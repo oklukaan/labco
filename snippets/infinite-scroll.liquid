@@ -1,0 +1,344 @@
+{% comment %}
+<!-- Designed by OnHOW YouTube Channel - Anas El Medlaoui -->
+{% endcomment %}
+
+<infinite-scroll data-next="{{ next_page }}" data-page-size="{{ page_size }}" data-end-text="{{ end_text }}">
+  {% if page_size > 1 %}
+    <div class="onhow-loading-container">
+      <span id="onhow-loading-1" class="onhow-loading-dot">&nbsp</span>
+      <span id="onhow-loading-2" class="onhow-loading-dot">&nbsp</span>
+      <span id="onhow-loading-3" class="onhow-loading-dot">&nbsp</span>
+      <span id="onhow-loading-4" class="onhow-loading-dot">&nbsp</span>
+      <span id="onhow-loading-5" class="onhow-loading-dot">&nbsp</span>
+      <span id="onhow-loading-6" class="onhow-loading-dot">&nbsp</span>
+      <span id="onhow-loading-7" class="onhow-loading-dot">&nbsp</span>
+      <span id="onhow-loading-8" class="onhow-loading-dot">&nbsp</span>
+    </div>
+  {% endif %}
+</infinite-scroll>
+
+<style>
+  infinite-scroll {
+    position: relative;
+    width: 100%;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+    margin: 2rem 0;
+  }
+
+  .onhow-loading-container {
+    position: relative;
+    width: 234px;
+    height: 28px;
+    margin: auto;
+  }
+
+  .onhow-loading-dot {
+    position: absolute;
+    top: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    animation: onhow-loading-wave 1.5s infinite ease-in-out;
+    transform: scale(0.3);
+  }
+
+  .onhow-end-section {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    font-family: var(--font-body-family);
+  }
+
+  .onhow-end-text {
+    font-size: 2.25rem;
+    font-weight: 500;
+    color: rgb(var(--color-foreground));
+    margin-bottom: 2rem;
+    opacity: 0.8;
+  }
+
+  .onhow-scroll-to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.875rem 1.75rem;
+    border-radius: 50px;
+    font-family: var(--font-body-family);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: onhow-button-appear 0.6s ease-out 0.3s forwards;
+  }
+
+  .onhow-scroll-to-top::before {
+    content: '↑';
+    font-size: 1.1em;
+    font-weight: bold;
+  }
+
+  .onhow-scroll-to-top::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .onhow-scroll-to-top:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  }
+
+  .onhow-scroll-to-top:hover::after {
+    left: 100%;
+  }
+
+  .onhow-scroll-to-top:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .onhow-scroll-to-top.onhow-hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+  }
+
+  #onhow-loading-1 {
+    left: 0;
+    animation-delay: 0.6s;
+  }
+
+  #onhow-loading-2 {
+    left: 29px;
+    animation-delay: 0.75s;
+  }
+
+  #onhow-loading-3 {
+    left: 58px;
+    animation-delay: 0.9s;
+  }
+
+  #onhow-loading-4 {
+    left: 88px;
+    animation-delay: 1.05s;
+  }
+
+  #onhow-loading-5 {
+    left: 117px;
+    animation-delay: 1.2s;
+  }
+
+  #onhow-loading-6 {
+    left: 146px;
+    animation-delay: 1.35s;
+  }
+
+  #onhow-loading-7 {
+    left: 175px;
+    animation-delay: 1.5s;
+  }
+
+  #onhow-loading-8 {
+    left: 205px;
+    animation-delay: 1.64s;
+  }
+
+  [class^="pagination"], [class^="Pagination"], .pagination {
+    display: none !important;
+  }
+
+  .js .features--show-element-staggering .ProductList--grid div.ProductItem {
+    visibility: visible;
+  }
+
+  .js .product-card[reveal-on-scroll="true"] {
+    opacity: 1;
+  }
+
+  @keyframes onhow-loading-wave {
+    0% {
+      transform: scale(1);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    100% {
+      transform: scale(0.3);
+      background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+    }
+  }
+
+  @keyframes onhow-button-appear {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 750px) {
+    .onhow-scroll-to-top {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .onhow-end-text {
+      font-size: 1.125rem;
+    }
+    
+    .onhow-loading-container {
+      width: 200px;
+      transform: scale(0.9);
+    }
+  }
+</style>
+
+<script>
+  class InfiniteScroll extends HTMLElement {
+    constructor() {
+      super();
+      this.initGrid();
+      this.init();
+      this.page = 1;
+      this.scrollToTopBtn = null;
+      this.setupGlobalScrollListener();
+    }
+
+    initGrid() {
+      const gridOptions = [".ProductListWrapper", "#main-collection-product-grid", "#product-grid", ".product-list"];
+      for (let gridName of gridOptions) {
+        let grid = document.querySelector(gridName);
+        if (grid) {
+          this.gridName = gridName;
+          this.gridContainer = grid;
+          break;
+        }
+      }
+    }
+
+    init() {
+      const observer = new IntersectionObserver(this.revealItem.bind(this), {
+        root: null,
+        threshold: 0.05,
+      });
+      observer.observe(this);
+    }
+
+    setupGlobalScrollListener() {
+      let scrollTimeout;
+      window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          this.handleScrollVisibility();
+        }, 10);
+      });
+    }
+
+    handleScrollVisibility() {
+      if (this.scrollToTopBtn) {
+        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        const shouldShow = scrollPosition > 300;
+        
+        if (shouldShow) {
+          this.scrollToTopBtn.classList.remove('onhow-hidden');
+        } else {
+          this.scrollToTopBtn.classList.add('onhow-hidden');
+        }
+      }
+    }
+
+    fetchNextPage(pageNum) {
+      if (pageNum <= this.dataset.pageSize) {
+        const url = `{{ shop.url }}/${this.dataset.next}`;
+        const urlObj = new URL(url);
+        urlObj.searchParams.set("page", pageNum);
+        const finalUrl = urlObj.href;
+        
+        fetch(finalUrl, { 
+          method: "GET", 
+          headers: { "Content-Type": "text/html" } 
+        })
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser().parseFromString(html, "text/html");
+          const newContent = parser.querySelector(this.gridName).innerHTML;
+          this.gridContainer.insertAdjacentHTML("beforeend", newContent);        
+        })
+        .catch(error => {
+          console.error("Error loading next page:", error);
+        });
+      }
+      
+      if (pageNum == this.dataset.pageSize) {
+        this.showEndSection();
+      }
+    }
+
+    showEndSection() {
+      this.innerHTML = `
+        <div class="onhow-end-section">
+          <h2 class="onhow-end-text">${this.dataset.endText}</h2>
+          <div class="onhow-scroll-to-top onhow-hidden">
+            Scroll To Top
+          </div>
+        </div>
+      `;
+      this.setupScrollToTop();
+    }
+
+    setupScrollToTop() {
+      this.scrollToTopBtn = this.querySelector('.onhow-scroll-to-top');
+      if (this.scrollToTopBtn) {
+        this.scrollToTopBtn.addEventListener('click', this.scrollToTopAction.bind(this));
+        
+        setTimeout(() => {
+          this.handleScrollVisibility();
+        }, 100);
+      }
+    }
+
+    revealItem(entries, observer) {
+      const [entry] = entries;
+      if (!entry.isIntersecting) return;
+      
+      if (entry.target) {
+        this.page++;
+        this.fetchNextPage(this.page);
+      }
+      
+      if (this.page == this.dataset.pageSize) {
+        observer.unobserve(entry.target);
+      }
+    }
+
+    scrollToTopAction() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }
+
+  customElements.define("infinite-scroll", InfiniteScroll);
+</script>

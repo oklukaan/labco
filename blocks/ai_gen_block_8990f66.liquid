@@ -1,0 +1,484 @@
+{% doc %}
+  @prompt
+    Create a "Share Cart" button for the cart page that allows customers to share their cart in two ways: 1) Copy a shareable cart link to clipboard, 2) Share directly via WhatsApp. The button should appear on the cart page below the cart items. When clicked, it should generate a permanent cart permalink using Shopify's cart permalink feature (/cart/[variant_id]:[quantity]) and allow sharing. Include a small modal or dropdown with both options (Copy Link and Share on WhatsApp). Style it to match the store's theme.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-share-cart-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 20px auto;
+  }
+
+  .ai-share-cart-container-{{ ai_gen_id }} {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .ai-share-cart-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    border: {{ block.settings.button_border_thickness }}px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-share-cart-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+    color: {{ block.settings.button_hover_text_color }};
+  }
+
+  .ai-share-cart-button-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .ai-share-cart-dropdown-{{ ai_gen_id }} {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: {{ block.settings.dropdown_bg_color }};
+    border: 1px solid {{ block.settings.dropdown_border_color }};
+    border-radius: {{ block.settings.dropdown_border_radius }}px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    transform: translateX(-50%) translateY(-10px);
+    z-index: 100;
+  }
+
+  .ai-share-cart-dropdown-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .ai-share-cart-option-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    border-radius: {{ block.settings.option_border_radius }}px;
+    color: {{ block.settings.dropdown_text_color }};
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 100%;
+    text-align: left;
+  }
+
+  .ai-share-cart-option-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.option_hover_color }};
+  }
+
+  .ai-share-cart-option-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .ai-share-cart-feedback-{{ ai_gen_id }} {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: {{ block.settings.feedback_bg_color }};
+    color: {{ block.settings.feedback_text_color }};
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 1000;
+  }
+
+  .ai-share-cart-feedback-{{ ai_gen_id }}.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-share-cart-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-share-cart-dropdown-{{ ai_gen_id }} {
+      left: 0;
+      right: 0;
+      transform: none;
+      margin: 0 16px;
+      min-width: auto;
+    }
+
+    .ai-share-cart-dropdown-{{ ai_gen_id }}.active {
+      transform: translateY(0);
+    }
+  }
+{% endstyle %}
+
+<share-cart-{{ ai_gen_id }} class="ai-share-cart-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-share-cart-container-{{ ai_gen_id }}">
+    <button
+      class="ai-share-cart-button-{{ ai_gen_id }}"
+      aria-label="{{ block.settings.button_text }}"
+      aria-expanded="false"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+      </svg>
+      <span>{{ block.settings.button_text }}</span>
+    </button>
+
+    <div class="ai-share-cart-dropdown-{{ ai_gen_id }}">
+      <button class="ai-share-cart-option-{{ ai_gen_id }}" data-action="copy">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span>{{ block.settings.copy_link_text }}</span>
+      </button>
+
+      <button class="ai-share-cart-option-{{ ai_gen_id }}" data-action="whatsapp">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+        <span>{{ block.settings.whatsapp_text }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="ai-share-cart-feedback-{{ ai_gen_id }}">
+    {{ block.settings.copy_success_message }}
+  </div>
+</share-cart-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ShareCart{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.button = this.querySelector('.ai-share-cart-button-{{ ai_gen_id }}');
+        this.dropdown = this.querySelector('.ai-share-cart-dropdown-{{ ai_gen_id }}');
+        this.feedback = this.querySelector('.ai-share-cart-feedback-{{ ai_gen_id }}');
+        this.copyOption = this.querySelector('[data-action="copy"]');
+        this.whatsappOption = this.querySelector('[data-action="whatsapp"]');
+      }
+
+      connectedCallback() {
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.button.addEventListener('click', () => this.toggleDropdown());
+        this.copyOption.addEventListener('click', () => this.copyToClipboard());
+        this.whatsappOption.addEventListener('click', () => this.shareOnWhatsApp());
+
+        document.addEventListener('click', (e) => {
+          if (!this.contains(e.target)) {
+            this.closeDropdown();
+          }
+        });
+      }
+
+      toggleDropdown() {
+        const isActive = this.dropdown.classList.contains('active');
+        if (isActive) {
+          this.closeDropdown();
+        } else {
+          this.openDropdown();
+        }
+      }
+
+      openDropdown() {
+        this.dropdown.classList.add('active');
+        this.button.setAttribute('aria-expanded', 'true');
+      }
+
+      closeDropdown() {
+        this.dropdown.classList.remove('active');
+        this.button.setAttribute('aria-expanded', 'false');
+      }
+
+      generateCartPermalink() {
+        const cartItems = [];
+        
+        fetch('/cart.js')
+          .then(response => response.json())
+          .then(cart => {
+            cart.items.forEach(item => {
+              cartItems.push(item.variant_id + ':' + item.quantity);
+            });
+            
+            const permalink = window.location.origin + '/cart/' + cartItems.join(',');
+            return permalink;
+          });
+
+        return new Promise((resolve) => {
+          fetch('/cart.js')
+            .then(response => response.json())
+            .then(cart => {
+              const items = cart.items.map(item => item.variant_id + ':' + item.quantity);
+              const permalink = window.location.origin + '/cart/' + items.join(',');
+              resolve(permalink);
+            })
+            .catch(() => {
+              resolve(window.location.origin + '/cart');
+            });
+        });
+      }
+
+      async copyToClipboard() {
+        const permalink = await this.generateCartPermalink();
+        
+        try {
+          await navigator.clipboard.writeText(permalink);
+          this.showFeedback();
+          this.closeDropdown();
+        } catch (err) {
+          const textArea = document.createElement('textarea');
+          textArea.value = permalink;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          document.body.appendChild(textArea);
+          textArea.select();
+          
+          try {
+            document.execCommand('copy');
+            this.showFeedback();
+            this.closeDropdown();
+          } catch (err) {
+            console.error('Failed to copy:', err);
+          }
+          
+          document.body.removeChild(textArea);
+        }
+      }
+
+      async shareOnWhatsApp() {
+        const permalink = await this.generateCartPermalink();
+        const message = encodeURIComponent('{{ block.settings.whatsapp_message }} ' + permalink);
+        const whatsappUrl = 'https://wa.me/?text=' + message;
+        
+        window.open(whatsappUrl, '_blank');
+        this.closeDropdown();
+      }
+
+      showFeedback() {
+        this.feedback.classList.add('show');
+        setTimeout(() => {
+          this.feedback.classList.remove('show');
+        }, 3000);
+      }
+    }
+
+    customElements.define('share-cart-{{ ai_gen_id }}', ShareCart{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Share cart",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Share cart"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Background color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Hover background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_thickness",
+      "label": "Border thickness",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Dropdown"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "dropdown_border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "range",
+      "id": "dropdown_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "option_hover_color",
+      "label": "Option hover color",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "range",
+      "id": "option_border_radius",
+      "label": "Option border radius",
+      "min": 0,
+      "max": 12,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Share options"
+    },
+    {
+      "type": "text",
+      "id": "copy_link_text",
+      "label": "Copy link text",
+      "default": "Copy link"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_text",
+      "label": "WhatsApp text",
+      "default": "Share on WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_message",
+      "label": "WhatsApp message",
+      "default": "Check out my cart:"
+    },
+    {
+      "type": "text",
+      "id": "copy_success_message",
+      "label": "Copy success message",
+      "default": "Link copied to clipboard!"
+    },
+    {
+      "type": "header",
+      "content": "Feedback notification"
+    },
+    {
+      "type": "color",
+      "id": "feedback_bg_color",
+      "label": "Background color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "feedback_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Share cart"
+    }
+  ]
+}
+{% endschema %}

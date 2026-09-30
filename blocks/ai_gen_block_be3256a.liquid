@@ -1,0 +1,632 @@
+{% doc %}
+  @prompt
+    Create a "Share Cart" button for the cart page that allows customers to share their cart. The shared link must use the /cart/add?items[][id]=[variant_id]&items[][quantity]=[quantity] format OR build a URL that adds items to cart and redirects to the cart page (NOT checkout). Include two sharing options: 1) Copy link to clipboard, 2) Share via WhatsApp. Style it to match the store theme.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-share-cart-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-share-cart-container-{{ ai_gen_id }} {
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding }}px;
+    border-radius: {{ block.settings.border_radius }}px;
+    border: {{ block.settings.border_thickness }}px solid {{ block.settings.border_color }};
+  }
+
+  .ai-share-cart-heading-{{ ai_gen_id }} {
+    margin: 0 0 {{ block.settings.spacing }}px;
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.text_color }};
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-share-cart-description-{{ ai_gen_id }} {
+    margin: 0 0 {{ block.settings.spacing }}px;
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.text_color }};
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-share-cart-buttons-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.button_gap }}px;
+    flex-wrap: wrap;
+    {% if block.settings.text_alignment == 'center' %}
+      justify-content: center;
+    {% elsif block.settings.text_alignment == 'right' %}
+      justify-content: flex-end;
+    {% else %}
+      justify-content: flex-start;
+    {% endif %}
+  }
+
+  .ai-share-cart-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: {{ block.settings.button_padding }}px {{ block.settings.button_padding | times: 1.5 }}px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: {{ block.settings.button_border_thickness }}px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .ai-share-cart-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_text_color }};
+    border-color: {{ block.settings.button_hover_border_color }};
+  }
+
+  .ai-share-cart-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-share-cart-button-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .ai-share-cart-whatsapp-{{ ai_gen_id }} {
+    background-color: {{ block.settings.whatsapp_background }};
+    color: {{ block.settings.whatsapp_text_color }};
+    border-color: {{ block.settings.whatsapp_background }};
+  }
+
+  .ai-share-cart-whatsapp-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.whatsapp_hover_background }};
+    color: {{ block.settings.whatsapp_hover_text_color }};
+    border-color: {{ block.settings.whatsapp_hover_background }};
+  }
+
+  .ai-share-cart-message-{{ ai_gen_id }} {
+    margin-top: {{ block.settings.spacing }}px;
+    padding: 12px;
+    border-radius: {{ block.settings.border_radius }}px;
+    font-size: 14px;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .ai-share-cart-message-{{ ai_gen_id }}.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ai-share-cart-message-{{ ai_gen_id }}.success {
+    background-color: {{ block.settings.success_background }};
+    color: {{ block.settings.success_text_color }};
+  }
+
+  .ai-share-cart-message-{{ ai_gen_id }}.error {
+    background-color: {{ block.settings.error_background }};
+    color: {{ block.settings.error_text_color }};
+  }
+
+  .ai-share-cart-empty-{{ ai_gen_id }} {
+    padding: {{ block.settings.padding }}px;
+    text-align: center;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.description_size }}px;
+    font-style: italic;
+    opacity: 0.7;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-share-cart-buttons-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .ai-share-cart-button-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<share-cart-{{ ai_gen_id }} class="ai-share-cart-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if cart.item_count > 0 %}
+    <div class="ai-share-cart-container-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h3 class="ai-share-cart-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h3>
+      {% endif %}
+
+      {% if block.settings.description != blank %}
+        <div class="ai-share-cart-description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+      {% endif %}
+
+      <div class="ai-share-cart-buttons-{{ ai_gen_id }}">
+        <button
+          type="button"
+          class="ai-share-cart-button-{{ ai_gen_id }} ai-share-cart-copy-{{ ai_gen_id }}"
+          data-action="copy"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>{{ block.settings.copy_button_text }}</span>
+        </button>
+
+        <a
+          href="#"
+          class="ai-share-cart-button-{{ ai_gen_id }} ai-share-cart-whatsapp-{{ ai_gen_id }}"
+          data-action="whatsapp"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+          </svg>
+          <span>{{ block.settings.whatsapp_button_text }}</span>
+        </a>
+      </div>
+
+      <div class="ai-share-cart-message-{{ ai_gen_id }}" role="status" aria-live="polite"></div>
+    </div>
+  {% else %}
+    <div class="ai-share-cart-empty-{{ ai_gen_id }}">
+      {{ block.settings.empty_cart_message }}
+    </div>
+  {% endif %}
+</share-cart-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ShareCart{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.copyButton = this.querySelector('.ai-share-cart-copy-{{ ai_gen_id }}');
+        this.whatsappButton = this.querySelector('.ai-share-cart-whatsapp-{{ ai_gen_id }}');
+        this.messageElement = this.querySelector('.ai-share-cart-message-{{ ai_gen_id }}');
+      }
+
+      connectedCallback() {
+        if (this.copyButton) {
+          this.copyButton.addEventListener('click', () => this.handleCopy());
+        }
+        if (this.whatsappButton) {
+          this.whatsappButton.addEventListener('click', (e) => this.handleWhatsApp(e));
+        }
+        this.buildShareUrl();
+      }
+
+      async buildShareUrl() {
+        try {
+          const response = await fetch('/cart.js');
+          const cart = await response.json();
+          
+          if (!cart.items || cart.items.length === 0) {
+            return null;
+          }
+
+          const baseUrl = window.location.origin;
+          const params = new URLSearchParams();
+          
+          cart.items.forEach((item, index) => {
+            params.append(`items[${index}][id]`, item.variant_id);
+            params.append(`items[${index}][quantity]`, item.quantity);
+          });
+
+          this.shareUrl = `${baseUrl}/cart/add?${params.toString()}`;
+          
+          if (this.whatsappButton) {
+            const message = encodeURIComponent(`{{ block.settings.whatsapp_message }}\n\n${this.shareUrl}`);
+            this.whatsappButton.href = `https://wa.me/?text=${message}`;
+          }
+        } catch (error) {
+          console.error('Error building share URL:', error);
+          this.showMessage('{{ block.settings.error_message }}', 'error');
+        }
+      }
+
+      async handleCopy() {
+        if (!this.shareUrl) {
+          await this.buildShareUrl();
+        }
+
+        if (!this.shareUrl) {
+          this.showMessage('{{ block.settings.error_message }}', 'error');
+          return;
+        }
+
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(this.shareUrl);
+            this.showMessage('{{ block.settings.success_message }}', 'success');
+          } else {
+            const textArea = document.createElement('textarea');
+            textArea.value = this.shareUrl;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+              document.execCommand('copy');
+              this.showMessage('{{ block.settings.success_message }}', 'success');
+            } catch (err) {
+              this.showMessage('{{ block.settings.error_message }}', 'error');
+            }
+            
+            document.body.removeChild(textArea);
+          }
+        } catch (error) {
+          console.error('Error copying to clipboard:', error);
+          this.showMessage('{{ block.settings.error_message }}', 'error');
+        }
+      }
+
+      handleWhatsApp(e) {
+        if (!this.shareUrl) {
+          e.preventDefault();
+          this.buildShareUrl().then(() => {
+            if (this.shareUrl && this.whatsappButton) {
+              const message = encodeURIComponent(`{{ block.settings.whatsapp_message }}\n\n${this.shareUrl}`);
+              this.whatsappButton.href = `https://wa.me/?text=${message}`;
+              window.open(this.whatsappButton.href, '_blank');
+            }
+          });
+        }
+      }
+
+      showMessage(text, type) {
+        if (!this.messageElement) return;
+        
+        this.messageElement.textContent = text;
+        this.messageElement.className = `ai-share-cart-message-{{ ai_gen_id }} ${type} active`;
+        
+        setTimeout(() => {
+          this.messageElement.classList.remove('active');
+        }, 3000);
+      }
+    }
+
+    customElements.define('share-cart-{{ ai_gen_id }}', ShareCart{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Share cart",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Share your cart"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "Share this cart with friends or save it for later"
+    },
+    {
+      "type": "text",
+      "id": "copy_button_text",
+      "label": "Copy button text",
+      "default": "Copy link"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_button_text",
+      "label": "WhatsApp button text",
+      "default": "Share on WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_message",
+      "label": "WhatsApp message",
+      "default": "Check out my cart!"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Link copied to clipboard!"
+    },
+    {
+      "type": "text",
+      "id": "error_message",
+      "label": "Error message",
+      "default": "Unable to copy link. Please try again."
+    },
+    {
+      "type": "text",
+      "id": "empty_cart_message",
+      "label": "Empty cart message",
+      "default": "Add items to your cart to share it"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "label": "Spacing",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_gap",
+      "label": "Button gap",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Container style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "border_thickness",
+      "label": "Border thickness",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Description size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Copy button style"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Hover text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "Hover border color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "button_border_thickness",
+      "label": "Border thickness",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_padding",
+      "label": "Padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "WhatsApp button style"
+    },
+    {
+      "type": "color",
+      "id": "whatsapp_background",
+      "label": "Background",
+      "default": "#25D366"
+    },
+    {
+      "type": "color",
+      "id": "whatsapp_text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "whatsapp_hover_background",
+      "label": "Hover background",
+      "default": "#1ebe57"
+    },
+    {
+      "type": "color",
+      "id": "whatsapp_hover_text_color",
+      "label": "Hover text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Messages"
+    },
+    {
+      "type": "color",
+      "id": "success_background",
+      "label": "Success background",
+      "default": "#d4edda"
+    },
+    {
+      "type": "color",
+      "id": "success_text_color",
+      "label": "Success text",
+      "default": "#155724"
+    },
+    {
+      "type": "color",
+      "id": "error_background",
+      "label": "Error background",
+      "default": "#f8d7da"
+    },
+    {
+      "type": "color",
+      "id": "error_text_color",
+      "label": "Error text",
+      "default": "#721c24"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Share cart"
+    }
+  ]
+}
+{% endschema %}
