@@ -457,7 +457,7 @@ Medium | 10–25 kg | 2 scoops
 Large | 25+ kg | 3 scoops
 ```
 
-Sol sütunda kalın boyut ve altında gri alt açıklama, sağ sütunda küçük dolu daire ve altında kalın doz yer alır.
+Sol sütunda kalın boyut ve altında alt açıklama, sağ sütunda alt açıklamayla aynı hizada kalın doz yer alır.
 Sütun başlıkları bloktaki **1. sütun başlığı** ve **2. sütun başlığı** alanlarından gelir.
 
 **facts**: `İsim | değer1 | değer2 | ...` (değer sayısı serbest)
