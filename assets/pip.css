@@ -1,0 +1,670 @@
+/*
+  Ürün Bilgi Paneli (pip)
+  Tüm kurallar .pip- sınıflarıyla izoledir; temanın mevcut bileşenlerini etkilemez.
+  Birimler px: Dawn kök font boyutunu 62.5% yaptığı için rem temalar arası taşınabilir değil.
+  Varsayım: içerik yüzeyi spesifikasyon gereği beyazdır (--pip-surface); koyu renk şemalı
+  bir bölümde kullanılacaksa --pip-surface değişkeni tema tarafında ezilebilir.
+*/
+
+.pip-tabs,
+.pip-acc-group {
+  --pip-color-check: #1a7f45;
+  --pip-color-cross: #c0392b;
+  --pip-color-brand-col-bg: #e8f1fc;
+  --pip-color-border: #e2e2e2;
+  --pip-color-muted: #666666;
+  --pip-color-tab-inactive-bg: #f3f3f3;
+  --pip-radius: 14px;
+  --pip-surface: #ffffff;
+  --pip-ink-bg: #000000;
+  --pip-ink-fg: #ffffff;
+
+  display: block;
+  font-family: inherit;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.pip-tabs *,
+.pip-tabs *::before,
+.pip-tabs *::after,
+.pip-acc-group *,
+.pip-acc-group *::before,
+.pip-acc-group *::after {
+  box-sizing: border-box;
+}
+
+.pip-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pip-icon {
+  display: inline-block;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.pip-icon--check {
+  color: var(--pip-color-check);
+}
+
+.pip-icon--cross {
+  color: var(--pip-color-cross);
+}
+
+/* ---------- Zengin metin ---------- */
+
+.pip-rte p,
+.pip-rte ul,
+.pip-rte ol {
+  margin: 0 0 10px;
+}
+
+.pip-rte ul,
+.pip-rte ol {
+  padding-left: 20px;
+}
+
+.pip-rte li + li {
+  margin-top: 4px;
+}
+
+.pip-rte :is(p, ul, ol):last-child {
+  margin-bottom: 0;
+}
+
+.pip-rte :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0 0 8px;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: 600;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+.pip-rte a,
+.pip-cmp__link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---------- Ortak içerik ---------- */
+
+.pip-content > * + * {
+  margin-top: 16px;
+}
+
+.pip-table {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: inherit;
+}
+
+.pip-table th,
+.pip-table td {
+  padding: 12px 0;
+  border: 0;
+  text-align: left;
+  vertical-align: middle;
+  font-weight: inherit;
+  background: none;
+}
+
+.pip-table tbody tr + tr,
+.pip-table thead + tbody tr:first-child {
+  border-top: 1px solid var(--pip-color-border);
+}
+
+/* ---------- Sekmeler ---------- */
+
+.pip-tabs__heading {
+  margin: 0 0 16px;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+.pip-tabs__box {
+  overflow: hidden;
+  border: 1px solid var(--pip-color-border);
+  border-radius: var(--pip-radius);
+  background: var(--pip-surface);
+}
+
+.pip-tabs__list {
+  display: grid;
+  grid-template-columns: repeat(var(--pip-tab-count, 1), minmax(0, 1fr));
+  background: var(--pip-surface);
+}
+
+.pip-tabs__list[hidden] {
+  display: none;
+}
+
+.pip-tabs__tab {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 64px;
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--pip-color-border);
+  border-radius: 0;
+  background: var(--pip-color-tab-inactive-bg);
+  color: inherit;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: inherit;
+  text-align: center;
+  overflow-wrap: break-word;
+  cursor: pointer;
+}
+
+.pip-tabs__tab + .pip-tabs__tab {
+  border-left: 1px solid var(--pip-color-border);
+}
+
+.pip-tabs__tab[aria-selected='true'] {
+  margin-top: 0;
+  min-height: 74px;
+  border-right: 1px solid var(--pip-color-border);
+  border-bottom-color: transparent;
+  border-radius: var(--pip-radius) var(--pip-radius) 0 0;
+  background: var(--pip-surface);
+  font-weight: 600;
+}
+
+.pip-tabs__tab[aria-selected='true'] + .pip-tabs__tab {
+  border-left-color: transparent;
+}
+
+.pip-tabs__tab[aria-selected='true']:first-child {
+  border-top-left-radius: 0;
+}
+
+.pip-tabs__tab[aria-selected='true']:last-child {
+  border-right: 0;
+  border-top-right-radius: 0;
+}
+
+.pip-tabs__tab:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -4px;
+}
+
+.pip-tabs__panel {
+  padding: 18px 20px 20px;
+  background: var(--pip-surface);
+}
+
+.pip-tabs__panel[hidden] {
+  display: none;
+}
+
+.pip-tabs__panel:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -4px;
+}
+
+.pip-tabs__panel-title {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.pip-tabs--js .pip-tabs__panel-title {
+  display: none;
+}
+
+/* JS yok: paneller alt alta, aralarında ayraç. */
+.pip-tabs:not(.pip-tabs--js) .pip-tabs__panel + .pip-tabs__panel {
+  border-top: 1px solid var(--pip-color-border);
+}
+
+@media screen and (max-width: 749px) {
+  .pip-tabs__list {
+    grid-template-columns: repeat(var(--pip-tab-count, 1), minmax(112px, 1fr));
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pip-tabs__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pip-tabs__panel {
+    padding: 16px;
+  }
+}
+
+/* ---------- Akordeon ---------- */
+
+.pip-acc-group:not(:has(.pip-acc)) {
+  display: none;
+}
+
+.pip-acc {
+  border-bottom: 1px solid var(--pip-color-border);
+}
+
+.pip-acc__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 12px 0;
+  list-style: none;
+  cursor: pointer;
+}
+
+.pip-acc__summary::-webkit-details-marker {
+  display: none;
+}
+
+.pip-acc__summary::marker {
+  content: '';
+}
+
+.pip-acc__summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.pip-acc__title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.pip-acc__chevron {
+  transition: transform 0.2s ease;
+}
+
+.pip-acc[open] .pip-acc__chevron {
+  transform: rotate(180deg);
+}
+
+.pip-acc.pip-acc--closing .pip-acc__chevron {
+  transform: none;
+}
+
+.pip-acc__body {
+  padding-bottom: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pip-acc__chevron {
+    transition: none;
+  }
+}
+
+/* ---------- Promosyon kartı ---------- */
+
+.pip-promo {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  min-height: 110px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--pip-promo-bg, var(--pip-color-tab-inactive-bg));
+}
+
+.pip-content + .pip-promo {
+  margin-top: 16px;
+}
+
+.pip-promo__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 16px 18px;
+}
+
+.pip-promo__title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.pip-promo__subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.pip-promo__media {
+  position: relative;
+  flex: none;
+  width: 40%;
+  max-width: 180px;
+}
+
+.pip-promo__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- İkonlu liste ---------- */
+
+.pip-features {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pip-feature {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+}
+
+.pip-feature:first-child {
+  padding-top: 0;
+}
+
+.pip-feature:last-child {
+  padding-bottom: 0;
+}
+
+.pip-feature + .pip-feature {
+  border-top: 1px solid var(--pip-color-border);
+}
+
+.pip-feature__icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.pip-feature__text {
+  min-width: 0;
+}
+
+.pip-feature__title {
+  display: block;
+  font-size: 16.5px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.pip-feature__desc {
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+.pip-feature--inline .pip-feature__text {
+  font-size: 16px;
+}
+
+.pip-feature--inline .pip-feature__title,
+.pip-feature--inline .pip-feature__desc,
+.pip-feature--inline .pip-feature__desc :is(div, p) {
+  display: inline;
+  margin: 0;
+  font-size: 16px;
+}
+
+.pip-feature--inline .pip-feature__desc {
+  font-weight: 400;
+}
+
+/* ---------- Alıntı ---------- */
+
+.pip-quote {
+  margin: 0;
+}
+
+.pip-quote__text {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 16px;
+  font-style: normal;
+}
+
+.pip-quote__text p {
+  margin: 0;
+}
+
+.pip-quote__author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.pip-quote__photo {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pip-quote__name {
+  display: block;
+  font-weight: 600;
+}
+
+.pip-quote__role {
+  display: block;
+  font-size: 13px;
+  color: var(--pip-color-muted);
+}
+
+/* ---------- Karşılaştırma ---------- */
+
+.pip-cmp {
+  table-layout: fixed;
+}
+
+.pip-cmp__col-mark {
+  width: 52px;
+}
+
+.pip-cmp .pip-cmp__brand {
+  background: var(--pip-color-brand-col-bg);
+}
+
+.pip-cmp thead th {
+  height: 48px;
+  padding: 0;
+  vertical-align: middle;
+}
+
+.pip-cmp__brand-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 4px;
+  border-radius: 8px 8px 0 0;
+  background: var(--pip-ink-bg);
+  color: var(--pip-ink-fg);
+}
+
+.pip-cmp__logo {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 28px;
+  object-fit: contain;
+}
+
+.pip-cmp__brand-label {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.pip-cmp .pip-cmp__head-others {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.pip-cmp .pip-cmp__feature-cell {
+  padding-right: 12px;
+}
+
+.pip-cmp__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.pip-cmp__icon {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pip-cmp__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pip-cmp__title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.pip-cmp__desc {
+  margin-top: 2px;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.pip-cmp__link {
+  align-self: flex-start;
+  margin-top: 4px;
+  font-size: 12.5px;
+}
+
+.pip-cmp .pip-cmp__mark {
+  text-align: center;
+}
+
+/* ---------- Dozaj ---------- */
+
+.pip-dosage thead th {
+  padding: 0 0 8px;
+  font-size: 13px;
+  color: var(--pip-color-muted);
+}
+
+.pip-dosage .pip-dosage__dose-cell {
+  width: 40%;
+  text-align: center;
+}
+
+.pip-dosage__size {
+  display: block;
+  font-weight: 700;
+}
+
+.pip-dosage__sub {
+  display: block;
+  font-size: 13px;
+  color: var(--pip-color-muted);
+}
+
+.pip-dosage__dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  margin: 0 auto 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pip-dosage__dose {
+  display: block;
+  font-weight: 700;
+}
+
+/* ---------- Ürün bilgileri (facts) ---------- */
+
+.pip-facts__title {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: calc(var(--pip-radius) / 2);
+  background: var(--pip-ink-bg);
+  color: var(--pip-ink-fg);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.pip-facts__note {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pip-facts__table {
+  margin-top: 6px;
+}
+
+.pip-facts__table th,
+.pip-facts__table td {
+  padding: 8px 0;
+  font-size: 13px;
+  vertical-align: top;
+}
+
+.pip-facts__table .pip-facts__name {
+  padding-right: 12px;
+}
+
+.pip-facts__table .pip-facts__values {
+  text-align: right;
+}
+
+.pip-facts__value {
+  display: block;
+}

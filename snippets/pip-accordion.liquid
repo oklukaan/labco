@@ -1,0 +1,117 @@
+{%- comment -%}
+  Ürün Bilgi Paneli — tek akordeon öğesi.
+  Kullanım (main-product blok döngüsü içinde):
+    {% render 'pip-accordion', block: block, blocks: section.blocks, index: forloop.index0, product: product %}
+
+  Gruplama sırayla yapılır:
+  - Önceki blok pip_accordion değilse bu öğe grubun başıdır: grup sarmalayıcısı açılır.
+  - Sonraki blok pip_accordion değilse (veya yoksa) bu öğe grubun sonudur: sarmalayıcı kapanır.
+  Ardışık bloklar döngüde art arda render edildiği için açılış/kapanış etiketleri her zaman eşleşir.
+  Başlığı boş veya içeriği (gövde + promosyon kartı) boş öğe çizilmez. Hiç öğesi kalmayan
+  sarmalayıcı CSS ile gizlenir (.pip-acc-group:not(:has(.pip-acc))).
+{%- endcomment -%}
+
+{%- liquid
+  assign pip_is_head = true
+  if index > 0
+    assign pip_prev_index = index | minus: 1
+    if blocks[pip_prev_index].type == 'pip_accordion'
+      assign pip_is_head = false
+    endif
+  endif
+
+  assign pip_is_tail = true
+  assign pip_next_index = index | plus: 1
+  if blocks[pip_next_index].type == 'pip_accordion'
+    assign pip_is_tail = false
+  endif
+
+  # CSS/JS bölümdeki ilk pip bloğunda bir kez yüklenir.
+  assign pip_load_assets = true
+  for pip_b in blocks limit: index
+    if pip_b.type == 'pip_tab' or pip_b.type == 'pip_accordion'
+      assign pip_load_assets = false
+      break
+    endif
+  endfor
+
+  assign pip_title = block.settings.title | strip
+  assign pip_promo_title = block.settings.promo_title | strip
+  assign pip_promo_subtitle = block.settings.promo_subtitle | strip
+-%}
+
+{%- if pip_load_assets -%}
+  {{ 'pip.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'pip.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- if pip_is_head -%}
+  {%- capture pip_style -%}
+    {%- if settings.pip_color_check != blank -%}--pip-color-check: {{ settings.pip_color_check }};{%- endif -%}
+    {%- if settings.pip_color_cross != blank -%}--pip-color-cross: {{ settings.pip_color_cross }};{%- endif -%}
+    {%- if settings.pip_color_brand_col_bg != blank -%}--pip-color-brand-col-bg: {{ settings.pip_color_brand_col_bg }};{%- endif -%}
+    {%- if settings.pip_color_border != blank -%}--pip-color-border: {{ settings.pip_color_border }};{%- endif -%}
+    {%- if settings.pip_color_muted != blank -%}--pip-color-muted: {{ settings.pip_color_muted }};{%- endif -%}
+    {%- if settings.pip_color_tab_inactive_bg != blank -%}--pip-color-tab-inactive-bg: {{ settings.pip_color_tab_inactive_bg }};{%- endif -%}
+    --pip-radius: {{ settings.pip_radius | default: 14 }}px;
+  {%- endcapture -%}
+  <div class="pip-acc-group" style="{{ pip_style }}">
+{%- endif -%}
+
+{%- if pip_title != blank -%}
+  {%- capture pip_body -%}{%- render 'pip-content', block: block, product: product -%}{%- endcapture -%}
+  {%- assign pip_body_check = pip_body | strip -%}
+
+  {%- if pip_body_check != blank or pip_promo_title != blank -%}
+    <details
+      class="pip-acc"
+      id="PipAcc-{{ block.id }}"
+      data-pip-block="{{ block.id }}"
+      {% if block.settings.open_by_default %}
+        open
+      {% endif %}
+      {{ block.shopify_attributes }}
+    >
+      <summary class="pip-acc__summary" id="PipAccSummary-{{ block.id }}">
+        <span class="pip-acc__title">{{ pip_title | escape }}</span>
+        {% render 'pip-icon', icon: 'chevron', class: 'pip-acc__chevron' %}
+      </summary>
+      <div class="pip-acc__body" id="PipAccBody-{{ block.id }}">
+        {{ pip_body }}
+        {%- if pip_promo_title != blank -%}
+          <div
+            class="pip-promo"
+            {% if block.settings.promo_bg != blank %}
+              style="--pip-promo-bg: {{ block.settings.promo_bg }};"
+            {% endif %}
+          >
+            <div class="pip-promo__text">
+              <span class="pip-promo__title">{{ pip_promo_title | escape }}</span>
+              {%- if pip_promo_subtitle != blank -%}
+                <span class="pip-promo__subtitle">{{ pip_promo_subtitle | escape }}</span>
+              {%- endif -%}
+            </div>
+            {%- if block.settings.promo_image != blank -%}
+              <div class="pip-promo__media">
+                {{
+                  block.settings.promo_image
+                  | image_url: width: 480
+                  | image_tag:
+                    widths: '180, 360, 480',
+                    sizes: '180px',
+                    loading: 'lazy',
+                    alt: '',
+                    class: 'pip-promo__image'
+                }}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </details>
+  {%- endif -%}
+{%- endif -%}
+
+{%- if pip_is_tail -%}
+  </div>
+{%- endif -%}

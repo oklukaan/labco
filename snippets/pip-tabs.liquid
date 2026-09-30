@@ -1,0 +1,121 @@
+{%- comment -%}
+  Ürün Bilgi Paneli — sekme grubu.
+  Kullanım (main-product blok döngüsü içinde):
+    {% render 'pip-tabs', block: block, blocks: section.blocks, index: forloop.index0, product: product %}
+
+  Klasik section blokları tek seviyelidir; gruplama sırayla yapılır:
+  - Önceki blok da pip_tab ise bu çağrı hiçbir şey çizmez (grup zaten grubun ilk bloğunda çizildi).
+  - Grubun ilk bloğu, kendisinden itibaren ardışık tüm pip_tab bloklarını toplar ve tek bileşen çizer.
+  - Başlığı veya içeriği boş sekmeler atlanır; hiç dolu sekme yoksa grup çizilmez.
+  - Grup başlığı (group_heading) grubun ilk bloğundan okunur.
+{%- endcomment -%}
+
+{%- liquid
+  assign pip_is_head = true
+  if index > 0
+    assign pip_prev_index = index | minus: 1
+    if blocks[pip_prev_index].type == 'pip_tab'
+      assign pip_is_head = false
+    endif
+  endif
+
+  # CSS/JS bölümdeki ilk pip bloğunda bir kez yüklenir.
+  assign pip_load_assets = true
+  for pip_b in blocks limit: index
+    if pip_b.type == 'pip_tab' or pip_b.type == 'pip_accordion'
+      assign pip_load_assets = false
+      break
+    endif
+  endfor
+-%}
+
+{%- if pip_load_assets -%}
+  {{ 'pip.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'pip.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- if pip_is_head -%}
+  {%- assign pip_tab_count = 0 -%}
+  {%- assign pip_tabs_html = '' -%}
+  {%- assign pip_panels_html = '' -%}
+
+  {%- for pip_b in blocks offset: index -%}
+    {%- if pip_b.type != 'pip_tab' -%}{%- break -%}{%- endif -%}
+
+    {%- assign pip_title = pip_b.settings.title | strip -%}
+    {%- if pip_title == blank -%}{%- continue -%}{%- endif -%}
+
+    {%- capture pip_body -%}{%- render 'pip-content', block: pip_b, product: product -%}{%- endcapture -%}
+    {%- assign pip_body_check = pip_body | strip -%}
+    {%- if pip_body_check == blank -%}{%- continue -%}{%- endif -%}
+
+    {%- assign pip_selected = false -%}
+    {%- if pip_tab_count == 0 -%}{%- assign pip_selected = true -%}{%- endif -%}
+
+    {%- capture pip_tab -%}
+      <button
+        type="button"
+        class="pip-tabs__tab"
+        role="tab"
+        id="PipTab-{{ pip_b.id }}"
+        aria-controls="PipPanel-{{ pip_b.id }}"
+        aria-selected="{{ pip_selected }}"
+        tabindex="{% if pip_selected %}0{% else %}-1{% endif %}"
+        data-pip-block="{{ pip_b.id }}"
+        {{ pip_b.shopify_attributes }}
+      >
+        <span class="pip-tabs__tab-label">{{ pip_title | escape }}</span>
+      </button>
+    {%- endcapture -%}
+
+    {%- capture pip_panel -%}
+      <div
+        class="pip-tabs__panel"
+        role="tabpanel"
+        id="PipPanel-{{ pip_b.id }}"
+        aria-labelledby="PipTab-{{ pip_b.id }}"
+        tabindex="0"
+      >
+        <p class="pip-tabs__panel-title">{{ pip_title | escape }}</p>
+        {{ pip_body }}
+      </div>
+    {%- endcapture -%}
+
+    {%- assign pip_tabs_html = pip_tabs_html | append: pip_tab -%}
+    {%- assign pip_panels_html = pip_panels_html | append: pip_panel -%}
+    {%- assign pip_tab_count = pip_tab_count | plus: 1 -%}
+  {%- endfor -%}
+
+  {%- if pip_tab_count > 0 -%}
+    {%- capture pip_style -%}
+      {%- if settings.pip_color_check != blank -%}--pip-color-check: {{ settings.pip_color_check }};{%- endif -%}
+      {%- if settings.pip_color_cross != blank -%}--pip-color-cross: {{ settings.pip_color_cross }};{%- endif -%}
+      {%- if settings.pip_color_brand_col_bg != blank -%}--pip-color-brand-col-bg: {{ settings.pip_color_brand_col_bg }};{%- endif -%}
+      {%- if settings.pip_color_border != blank -%}--pip-color-border: {{ settings.pip_color_border }};{%- endif -%}
+      {%- if settings.pip_color_muted != blank -%}--pip-color-muted: {{ settings.pip_color_muted }};{%- endif -%}
+      {%- if settings.pip_color_tab_inactive_bg != blank -%}--pip-color-tab-inactive-bg: {{ settings.pip_color_tab_inactive_bg }};{%- endif -%}
+      --pip-radius: {{ settings.pip_radius | default: 14 }}px;
+    {%- endcapture -%}
+    {%- assign pip_heading = block.settings.group_heading | strip -%}
+
+    <pip-tabs class="pip-tabs" style="{{ pip_style }} --pip-tab-count: {{ pip_tab_count }};">
+      {%- if pip_heading != blank -%}
+        <h2 class="pip-tabs__heading" id="PipTabsHeading-{{ block.id }}">{{ pip_heading | escape }}</h2>
+      {%- endif -%}
+      <div class="pip-tabs__box">
+        {%- comment -%} Sekme şeridi JS yokken gizli kalır; paneller alt alta görünür. {%- endcomment -%}
+        <div
+          class="pip-tabs__list"
+          role="tablist"
+          {% if pip_heading != blank %}
+            aria-labelledby="PipTabsHeading-{{ block.id }}"
+          {% endif %}
+          hidden
+        >
+          {{- pip_tabs_html -}}
+        </div>
+        {{- pip_panels_html -}}
+      </div>
+    </pip-tabs>
+  {%- endif -%}
+{%- endif -%}

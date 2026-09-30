@@ -1,0 +1,13 @@
+{%- comment -%}
+  Ürün Bilgi Paneli — ikonlar.
+  Kullanım: {% render 'pip-icon', icon: 'check' %}  (check | cross | chevron)
+  Opsiyonel: class (ek sınıf)
+{%- endcomment -%}
+{%- case icon -%}
+  {%- when 'check' -%}
+    <svg class="pip-icon pip-icon--check {{ class }}" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+  {%- when 'cross' -%}
+    <svg class="pip-icon pip-icon--cross {{ class }}" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7l10 10M17 7L7 17"/></svg>
+  {%- when 'chevron' -%}
+    <svg class="pip-icon pip-icon--chevron {{ class }}" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>
+{%- endcase -%}

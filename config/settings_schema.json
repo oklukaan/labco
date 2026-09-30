@@ -1451,5 +1451,82 @@
         "default": "scheme-1"
       }
     ]
+  },
+  {
+    "name": "Ürün bilgi paneli",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Karşılaştırma tablosu"
+      },
+      {
+        "type": "image_picker",
+        "id": "pip_brand_logo",
+        "label": "Marka logosu",
+        "info": "Marka sütununun siyah başlık kutusunda gösterilir. Açık renkli logo önerilir."
+      },
+      {
+        "type": "text",
+        "id": "pip_brand_label",
+        "label": "Marka etiketi",
+        "info": "Logo yoksa gösterilir. Boşsa mağaza adı kullanılır."
+      },
+      {
+        "type": "text",
+        "id": "pip_others_label",
+        "label": "Diğerleri etiketi",
+        "default": "Others"
+      },
+      {
+        "type": "header",
+        "content": "Renkler"
+      },
+      {
+        "type": "color",
+        "id": "pip_color_check",
+        "label": "Onay ikonu (✓)",
+        "default": "#1a7f45"
+      },
+      {
+        "type": "color",
+        "id": "pip_color_cross",
+        "label": "Çarpı ikonu (✕)",
+        "default": "#c0392b"
+      },
+      {
+        "type": "color",
+        "id": "pip_color_brand_col_bg",
+        "label": "Marka sütunu arka planı",
+        "default": "#e8f1fc"
+      },
+      {
+        "type": "color",
+        "id": "pip_color_border",
+        "label": "Kenarlık ve ayraçlar",
+        "default": "#e2e2e2"
+      },
+      {
+        "type": "color",
+        "id": "pip_color_muted",
+        "label": "İkincil metin",
+        "default": "#666666"
+      },
+      {
+        "type": "color",
+        "id": "pip_color_tab_inactive_bg",
+        "label": "Pasif sekme arka planı",
+        "default": "#f3f3f3"
+      },
+      {
+        "type": "range",
+        "id": "pip_radius",
+        "label": "Köşe yarıçapı",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 14
+      }
+    ]
   }
 ]
