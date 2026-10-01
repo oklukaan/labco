@@ -15,10 +15,10 @@
         "pip_tab_McRYDB": {
           "type": "pip_tab",
           "settings": {
-            "title": "",
-            "group_heading": "",
-            "content_type": "richtext",
-            "source_metafield": "",
+            "title": "Vet Reviewed",
+            "group_heading": "Tell me about:",
+            "content_type": "quote",
+            "source_metafield": "pip.quote",
             "intro": "",
             "intro_metafield": "",
             "footer_metafield": "",
