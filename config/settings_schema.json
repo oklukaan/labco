@@ -1457,6 +1457,23 @@
     "settings": [
       {
         "type": "header",
+        "content": "Yazı tipi"
+      },
+      {
+        "type": "font_picker",
+        "id": "pip_font",
+        "label": "Panel yazı tipi",
+        "default": "inter_n4",
+        "info": "Referans tasarım Inter kullanır."
+      },
+      {
+        "type": "checkbox",
+        "id": "pip_use_theme_font",
+        "label": "Bunun yerine temanın gövde yazı tipini kullan",
+        "default": false
+      },
+      {
+        "type": "header",
         "content": "Karşılaştırma tablosu"
       },
       {

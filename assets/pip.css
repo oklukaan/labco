@@ -3,7 +3,7 @@
   Tüm kurallar .pip- sınıflarıyla izoledir; temanın mevcut bileşenlerini etkilemez.
   Ölçüler referans tasarımın (Tailwind) kaynak değerleridir; kırılım noktası 1024px.
   Birimler px: Dawn kök font boyutunu 62.5% yaptığı için rem temalar arası taşınabilir değil.
-  Font temadan miras alınır; referansla birebir görünüm için tema tipografisinde Inter seçilebilir.
+  Font, tema ayarlarındaki "Panel yazı tipi"nden gelir (varsayılan Inter).
   Varsayım: içerik yüzeyi beyazdır (--pip-surface).
 */
 
@@ -24,10 +24,14 @@
   --pip-color-photo-bg: #e0ebff;
 
   display: block;
-  font-family: inherit;
+  /* Font tema ayarından (varsayılan Inter); "tema fontunu kullan" seçiliyse temadan miras. */
+  font-family: var(--pip-font-family, inherit);
   color: inherit;
   font-size: 16px;
   line-height: 1.4;
+  /* Dawn body'e letter-spacing verir; referans tasarımda harf aralığı normaldir. */
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .pip-tabs *,

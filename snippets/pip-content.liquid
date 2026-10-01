@@ -147,7 +147,7 @@
         assign pip_show_col = pip_has_fallback
         unless pip_show_col
           for pip_item in pip_list
-            if pip_item.system.type == 'pip_feature' and pip_item.icon.value.media_type == 'image'
+            if pip_item.system.type == 'pip_feature' and pip_item.icon.value.preview_image != blank
               assign pip_show_col = true
               break
             endif
@@ -196,7 +196,7 @@
           <li class="pip-feature{% if pip_inline %} pip-feature--inline{% endif %}">
             {%- if pip_show_col -%}
               <span class="pip-feature__media">
-                {%- if pip_img.media_type == 'image' -%}
+                {%- if pip_img.preview_image != blank -%}
                   {{
                     pip_img.preview_image
                     | image_url: width: 40
@@ -264,7 +264,7 @@
           <tr>
             <td class="pip-cmp__feature-cell">
               <div class="pip-cmp__feature">
-                {%- if pip_img.media_type == 'image' -%}
+                {%- if pip_img.preview_image != blank -%}
                   {{
                     pip_img.preview_image
                     | image_url: width: 64
@@ -360,9 +360,9 @@
             <blockquote class="pip-quote__text">
               <p>&ldquo;{{ pip_text | escape | newline_to_br }}&rdquo;</p>
             </blockquote>
-            {%- if pip_name != blank or pip_role != blank or pip_img.media_type == 'image' -%}
+            {%- if pip_name != blank or pip_role != blank or pip_img.preview_image != blank -%}
               <figcaption class="pip-quote__author">
-                {%- if pip_img.media_type == 'image' -%}
+                {%- if pip_img.preview_image != blank -%}
                   {{
                     pip_img.preview_image
                     | image_url: width: 128

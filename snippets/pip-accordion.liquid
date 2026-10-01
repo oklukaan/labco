@@ -41,6 +41,14 @@
 -%}
 
 {%- if pip_load_assets -%}
+  {%- unless settings.pip_use_theme_font or settings.pip_font == blank -%}
+    {%- comment -%} Panel yazı tipi Shopify font kütüphanesinden (normal, 600, bold). {%- endcomment -%}
+    <style>
+      {{ settings.pip_font | font_face: font_display: 'swap' }}
+      {{ settings.pip_font | font_modify: 'weight', '600' | font_face: font_display: 'swap' }}
+      {{ settings.pip_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+    </style>
+  {%- endunless -%}
   {{ 'pip.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'pip.js' | asset_url }}" defer="defer"></script>
 {%- endif -%}
@@ -54,6 +62,9 @@
     {%- if settings.pip_color_muted != blank -%}--pip-color-muted: {{ settings.pip_color_muted }};{%- endif -%}
     {%- if settings.pip_color_tab_inactive_bg != blank -%}--pip-color-tab-inactive-bg: {{ settings.pip_color_tab_inactive_bg }};{%- endif -%}
     --pip-radius: {{ settings.pip_radius | default: 14 }}px;
+    {%- unless settings.pip_use_theme_font or settings.pip_font == blank -%}
+      --pip-font-family: {{ settings.pip_font.family }}, {{ settings.pip_font.fallback_families }};
+    {%- endunless -%}
   {%- endcapture -%}
   <div class="pip-acc-group" style="{{ pip_style }}">
 {%- endif -%}
