@@ -9,7 +9,7 @@ Metafield ve metaobject tanımlarını mağazada siz kurarsınız; tema kodu bu 
 |---|---|
 | `snippets/pip-tabs.liquid` | Ardışık `pip_tab` bloklarını tek bir sekme bileşeni olarak çizer |
 | `snippets/pip-accordion.liquid` | Tek bir akordeon öğesini çizer; grubun ilk öğesinde sarmalayıcıyı açar, son öğesinde kapatır |
-| `snippets/pip-content.liquid` | `content_type` değerine göre içerik gövdesini çizer (sekme ve akordeon ortak kullanır) |
+| `snippets/pip-content.liquid` | `content_type` değerine göre ürünün `pip.panel` verisinden içerik gövdesini çizer (sekme ve akordeon ortak kullanır) |
 | `snippets/pip-icon.liquid` | `check`, `cross`, `chevron` SVG ikonları |
 | `assets/pip.css` | Tüm stiller (`.pip-` ile izole) |
 | `assets/pip.js` | Sekme davranışı, akordeon animasyonu, tema editörü entegrasyonu |
@@ -64,6 +64,7 @@ Dawn'da son blok `icon-with-text`'tir.
       "id": "content_type",
       "label": "İçerik tipi",
       "default": "richtext",
+      "info": "Veri, ürünün pip.panel metaobject’inden içerik tipine göre okunur.",
       "options": [
         {
           "value": "richtext",
@@ -92,70 +93,92 @@ Dawn'da son blok `icon-with-text`'tir.
       ]
     },
     {
-      "type": "text",
-      "id": "source_metafield",
-      "label": "Kaynak metafield",
-      "placeholder": "pip.features_info",
-      "info": "namespace.key biçiminde. Beklenen metafield tipi içerik tipine göre değişir (INSTALL.md)."
-    },
-    {
-      "type": "header",
-      "content": "Giriş ve alt metin"
+      "type": "select",
+      "id": "list_source",
+      "label": "Liste kaynağı",
+      "default": "features_info",
+      "options": [
+        {
+          "value": "features_info",
+          "label": "Ürün bilgisi maddeleri"
+        },
+        {
+          "value": "features_benefits",
+          "label": "Fayda maddeleri"
+        }
+      ],
+      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
     },
     {
       "type": "richtext",
       "id": "intro",
-      "label": "Giriş metni"
-    },
-    {
-      "type": "text",
-      "id": "intro_metafield",
-      "label": "Giriş metni metafield",
-      "info": "Üründe doluysa giriş metninin yerine kullanılır."
-    },
-    {
-      "type": "text",
-      "id": "footer_metafield",
-      "label": "Alt metin metafield"
-    },
-    {
-      "type": "header",
-      "content": "Zengin metin"
+      "label": "Giriş metni",
+      "info": "Doluysa panelden gelen girişin üstüne eklenir."
     },
     {
       "type": "richtext",
       "id": "richtext",
-      "label": "Varsayılan metin",
-      "info": "İçerik tipi zengin metinse ve kaynak metafield boşsa gösterilir."
-    },
-    {
-      "type": "header",
-      "content": "Dozaj tablosu"
+      "label": "Metin",
+      "visible_if": "{{ block.settings.content_type == 'richtext' }}"
     },
     {
       "type": "text",
       "id": "dosage_col1_label",
-      "label": "1. sütun başlığı"
+      "label": "1. sütun başlığı",
+      "visible_if": "{{ block.settings.content_type == 'dosage' }}"
     },
     {
       "type": "text",
       "id": "dosage_col2_label",
-      "label": "2. sütun başlığı"
-    },
-    {
-      "type": "header",
-      "content": "Ürün bilgileri tablosu"
+      "label": "2. sütun başlığı",
+      "visible_if": "{{ block.settings.content_type == 'dosage' }}"
     },
     {
       "type": "text",
       "id": "facts_title",
       "label": "Tablo başlığı",
-      "default": "Product Facts"
+      "default": "Product Facts",
+      "visible_if": "{{ block.settings.content_type == 'facts' }}"
     },
     {
-      "type": "text",
-      "id": "facts_note_metafield",
-      "label": "Porsiyon notu metafield"
+      "type": "header",
+      "content": "Özel kaynak (isteğe bağlı)",
+      "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
+    },
+    {
+      "type": "metaobject_list",
+      "id": "override_comparison",
+      "metaobject_type": "pip_comparison_row",
+      "label": "Karşılaştırma satırları (karşılaştırma tablosu)",
+      "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+    },
+    {
+      "type": "metaobject_list",
+      "id": "override_features",
+      "metaobject_type": "pip_feature",
+      "label": "Liste maddeleri (ikonlu liste)",
+      "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+    },
+    {
+      "type": "metaobject",
+      "id": "override_quote",
+      "metaobject_type": "pip_quote",
+      "label": "Alıntı (alıntı)",
+      "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+    },
+    {
+      "type": "textarea",
+      "id": "override_rows",
+      "label": "Tablo satırları",
+      "info": "Boş bırakılırsa ürünün panelinden okunur. Her satır bir tablo satırıdır, hücreler | ile ayrılır.",
+      "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
+    },
+    {
+      "type": "richtext",
+      "id": "override_footer",
+      "label": "Alt metin",
+      "info": "Boş bırakılırsa ürünün panelinden okunur.",
+      "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
     }
   ]
 },
@@ -179,6 +202,7 @@ Dawn'da son blok `icon-with-text`'tir.
       "id": "content_type",
       "label": "İçerik tipi",
       "default": "richtext",
+      "info": "Veri, ürünün pip.panel metaobject’inden içerik tipine göre okunur.",
       "options": [
         {
           "value": "richtext",
@@ -207,70 +231,92 @@ Dawn'da son blok `icon-with-text`'tir.
       ]
     },
     {
-      "type": "text",
-      "id": "source_metafield",
-      "label": "Kaynak metafield",
-      "placeholder": "pip.features_info",
-      "info": "namespace.key biçiminde. Beklenen metafield tipi içerik tipine göre değişir (INSTALL.md)."
-    },
-    {
-      "type": "header",
-      "content": "Giriş ve alt metin"
+      "type": "select",
+      "id": "list_source",
+      "label": "Liste kaynağı",
+      "default": "features_info",
+      "options": [
+        {
+          "value": "features_info",
+          "label": "Ürün bilgisi maddeleri"
+        },
+        {
+          "value": "features_benefits",
+          "label": "Fayda maddeleri"
+        }
+      ],
+      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
     },
     {
       "type": "richtext",
       "id": "intro",
-      "label": "Giriş metni"
-    },
-    {
-      "type": "text",
-      "id": "intro_metafield",
-      "label": "Giriş metni metafield",
-      "info": "Üründe doluysa giriş metninin yerine kullanılır."
-    },
-    {
-      "type": "text",
-      "id": "footer_metafield",
-      "label": "Alt metin metafield"
-    },
-    {
-      "type": "header",
-      "content": "Zengin metin"
+      "label": "Giriş metni",
+      "info": "Doluysa panelden gelen girişin üstüne eklenir."
     },
     {
       "type": "richtext",
       "id": "richtext",
-      "label": "Varsayılan metin",
-      "info": "İçerik tipi zengin metinse ve kaynak metafield boşsa gösterilir."
-    },
-    {
-      "type": "header",
-      "content": "Dozaj tablosu"
+      "label": "Metin",
+      "visible_if": "{{ block.settings.content_type == 'richtext' }}"
     },
     {
       "type": "text",
       "id": "dosage_col1_label",
-      "label": "1. sütun başlığı"
+      "label": "1. sütun başlığı",
+      "visible_if": "{{ block.settings.content_type == 'dosage' }}"
     },
     {
       "type": "text",
       "id": "dosage_col2_label",
-      "label": "2. sütun başlığı"
-    },
-    {
-      "type": "header",
-      "content": "Ürün bilgileri tablosu"
+      "label": "2. sütun başlığı",
+      "visible_if": "{{ block.settings.content_type == 'dosage' }}"
     },
     {
       "type": "text",
       "id": "facts_title",
       "label": "Tablo başlığı",
-      "default": "Product Facts"
+      "default": "Product Facts",
+      "visible_if": "{{ block.settings.content_type == 'facts' }}"
     },
     {
-      "type": "text",
-      "id": "facts_note_metafield",
-      "label": "Porsiyon notu metafield"
+      "type": "header",
+      "content": "Özel kaynak (isteğe bağlı)",
+      "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
+    },
+    {
+      "type": "metaobject_list",
+      "id": "override_comparison",
+      "metaobject_type": "pip_comparison_row",
+      "label": "Karşılaştırma satırları (karşılaştırma tablosu)",
+      "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+    },
+    {
+      "type": "metaobject_list",
+      "id": "override_features",
+      "metaobject_type": "pip_feature",
+      "label": "Liste maddeleri (ikonlu liste)",
+      "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+    },
+    {
+      "type": "metaobject",
+      "id": "override_quote",
+      "metaobject_type": "pip_quote",
+      "label": "Alıntı (alıntı)",
+      "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+    },
+    {
+      "type": "textarea",
+      "id": "override_rows",
+      "label": "Tablo satırları",
+      "info": "Boş bırakılırsa ürünün panelinden okunur. Her satır bir tablo satırıdır, hücreler | ile ayrılır.",
+      "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
+    },
+    {
+      "type": "richtext",
+      "id": "override_footer",
+      "label": "Alt metin",
+      "info": "Boş bırakılırsa ürünün panelinden okunur.",
+      "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
     },
     {
       "type": "header",
@@ -409,14 +455,52 @@ Renkler, grubun kök elemanına inline `style` ile CSS değişkeni olarak basıl
 - Art arda gelen sekme blokları tek bir sekme bileşeni olur. Araya başka tipte bir blok girerse yeni grup başlar.
   Akordeonlarda da aynı kural geçerlidir.
 - Grup başlığı (örneğin "Tell me about:") gruptaki ilk sekme bloğunun **Grup başlığı** alanından okunur.
-- Her blok verisini, **Kaynak metafield** alanına `namespace.key` biçiminde yazılan metafield'dan okur.
-  Aynı metafield'ı hem bir sekmede hem bir akordeonda kullanabilirsiniz.
+- Blokta yalnızca **İçerik tipi** seçilir; veri ürünün panelinden (`pip.panel`) sabit alanlardan okunur (bölüm 5).
+  Aynı panel alanı hem bir sekmede hem bir akordeonda gösterilebilir.
+- İçerik tipine özel ayarlar (sütun başlıkları, tablo başlığı, liste kaynağı vb.) yalnızca ilgili tip seçiliyken görünür.
 - Başlığı veya ana verisi boş olan sekme/akordeon görünmez. Giriş ve alt metin tek başına bir öğeyi
-  görünür tutmaz. Hiç dolu sekme yoksa grup hiç çizilmez.
-- Tekrar eden içerik (liste maddeleri, tablo satırları) blok olarak değil metafield/metaobject olarak girilir.
+  görünür tutmaz. Hiç dolu sekme yoksa grup hiç çizilmez. Ürünün paneli yoksa panelden okuyan bloklar görünmez.
+- Tekrar eden içerik (liste maddeleri, tablo satırları) blok olarak değil metaobject alanı olarak girilir.
   20 satırlık bir facts tablosu da tek bloktur.
 
-## 5. Veri sözleşmesi
+## 5. Veri modeli
+
+### Ürün metafield'ı
+
+| Namespace ve key | Tip |
+|---|---|
+| `pip.panel` | Metaobject reference → `pip_panel` |
+
+### `pip_panel` alanları
+
+| Alan | Tip | Kullanan içerik tipi |
+|---|---|---|
+| `quote` | Metaobject reference → `pip_quote` | `quote` |
+| `comparison` | List of metaobject references → `pip_comparison_row` | `comparison` |
+| `features_info` | List of metaobject references → `pip_feature` | `icon_list` (Liste kaynağı: Ürün bilgisi maddeleri) |
+| `intro_info` | Rich text | `icon_list` girişi (yalnızca `features_info` seçiliyken) |
+| `features_benefits` | List of metaobject references → `pip_feature` | `icon_list` (Liste kaynağı: Fayda maddeleri) |
+| `dosage` | Multi-line text | `dosage` satırları |
+| `directions_footer` | Rich text | `dosage` alt metni |
+| `facts` | Multi-line text | `facts` satırları |
+| `facts_note` | Rich text | `facts` porsiyon notu (başlık bandının altında, kalın) |
+| `facts_footer` | Rich text | `facts` alt metni |
+
+Rich text alanları multi-line text olarak tanımlanırsa da çalışır; satır sonları korunarak gösterilir.
+`richtext` içerik tipi panelden okumaz, bloktaki **Metin** ayarını gösterir.
+
+### İçerik tipi → okunan veri
+
+| `content_type` | Ana veri | Giriş | Alt metin |
+|---|---|---|---|
+| `quote` | `quote` | — | — |
+| `comparison` | `comparison` | — | — |
+| `icon_list` | **Liste kaynağı**na göre `features_info` veya `features_benefits` | `features_info` seçiliyse `intro_info` | — |
+| `dosage` | `dosage` | — | `directions_footer` |
+| `facts` | `facts` | `facts_note` (porsiyon notu) | `facts_footer` |
+| `richtext` | Blok ayarı **Metin** | — | — |
+
+Bloğun **Giriş metni** ayarı doluysa, panelden gelen girişin üstüne eklenir. Bu ayar tüm tiplerde geçerlidir.
 
 ### Metaobject tipleri
 
@@ -426,46 +510,45 @@ Renkler, grubun kök elemanına inline `style` ile CSS değişkeni olarak basıl
 | `pip_feature` | `icon` (file_reference, image, opsiyonel), `title` (single_line_text_field), `description` (rich_text_field) |
 | `pip_quote` | `quote` (multi_line_text_field), `author_name` (single_line_text_field), `author_title` (single_line_text_field), `photo` (file_reference, image) |
 
-### İçerik tipi → metafield
+### Özel kaynak (override)
 
-| `content_type` | `source_metafield` tipi | Örnek `source_metafield` | Örnek veri |
-|---|---|---|---|
-| `richtext` | rich_text_field (multi_line_text_field de kabul edilir) | `pip.how_to_use` | Serbest zengin metin. Metafield boşsa bloktaki **Varsayılan metin** gösterilir |
-| `icon_list` | list.metaobject_reference → `pip_feature` | `pip.features_info` | Madde: ikon + "Vegan" + "Hayvansal içerik yok." |
-| `comparison` | list.metaobject_reference → `pip_comparison_row` | `pip.comparison` | Satır: "Clinically tested", `ours` = true, `others` = false |
-| `quote` | metaobject_reference → `pip_quote` | `pip.expert_quote` | Alıntı + isim + unvan + fotoğraf |
-| `dosage` | multi_line_text_field | `pip.dosage` | Aşağıdaki dozaj örneği |
-| `facts` | multi_line_text_field | `pip.facts` | Aşağıdaki facts örneği |
+Her blokta "Özel kaynak (isteğe bağlı)" başlığı altında, panel yerine kullanılacak veriyi seçebileceğiniz ayarlar vardır.
+Doluysa panel yerine bu veri kullanılır; boşsa ürünün panelinden okunur. Ayarların hepsi dinamik kaynak destekler:
+ayarın yanındaki **Dinamik kaynak bağla** ikonundan bir metafield seçebilir ya da doğrudan bir metaobject seçebilirsiniz.
 
-Ek alanların tümü rich_text_field'dır. multi_line_text_field gelirse satır sonları korunarak gösterilir.
-
-| Blok ayarı | Görev | Örnek |
+| Ayar | Tip | İçerik tipi |
 |---|---|---|
-| `intro_metafield` | İçeriğin üstündeki giriş metni (doluysa bloktaki **Giriş metni** yerine geçer) | `pip.features_intro` |
-| `footer_metafield` | İçeriğin altındaki zengin metin | `pip.dosage_note` |
-| `facts_note_metafield` | Facts başlık bandının altındaki kalın porsiyon notu | `pip.serving_note` |
+| `override_comparison` | metaobject_list (`pip_comparison_row`) | `comparison` |
+| `override_features` | metaobject_list (`pip_feature`) | `icon_list` (liste kaynağı ayarının yerine geçer) |
+| `override_quote` | metaobject (`pip_quote`) | `quote` |
+| `override_rows` | textarea | `dosage`, `facts` |
+| `override_footer` | richtext | `dosage`, `facts` |
+
+`override_comparison`, `override_features` ve `override_quote` her içerik tipinde görünür, çünkü Shopify şeması
+metaobject ayarlarında `visible_if` kabul etmiyor. Bu ayarlar yalnızca etiketlerinde yazan içerik tipinde okunur.
+Diğer override ayarları yalnızca ilgili tip seçiliyken görünür.
 
 ### Satır bazlı tablo formatı
 
-Her satır bir tablo satırıdır. Hücreler `|` ile ayrılır ve kenar boşlukları temizlenir. Boş satırlar atlanır.
+`dosage` ve `facts` alanları ile `override_rows` ayarı aynı formatı kullanır. Her satır bir tablo satırıdır.
+Hücreler `|` ile ayrılır ve kenar boşlukları temizlenir. Boş satırlar atlanır.
 
 **dosage**: `Boyut | Alt açıklama | Doz`
 
 ```text
-Small | up to 10 kg | 1 scoop
-Medium | 10–25 kg | 2 scoops
-Large | 25+ kg | 3 scoops
+Small | Under 25 lbs | 1 soft chew/Small
+Medium | 25 - 75 lbs | 1 soft chew/Medium
+Large | Over 75 lbs | 1 soft chew/Large
 ```
 
-Sol sütunda kalın boyut ve altında alt açıklama, sağ sütunda alt açıklamayla aynı hizada kalın doz yer alır.
+Sol sütunda kalın boyut ve altında alt açıklama yer alır. Sağ sütunda küçük dolu bir daire (●) ve altında kalın doz bulunur.
 Sütun başlıkları bloktaki **1. sütun başlığı** ve **2. sütun başlığı** alanlarından gelir.
 
 **facts**: `İsim | değer1 | değer2 | ...` (değer sayısı serbest)
 
 ```text
-Calories | 120 kcal
-Protein | 20 g | 40% DV
-Vitamin D | 5 µg | 25% DV
+A Proprietary Blend of Probiotics | 1 Billion CFU | 2 Billion CFU | 3 Billion CFU
+Colostrum (Bovine) | 350 mg | 700 mg | 1050 mg
 ```
 
 Solda isim, sağda değerler alt alta ve sağa yaslı gösterilir. Başlık bandındaki metin bloktaki **Tablo başlığı**

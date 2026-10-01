@@ -51,15 +51,11 @@
             "title": "Vet Reviewed",
             "group_heading": "Tell me about:",
             "content_type": "quote",
-            "source_metafield": "pip.quote",
             "intro": "",
-            "intro_metafield": "",
-            "footer_metafield": "",
             "richtext": "",
             "dosage_col1_label": "",
             "dosage_col2_label": "",
-            "facts_title": "Product Facts",
-            "facts_note_metafield": ""
+            "facts_title": "Product Facts"
           }
         },
         "pip_tab_HBxdN3": {
@@ -68,15 +64,11 @@
             "title": "Key Ingredients",
             "group_heading": "Karşılaştırma tablosu",
             "content_type": "comparison",
-            "source_metafield": "pip.comparison",
             "intro": "<p>test</p>",
-            "intro_metafield": "qweqwe",
-            "footer_metafield": "qweqwe",
             "richtext": "<p>eqeqw</p>",
             "dosage_col1_label": "qweqwe",
             "dosage_col2_label": "qeweqw",
-            "facts_title": "Product Facts",
-            "facts_note_metafield": "eqewqweqwe"
+            "facts_title": "Product Facts"
           }
         },
         "pip_tab_wCVqBK": {
@@ -85,15 +77,11 @@
             "title": "Directions for Use",
             "group_heading": "Directions for Use",
             "content_type": "dosage",
-            "source_metafield": "pip.dosage",
             "intro": "",
-            "intro_metafield": "Köpek boyutu",
-            "footer_metafield": "pip.directions_footer",
             "richtext": "<p><br/>Günlük doz<br/><br/></p>",
             "dosage_col1_label": "Köpek boyutu",
             "dosage_col2_label": "Günlük doz",
-            "facts_title": "Product Facts",
-            "facts_note_metafield": "eqewqweqwe"
+            "facts_title": "Product Facts"
           }
         },
         "description": {

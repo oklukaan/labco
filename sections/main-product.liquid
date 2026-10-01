@@ -2143,80 +2143,121 @@
           "id": "content_type",
           "label": "İçerik tipi",
           "default": "richtext",
+          "info": "Veri, ürünün pip.panel metaobject’inden içerik tipine göre okunur.",
           "options": [
-            { "value": "richtext", "label": "Zengin metin" },
-            { "value": "icon_list", "label": "İkonlu liste" },
-            { "value": "comparison", "label": "Karşılaştırma tablosu" },
-            { "value": "quote", "label": "Alıntı" },
-            { "value": "dosage", "label": "Dozaj tablosu" },
-            { "value": "facts", "label": "Ürün bilgileri tablosu" }
+            {
+              "value": "richtext",
+              "label": "Zengin metin"
+            },
+            {
+              "value": "icon_list",
+              "label": "İkonlu liste"
+            },
+            {
+              "value": "comparison",
+              "label": "Karşılaştırma tablosu"
+            },
+            {
+              "value": "quote",
+              "label": "Alıntı"
+            },
+            {
+              "value": "dosage",
+              "label": "Dozaj tablosu"
+            },
+            {
+              "value": "facts",
+              "label": "Ürün bilgileri tablosu"
+            }
           ]
         },
         {
-          "type": "text",
-          "id": "source_metafield",
-          "label": "Kaynak metafield",
-          "placeholder": "pip.features_info",
-          "info": "namespace.key biçiminde. Beklenen metafield tipi içerik tipine göre değişir (INSTALL.md)."
-        },
-        {
-          "type": "header",
-          "content": "Giriş ve alt metin"
+          "type": "select",
+          "id": "list_source",
+          "label": "Liste kaynağı",
+          "default": "features_info",
+          "options": [
+            {
+              "value": "features_info",
+              "label": "Ürün bilgisi maddeleri"
+            },
+            {
+              "value": "features_benefits",
+              "label": "Fayda maddeleri"
+            }
+          ],
+          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
         },
         {
           "type": "richtext",
           "id": "intro",
-          "label": "Giriş metni"
-        },
-        {
-          "type": "text",
-          "id": "intro_metafield",
-          "label": "Giriş metni metafield",
-          "info": "Üründe doluysa giriş metninin yerine kullanılır."
-        },
-        {
-          "type": "text",
-          "id": "footer_metafield",
-          "label": "Alt metin metafield"
-        },
-        {
-          "type": "header",
-          "content": "Zengin metin"
+          "label": "Giriş metni",
+          "info": "Doluysa panelden gelen girişin üstüne eklenir."
         },
         {
           "type": "richtext",
           "id": "richtext",
-          "label": "Varsayılan metin",
-          "info": "İçerik tipi zengin metinse ve kaynak metafield boşsa gösterilir."
-        },
-        {
-          "type": "header",
-          "content": "Dozaj tablosu"
+          "label": "Metin",
+          "visible_if": "{{ block.settings.content_type == 'richtext' }}"
         },
         {
           "type": "text",
           "id": "dosage_col1_label",
-          "label": "1. sütun başlığı"
+          "label": "1. sütun başlığı",
+          "visible_if": "{{ block.settings.content_type == 'dosage' }}"
         },
         {
           "type": "text",
           "id": "dosage_col2_label",
-          "label": "2. sütun başlığı"
-        },
-        {
-          "type": "header",
-          "content": "Ürün bilgileri tablosu"
+          "label": "2. sütun başlığı",
+          "visible_if": "{{ block.settings.content_type == 'dosage' }}"
         },
         {
           "type": "text",
           "id": "facts_title",
           "label": "Tablo başlığı",
-          "default": "Product Facts"
+          "default": "Product Facts",
+          "visible_if": "{{ block.settings.content_type == 'facts' }}"
         },
         {
-          "type": "text",
-          "id": "facts_note_metafield",
-          "label": "Porsiyon notu metafield"
+          "type": "header",
+          "content": "Özel kaynak (isteğe bağlı)",
+          "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
+        },
+        {
+          "type": "metaobject_list",
+          "id": "override_comparison",
+          "metaobject_type": "pip_comparison_row",
+          "label": "Karşılaştırma satırları (karşılaştırma tablosu)",
+          "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+        },
+        {
+          "type": "metaobject_list",
+          "id": "override_features",
+          "metaobject_type": "pip_feature",
+          "label": "Liste maddeleri (ikonlu liste)",
+          "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+        },
+        {
+          "type": "metaobject",
+          "id": "override_quote",
+          "metaobject_type": "pip_quote",
+          "label": "Alıntı (alıntı)",
+          "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+        },
+        {
+          "type": "textarea",
+          "id": "override_rows",
+          "label": "Tablo satırları",
+          "info": "Boş bırakılırsa ürünün panelinden okunur. Her satır bir tablo satırıdır, hücreler | ile ayrılır.",
+          "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
+        },
+        {
+          "type": "richtext",
+          "id": "override_footer",
+          "label": "Alt metin",
+          "info": "Boş bırakılırsa ürünün panelinden okunur.",
+          "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
         }
       ]
     },
@@ -2240,80 +2281,121 @@
           "id": "content_type",
           "label": "İçerik tipi",
           "default": "richtext",
+          "info": "Veri, ürünün pip.panel metaobject’inden içerik tipine göre okunur.",
           "options": [
-            { "value": "richtext", "label": "Zengin metin" },
-            { "value": "icon_list", "label": "İkonlu liste" },
-            { "value": "comparison", "label": "Karşılaştırma tablosu" },
-            { "value": "quote", "label": "Alıntı" },
-            { "value": "dosage", "label": "Dozaj tablosu" },
-            { "value": "facts", "label": "Ürün bilgileri tablosu" }
+            {
+              "value": "richtext",
+              "label": "Zengin metin"
+            },
+            {
+              "value": "icon_list",
+              "label": "İkonlu liste"
+            },
+            {
+              "value": "comparison",
+              "label": "Karşılaştırma tablosu"
+            },
+            {
+              "value": "quote",
+              "label": "Alıntı"
+            },
+            {
+              "value": "dosage",
+              "label": "Dozaj tablosu"
+            },
+            {
+              "value": "facts",
+              "label": "Ürün bilgileri tablosu"
+            }
           ]
         },
         {
-          "type": "text",
-          "id": "source_metafield",
-          "label": "Kaynak metafield",
-          "placeholder": "pip.features_info",
-          "info": "namespace.key biçiminde. Beklenen metafield tipi içerik tipine göre değişir (INSTALL.md)."
-        },
-        {
-          "type": "header",
-          "content": "Giriş ve alt metin"
+          "type": "select",
+          "id": "list_source",
+          "label": "Liste kaynağı",
+          "default": "features_info",
+          "options": [
+            {
+              "value": "features_info",
+              "label": "Ürün bilgisi maddeleri"
+            },
+            {
+              "value": "features_benefits",
+              "label": "Fayda maddeleri"
+            }
+          ],
+          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
         },
         {
           "type": "richtext",
           "id": "intro",
-          "label": "Giriş metni"
-        },
-        {
-          "type": "text",
-          "id": "intro_metafield",
-          "label": "Giriş metni metafield",
-          "info": "Üründe doluysa giriş metninin yerine kullanılır."
-        },
-        {
-          "type": "text",
-          "id": "footer_metafield",
-          "label": "Alt metin metafield"
-        },
-        {
-          "type": "header",
-          "content": "Zengin metin"
+          "label": "Giriş metni",
+          "info": "Doluysa panelden gelen girişin üstüne eklenir."
         },
         {
           "type": "richtext",
           "id": "richtext",
-          "label": "Varsayılan metin",
-          "info": "İçerik tipi zengin metinse ve kaynak metafield boşsa gösterilir."
-        },
-        {
-          "type": "header",
-          "content": "Dozaj tablosu"
+          "label": "Metin",
+          "visible_if": "{{ block.settings.content_type == 'richtext' }}"
         },
         {
           "type": "text",
           "id": "dosage_col1_label",
-          "label": "1. sütun başlığı"
+          "label": "1. sütun başlığı",
+          "visible_if": "{{ block.settings.content_type == 'dosage' }}"
         },
         {
           "type": "text",
           "id": "dosage_col2_label",
-          "label": "2. sütun başlığı"
-        },
-        {
-          "type": "header",
-          "content": "Ürün bilgileri tablosu"
+          "label": "2. sütun başlığı",
+          "visible_if": "{{ block.settings.content_type == 'dosage' }}"
         },
         {
           "type": "text",
           "id": "facts_title",
           "label": "Tablo başlığı",
-          "default": "Product Facts"
+          "default": "Product Facts",
+          "visible_if": "{{ block.settings.content_type == 'facts' }}"
         },
         {
-          "type": "text",
-          "id": "facts_note_metafield",
-          "label": "Porsiyon notu metafield"
+          "type": "header",
+          "content": "Özel kaynak (isteğe bağlı)",
+          "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
+        },
+        {
+          "type": "metaobject_list",
+          "id": "override_comparison",
+          "metaobject_type": "pip_comparison_row",
+          "label": "Karşılaştırma satırları (karşılaştırma tablosu)",
+          "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+        },
+        {
+          "type": "metaobject_list",
+          "id": "override_features",
+          "metaobject_type": "pip_feature",
+          "label": "Liste maddeleri (ikonlu liste)",
+          "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+        },
+        {
+          "type": "metaobject",
+          "id": "override_quote",
+          "metaobject_type": "pip_quote",
+          "label": "Alıntı (alıntı)",
+          "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+        },
+        {
+          "type": "textarea",
+          "id": "override_rows",
+          "label": "Tablo satırları",
+          "info": "Boş bırakılırsa ürünün panelinden okunur. Her satır bir tablo satırıdır, hücreler | ile ayrılır.",
+          "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
+        },
+        {
+          "type": "richtext",
+          "id": "override_footer",
+          "label": "Alt metin",
+          "info": "Boş bırakılırsa ürünün panelinden okunur.",
+          "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
         },
         {
           "type": "header",

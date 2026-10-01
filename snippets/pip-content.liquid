@@ -2,49 +2,105 @@
   Ürün Bilgi Paneli — içerik gövdesi (sekme paneli ve akordeon gövdesi ortak kullanır).
   Kullanım: {% render 'pip-content', block: block, product: product %}
 
-  - Metafield yolları blok ayarlarından "namespace.key" olarak okunur.
-  - Beklenen tipte olmayan veya boş veri sessizce atlanır.
-  - Ana veri (content_type'ın kendisi) boşsa HİÇBİR çıktı üretilmez.
-    Varsayım: giriş/alt metin tek başına bir sekmeyi veya akordeonu görünür tutmaz;
-    aksi halde blok ayarındaki ortak giriş metni, verisi olmayan her üründe boş bir sekme açardı.
+  Veri kaynağı: product.metafields.pip.panel.value (metaobject tipi pip_panel).
+  İçerik tipine göre okunacak panel alanları sabittir:
+    quote      → quote (metaobject pip_quote)
+    comparison → comparison (list pip_comparison_row)
+    icon_list  → list_source ayarına göre features_info | features_benefits
+                 (features_info seçiliyse giriş: intro_info)
+    dosage     → dosage (satır formatı), alt metin: directions_footer
+    facts      → facts (satır formatı), porsiyon notu: facts_note, alt metin: facts_footer
+    richtext   → blok ayarı richtext
+  Bloktaki override_* ayarları doluysa panel yerine kullanılır.
+  Bloğun intro ayarı doluysa panel girişinin üstüne eklenir.
+
+  Ana veri boşsa HİÇBİR çıktı üretilmez. Varsayım: giriş/alt metin tek başına bir sekmeyi
+  veya akordeonu görünür tutmaz.
+  Panel metin alanları rich_text_field veya multi_line_text_field olabilir; ikisi de desteklenir.
 {%- endcomment -%}
 
 {%- liquid
   assign pip_type = block.settings.content_type | default: 'richtext'
+  assign pip_panel = product.metafields.pip.panel.value
+  if pip_panel.system.type != 'pip_panel'
+    assign pip_panel = nil
+  endif
 
-  # Giriş metni: intro_metafield doluysa öncelikli, değilse blok ayarındaki intro.
-  assign pip_intro = ''
-  assign pip_mf = nil
-  assign pip_path = block.settings.intro_metafield | strip | split: '.'
-  if pip_path.size > 1
-    assign pip_mf = product.metafields[pip_path[0]][pip_path[1]]
-  endif
-  if pip_mf.type == 'rich_text_field'
-    assign pip_intro = pip_mf | metafield_tag
-  elsif pip_mf.type == 'multi_line_text_field' or pip_mf.type == 'single_line_text_field'
-    assign pip_intro = pip_mf.value | escape | newline_to_br | prepend: '<p>' | append: '</p>'
-  endif
+  assign pip_list = nil
+  assign pip_quote = nil
+  assign pip_rows_text = ''
+  assign pip_panel_intro = nil
+  assign pip_footer_field = nil
+  assign pip_note_field = nil
+
+  case pip_type
+    when 'comparison'
+      if block.settings.override_comparison != blank
+        assign pip_list = block.settings.override_comparison
+      else
+        assign pip_list = pip_panel.comparison.value
+      endif
+    when 'icon_list'
+      if block.settings.override_features != blank
+        assign pip_list = block.settings.override_features
+      elsif block.settings.list_source == 'features_benefits'
+        assign pip_list = pip_panel.features_benefits.value
+      else
+        assign pip_list = pip_panel.features_info.value
+      endif
+      if block.settings.list_source != 'features_benefits'
+        assign pip_panel_intro = pip_panel.intro_info
+      endif
+    when 'quote'
+      if block.settings.override_quote != blank
+        assign pip_quote = block.settings.override_quote
+      else
+        assign pip_quote = pip_panel.quote.value
+      endif
+    when 'dosage'
+      assign pip_rows_text = block.settings.override_rows | default: pip_panel.dosage.value
+      assign pip_footer_field = pip_panel.directions_footer
+    when 'facts'
+      assign pip_rows_text = block.settings.override_rows | default: pip_panel.facts.value
+      assign pip_note_field = pip_panel.facts_note
+      assign pip_footer_field = pip_panel.facts_footer
+  endcase
+
+  # Giriş: bloğun intro ayarı + (varsa) panel girişi, bu sırayla.
+  assign pip_intro = block.settings.intro
   assign pip_check = pip_intro | strip_html | strip
   if pip_check == blank
-    assign pip_intro = block.settings.intro
-    assign pip_check = pip_intro | strip_html | strip
+    assign pip_intro = ''
   endif
+  assign pip_extra = ''
+  if pip_panel_intro.type == 'rich_text_field'
+    assign pip_extra = pip_panel_intro | metafield_tag
+  elsif pip_panel_intro.type == 'multi_line_text_field' or pip_panel_intro.type == 'single_line_text_field'
+    assign pip_extra = pip_panel_intro.value | escape | newline_to_br | prepend: '<p>' | append: '</p>'
+  endif
+  assign pip_check = pip_extra | strip_html | strip
+  if pip_check != blank
+    assign pip_intro = pip_intro | append: pip_extra
+  endif
+  assign pip_check = pip_intro | strip_html | strip
   assign pip_has_intro = false
   if pip_check != blank
     assign pip_has_intro = true
   endif
 
-  # Alt metin: yalnızca footer_metafield.
+  # Alt metin: override_footer (dosage/facts) doluysa öncelikli, değilse panel alanı.
   assign pip_footer = ''
-  assign pip_mf = nil
-  assign pip_path = block.settings.footer_metafield | strip | split: '.'
-  if pip_path.size > 1
-    assign pip_mf = product.metafields[pip_path[0]][pip_path[1]]
-  endif
-  if pip_mf.type == 'rich_text_field'
-    assign pip_footer = pip_mf | metafield_tag
-  elsif pip_mf.type == 'multi_line_text_field' or pip_mf.type == 'single_line_text_field'
-    assign pip_footer = pip_mf.value | escape | newline_to_br | prepend: '<p>' | append: '</p>'
+  if pip_type == 'dosage' or pip_type == 'facts'
+    assign pip_footer = block.settings.override_footer
+    assign pip_check = pip_footer | strip_html | strip
+    if pip_check == blank
+      assign pip_footer = ''
+      if pip_footer_field.type == 'rich_text_field'
+        assign pip_footer = pip_footer_field | metafield_tag
+      elsif pip_footer_field.type == 'multi_line_text_field' or pip_footer_field.type == 'single_line_text_field'
+        assign pip_footer = pip_footer_field.value | escape | newline_to_br | prepend: '<p>' | append: '</p>'
+      endif
+    endif
   endif
   assign pip_check = pip_footer | strip_html | strip
   assign pip_has_footer = false
@@ -52,209 +108,196 @@
     assign pip_has_footer = true
   endif
 
-  # Ana veri kaynağı.
-  assign pip_src = nil
-  assign pip_path = block.settings.source_metafield | strip | split: '.'
-  if pip_path.size > 1
-    assign pip_src = product.metafields[pip_path[0]][pip_path[1]]
+  # Facts porsiyon notu.
+  assign pip_note = ''
+  if pip_note_field.type == 'rich_text_field'
+    assign pip_note = pip_note_field | metafield_tag
+  elsif pip_note_field.type == 'multi_line_text_field' or pip_note_field.type == 'single_line_text_field'
+    assign pip_note = pip_note_field.value | escape | newline_to_br | prepend: '<p>' | append: '</p>'
   endif
+  assign pip_note_check = pip_note | strip_html | strip
+
+  # Satır verisi: newline_to_br ile normalize edip satırlara böl (\r\n güvenli).
+  assign pip_lines = pip_rows_text | newline_to_br | split: '<br />'
 -%}
 
 {%- capture pip_main -%}
   {%- case pip_type -%}
     {%- when 'richtext' -%}
-      {%- liquid
-        # Kaynak metafield boşsa (ayar boş ya da üründe değer yok) blok ayarındaki metin gösterilir.
-        assign pip_rt = ''
-        if pip_src.type == 'rich_text_field'
-          assign pip_rt = pip_src | metafield_tag
-        elsif pip_src.type == 'multi_line_text_field' or pip_src.type == 'single_line_text_field'
-          assign pip_rt = pip_src.value | escape | newline_to_br | prepend: '<p>' | append: '</p>'
-        endif
-        assign pip_check = pip_rt | strip_html | strip
-        if pip_check == blank
-          assign pip_rt = block.settings.richtext
-          assign pip_check = pip_rt | strip_html | strip
-        endif
-      -%}
+      {%- assign pip_check = block.settings.richtext | strip_html | strip -%}
       {%- if pip_check != blank -%}
-        <div class="pip-rte">{{ pip_rt }}</div>
+        <div class="pip-rte">{{ block.settings.richtext }}</div>
       {%- endif -%}
 
     {%- when 'icon_list' -%}
-      {%- if pip_src.type == 'list.metaobject_reference' -%}
-        {%- capture pip_items -%}
-          {%- for pip_item in pip_src.value -%}
-            {%- if pip_item.system.type != 'pip_feature' -%}{%- continue -%}{%- endif -%}
-            {%- liquid
-              assign pip_title = pip_item.title.value | strip
+      {%- capture pip_items -%}
+        {%- for pip_item in pip_list -%}
+          {%- if pip_item.system.type != 'pip_feature' -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign pip_title = pip_item.title.value | strip
+            assign pip_desc = ''
+            if pip_item.description.type == 'rich_text_field'
+              assign pip_desc = pip_item.description | metafield_tag | strip
+            endif
+            assign pip_check = pip_desc | strip_html | strip
+            if pip_check == blank
               assign pip_desc = ''
-              if pip_item.description.type == 'rich_text_field'
-                assign pip_desc = pip_item.description | metafield_tag | strip
-              endif
-              assign pip_check = pip_desc | strip_html | strip
-              if pip_check == blank
-                assign pip_desc = ''
-              endif
-              if pip_title == blank and pip_desc == blank
-                continue
-              endif
+            endif
+            if pip_title == blank and pip_desc == blank
+              continue
+            endif
 
-              # Tek paragraflı (liste/başlık içermeyen) açıklama başlıkla aynı satırda akar.
-              assign pip_inline = false
-              if pip_title != blank and pip_desc != blank
-                assign pip_p_count = pip_desc | split: '<p' | size | minus: 1
-                unless pip_desc contains '<ul' or pip_desc contains '<ol' or pip_desc contains '<h'
-                  if pip_p_count <= 1
-                    assign pip_inline = true
-                  endif
-                endunless
-              endif
+            # Tek paragraflı (liste/başlık içermeyen) açıklama başlıkla aynı satırda akar.
+            assign pip_inline = false
+            if pip_title != blank and pip_desc != blank
+              assign pip_p_count = pip_desc | split: '<p' | size | minus: 1
+              unless pip_desc contains '<ul' or pip_desc contains '<ol' or pip_desc contains '<h'
+                if pip_p_count <= 1
+                  assign pip_inline = true
+                endif
+              endunless
+            endif
 
-              assign pip_img = pip_item.icon.value
-            -%}
-            <li class="pip-feature{% if pip_inline %} pip-feature--inline{% endif %}">
-              {%- if pip_img.media_type == 'image' -%}
-                {{
-                  pip_img.preview_image
-                  | image_url: width: 40
-                  | image_tag:
-                    width: 20,
-                    height: 20,
-                    widths: '20, 40',
-                    sizes: '20px',
-                    loading: 'lazy',
-                    alt: '',
-                    class: 'pip-feature__icon'
-                }}
+            assign pip_img = pip_item.icon.value
+          -%}
+          <li class="pip-feature{% if pip_inline %} pip-feature--inline{% endif %}">
+            {%- if pip_img.media_type == 'image' -%}
+              {{
+                pip_img.preview_image
+                | image_url: width: 40
+                | image_tag:
+                  width: 20,
+                  height: 20,
+                  widths: '20, 40',
+                  sizes: '20px',
+                  loading: 'lazy',
+                  alt: '',
+                  class: 'pip-feature__icon'
+              }}
+            {%- endif -%}
+            <div class="pip-feature__text">
+              {%- if pip_title != blank -%}
+                <span class="pip-feature__title">{{ pip_title | escape }}</span>
               {%- endif -%}
-              <div class="pip-feature__text">
-                {%- if pip_title != blank -%}
-                  <span class="pip-feature__title">{{ pip_title | escape }}</span>
-                {%- endif -%}
-                {%- if pip_inline -%}
-                  <span class="pip-feature__sep"> - </span>
-                {%- endif -%}
-                {%- if pip_desc != blank -%}
-                  <div class="pip-feature__desc pip-rte">{{ pip_desc }}</div>
-                {%- endif -%}
-              </div>
-            </li>
-          {%- endfor -%}
-        {%- endcapture -%}
-        {%- assign pip_check = pip_items | strip -%}
-        {%- if pip_check != blank -%}
-          <ul class="pip-features" role="list">{{ pip_items }}</ul>
-        {%- endif -%}
+              {%- if pip_inline -%}
+                <span class="pip-feature__sep"> - </span>
+              {%- endif -%}
+              {%- if pip_desc != blank -%}
+                <div class="pip-feature__desc pip-rte">{{ pip_desc }}</div>
+              {%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign pip_check = pip_items | strip -%}
+      {%- if pip_check != blank -%}
+        <ul class="pip-features" role="list">{{ pip_items }}</ul>
       {%- endif -%}
 
     {%- when 'comparison' -%}
-      {%- if pip_src.type == 'list.metaobject_reference' -%}
-        {%- capture pip_rows -%}
-          {%- for pip_row in pip_src.value -%}
-            {%- if pip_row.system.type != 'pip_comparison_row' -%}{%- continue -%}{%- endif -%}
-            {%- liquid
-              assign pip_title = pip_row.title.value | strip
-              if pip_title == blank
-                continue
-              endif
-              assign pip_desc = pip_row.description.value | strip
-              assign pip_link = pip_row.link_url.value | strip
-              # Varsayım: link etiketi boşsa İngilizce varsayılan kullanılır.
-              assign pip_link_label = pip_row.link_label.value | strip | default: 'Learn more'
-              assign pip_img = pip_row.icon.value
-            -%}
-            <tr>
-              <td class="pip-cmp__feature-cell">
-                <div class="pip-cmp__feature">
-                  {%- if pip_img.media_type == 'image' -%}
-                    {{
-                      pip_img.preview_image
-                      | image_url: width: 60
-                      | image_tag:
-                        width: 30,
-                        height: 30,
-                        widths: '30, 60',
-                        sizes: '30px',
-                        loading: 'lazy',
-                        alt: '',
-                        class: 'pip-cmp__icon'
-                    }}
-                  {%- endif -%}
-                  <div class="pip-cmp__text">
-                    <span class="pip-cmp__title">{{ pip_title | escape }}</span>
-                    {%- if pip_desc != blank -%}
-                      <span class="pip-cmp__desc">{{ pip_desc | escape | newline_to_br }}</span>
-                    {%- endif -%}
-                    {%- if pip_link != blank -%}
-                      <a class="pip-cmp__link" href="{{ pip_link | escape }}">{{ pip_link_label | escape }}</a>
-                    {%- endif -%}
-                  </div>
-                </div>
-              </td>
-              <td class="pip-cmp__mark pip-cmp__brand">
-                {%- if pip_row.ours.value == true -%}
-                  {% render 'pip-icon', icon: 'check' %}<span class="pip-sr">Yes</span>
-                {%- else -%}
-                  {% render 'pip-icon', icon: 'cross' %}<span class="pip-sr">No</span>
-                {%- endif -%}
-              </td>
-              <td class="pip-cmp__mark">
-                {%- if pip_row.others.value == true -%}
-                  {% render 'pip-icon', icon: 'check' %}<span class="pip-sr">Yes</span>
-                {%- else -%}
-                  {% render 'pip-icon', icon: 'cross' %}<span class="pip-sr">No</span>
-                {%- endif -%}
-              </td>
-            </tr>
-          {%- endfor -%}
-        {%- endcapture -%}
-        {%- assign pip_check = pip_rows | strip -%}
-        {%- if pip_check != blank -%}
+      {%- capture pip_rows -%}
+        {%- for pip_row in pip_list -%}
+          {%- if pip_row.system.type != 'pip_comparison_row' -%}{%- continue -%}{%- endif -%}
           {%- liquid
-            assign pip_brand_label = settings.pip_brand_label | strip | default: shop.name
-            assign pip_others_label = settings.pip_others_label | strip | default: 'Others'
-            assign pip_logo_alt = settings.pip_brand_logo.alt | default: pip_brand_label
+            assign pip_title = pip_row.title.value | strip
+            if pip_title == blank
+              continue
+            endif
+            assign pip_desc = pip_row.description.value | strip
+            assign pip_link = pip_row.link_url.value | strip
+            # Varsayım: link etiketi boşsa İngilizce varsayılan kullanılır.
+            assign pip_link_label = pip_row.link_label.value | strip | default: 'Learn more'
+            assign pip_img = pip_row.icon.value
           -%}
-          <table class="pip-table pip-cmp">
-            <colgroup>
-              <col>
-              <col class="pip-cmp__col-mark">
-              <col class="pip-cmp__col-mark">
-            </colgroup>
-            <thead>
-              <tr>
-                <th scope="col" class="pip-cmp__head-feature"><span class="pip-sr">Feature</span></th>
-                <th scope="col" class="pip-cmp__brand pip-cmp__head-brand">
-                  <span class="pip-cmp__brand-box">
-                    {%- if settings.pip_brand_logo != blank -%}
-                      {{
-                        settings.pip_brand_logo
-                        | image_url: width: 120
-                        | image_tag:
-                          widths: '60, 120',
-                          sizes: '44px',
-                          loading: 'lazy',
-                          alt: pip_logo_alt,
-                          class: 'pip-cmp__logo'
-                      }}
-                    {%- else -%}
-                      <span class="pip-cmp__brand-label">{{ pip_brand_label | escape }}</span>
-                    {%- endif -%}
-                  </span>
-                </th>
-                <th scope="col" class="pip-cmp__head-others">{{ pip_others_label | escape }}</th>
-              </tr>
-            </thead>
-            <tbody>{{ pip_rows }}</tbody>
-          </table>
-        {%- endif -%}
+          <tr>
+            <td class="pip-cmp__feature-cell">
+              <div class="pip-cmp__feature">
+                {%- if pip_img.media_type == 'image' -%}
+                  {{
+                    pip_img.preview_image
+                    | image_url: width: 60
+                    | image_tag:
+                      width: 30,
+                      height: 30,
+                      widths: '30, 60',
+                      sizes: '30px',
+                      loading: 'lazy',
+                      alt: '',
+                      class: 'pip-cmp__icon'
+                  }}
+                {%- endif -%}
+                <div class="pip-cmp__text">
+                  <span class="pip-cmp__title">{{ pip_title | escape }}</span>
+                  {%- if pip_desc != blank -%}
+                    <span class="pip-cmp__desc">{{ pip_desc | escape | newline_to_br }}</span>
+                  {%- endif -%}
+                  {%- if pip_link != blank -%}
+                    <a class="pip-cmp__link" href="{{ pip_link | escape }}">{{ pip_link_label | escape }}</a>
+                  {%- endif -%}
+                </div>
+              </div>
+            </td>
+            <td class="pip-cmp__mark pip-cmp__brand">
+              {%- if pip_row.ours.value == true -%}
+                {% render 'pip-icon', icon: 'check' %}<span class="pip-sr">Yes</span>
+              {%- else -%}
+                {% render 'pip-icon', icon: 'cross' %}<span class="pip-sr">No</span>
+              {%- endif -%}
+            </td>
+            <td class="pip-cmp__mark">
+              {%- if pip_row.others.value == true -%}
+                {% render 'pip-icon', icon: 'check' %}<span class="pip-sr">Yes</span>
+              {%- else -%}
+                {% render 'pip-icon', icon: 'cross' %}<span class="pip-sr">No</span>
+              {%- endif -%}
+            </td>
+          </tr>
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign pip_check = pip_rows | strip -%}
+      {%- if pip_check != blank -%}
+        {%- liquid
+          assign pip_brand_label = settings.pip_brand_label | strip | default: shop.name
+          assign pip_others_label = settings.pip_others_label | strip | default: 'Others'
+          assign pip_logo_alt = settings.pip_brand_logo.alt | default: pip_brand_label
+        -%}
+        <table class="pip-table pip-cmp">
+          <colgroup>
+            <col>
+            <col class="pip-cmp__col-mark">
+            <col class="pip-cmp__col-mark">
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col" class="pip-cmp__head-feature"><span class="pip-sr">Feature</span></th>
+              <th scope="col" class="pip-cmp__brand pip-cmp__head-brand">
+                <span class="pip-cmp__brand-box">
+                  {%- if settings.pip_brand_logo != blank -%}
+                    {{
+                      settings.pip_brand_logo
+                      | image_url: width: 120
+                      | image_tag:
+                        widths: '60, 120',
+                        sizes: '44px',
+                        loading: 'lazy',
+                        alt: pip_logo_alt,
+                        class: 'pip-cmp__logo'
+                    }}
+                  {%- else -%}
+                    <span class="pip-cmp__brand-label">{{ pip_brand_label | escape }}</span>
+                  {%- endif -%}
+                </span>
+              </th>
+              <th scope="col" class="pip-cmp__head-others">{{ pip_others_label | escape }}</th>
+            </tr>
+          </thead>
+          <tbody>{{ pip_rows }}</tbody>
+        </table>
       {%- endif -%}
 
     {%- when 'quote' -%}
-      {%- if pip_src.type == 'metaobject_reference' and pip_src.value.system.type == 'pip_quote' -%}
+      {%- if pip_quote.system.type == 'pip_quote' -%}
         {%- liquid
-          assign pip_quote = pip_src.value
           assign pip_text = pip_quote.quote.value | strip
           assign pip_name = pip_quote.author_name.value | strip
           assign pip_role = pip_quote.author_title.value | strip
@@ -296,103 +339,83 @@
       {%- endif -%}
 
     {%- when 'dosage' -%}
-      {%- if pip_src.type == 'multi_line_text_field' -%}
-        {%- assign pip_lines = pip_src.value | newline_to_br | split: '<br />' -%}
-        {%- capture pip_rows -%}
-          {%- for pip_line in pip_lines -%}
-            {%- assign pip_line_check = pip_line | strip -%}
-            {%- if pip_line_check == blank -%}{%- continue -%}{%- endif -%}
-            {%- liquid
-              assign pip_cells = pip_line | split: '|'
-              assign pip_size = pip_cells[0] | strip
-              assign pip_sub = pip_cells[1] | strip
-              assign pip_dose = pip_cells[2] | strip
-            -%}
-            <tr>
-              <td class="pip-dosage__size-cell">
-                {%- if pip_size != blank -%}<strong class="pip-dosage__size">{{ pip_size | escape }}</strong>{%- endif -%}
-                {%- if pip_sub != blank -%}<span class="pip-dosage__sub">{{ pip_sub | escape }}</span>{%- endif -%}
-              </td>
-              <td class="pip-dosage__dose-cell">
-                {%- if pip_dose != blank -%}
-                  <strong class="pip-dosage__dose">{{ pip_dose | escape }}</strong>
-                {%- endif -%}
-              </td>
-            </tr>
-          {%- endfor -%}
-        {%- endcapture -%}
-        {%- assign pip_check = pip_rows | strip -%}
-        {%- if pip_check != blank -%}
+      {%- capture pip_rows -%}
+        {%- for pip_line in pip_lines -%}
+          {%- assign pip_line_check = pip_line | strip -%}
+          {%- if pip_line_check == blank -%}{%- continue -%}{%- endif -%}
           {%- liquid
-            assign pip_col1 = block.settings.dosage_col1_label | strip
-            assign pip_col2 = block.settings.dosage_col2_label | strip
+            assign pip_cells = pip_line | split: '|'
+            assign pip_size = pip_cells[0] | strip
+            assign pip_sub = pip_cells[1] | strip
+            assign pip_dose = pip_cells[2] | strip
           -%}
-          <table class="pip-table pip-dosage">
-            {%- if pip_col1 != blank or pip_col2 != blank -%}
-              <thead>
-                <tr>
-                  <th scope="col">{{ pip_col1 | escape }}</th>
-                  <th scope="col" class="pip-dosage__dose-cell">{{ pip_col2 | escape }}</th>
-                </tr>
-              </thead>
-            {%- endif -%}
-            <tbody>{{ pip_rows }}</tbody>
-          </table>
-        {%- endif -%}
+          <tr>
+            <td class="pip-dosage__size-cell">
+              {%- if pip_size != blank -%}<strong class="pip-dosage__size">{{ pip_size | escape }}</strong>{%- endif -%}
+              {%- if pip_sub != blank -%}<span class="pip-dosage__sub">{{ pip_sub | escape }}</span>{%- endif -%}
+            </td>
+            <td class="pip-dosage__dose-cell">
+              {%- if pip_dose != blank -%}
+                <span class="pip-dosage__dot" aria-hidden="true"></span>
+                <strong class="pip-dosage__dose">{{ pip_dose | escape }}</strong>
+              {%- endif -%}
+            </td>
+          </tr>
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign pip_check = pip_rows | strip -%}
+      {%- if pip_check != blank -%}
+        {%- liquid
+          assign pip_col1 = block.settings.dosage_col1_label | strip
+          assign pip_col2 = block.settings.dosage_col2_label | strip
+        -%}
+        <table class="pip-table pip-dosage">
+          {%- if pip_col1 != blank or pip_col2 != blank -%}
+            <thead>
+              <tr>
+                <th scope="col">{{ pip_col1 | escape }}</th>
+                <th scope="col" class="pip-dosage__dose-cell">{{ pip_col2 | escape }}</th>
+              </tr>
+            </thead>
+          {%- endif -%}
+          <tbody>{{ pip_rows }}</tbody>
+        </table>
       {%- endif -%}
 
     {%- when 'facts' -%}
-      {%- if pip_src.type == 'multi_line_text_field' -%}
-        {%- assign pip_lines = pip_src.value | newline_to_br | split: '<br />' -%}
-        {%- capture pip_rows -%}
-          {%- for pip_line in pip_lines -%}
-            {%- assign pip_line_check = pip_line | strip -%}
-            {%- if pip_line_check == blank -%}{%- continue -%}{%- endif -%}
-            {%- assign pip_cells = pip_line | split: '|' -%}
-            {%- assign pip_name = pip_cells[0] | strip -%}
-            <tr>
-              <th scope="row" class="pip-facts__name">{{ pip_name | escape }}</th>
-              <td class="pip-facts__values">
-                {%- for pip_cell in pip_cells offset: 1 -%}
-                  {%- assign pip_value = pip_cell | strip -%}
-                  {%- if pip_value != blank -%}
-                    <span class="pip-facts__value">{{ pip_value | escape }}</span>
-                  {%- endif -%}
-                {%- endfor -%}
-              </td>
-            </tr>
-          {%- endfor -%}
-        {%- endcapture -%}
-        {%- assign pip_check = pip_rows | strip -%}
-        {%- if pip_check != blank -%}
-          {%- liquid
-            assign pip_facts_title = block.settings.facts_title | strip
-
-            assign pip_note = ''
-            assign pip_mf = nil
-            assign pip_path = block.settings.facts_note_metafield | strip | split: '.'
-            if pip_path.size > 1
-              assign pip_mf = product.metafields[pip_path[0]][pip_path[1]]
-            endif
-            if pip_mf.type == 'rich_text_field'
-              assign pip_note = pip_mf | metafield_tag
-            elsif pip_mf.type == 'multi_line_text_field' or pip_mf.type == 'single_line_text_field'
-              assign pip_note = pip_mf.value | escape | newline_to_br | prepend: '<p>' | append: '</p>'
-            endif
-            assign pip_note_check = pip_note | strip_html | strip
-          -%}
-          <div class="pip-facts">
-            {%- if pip_facts_title != blank -%}
-              <p class="pip-facts__title">{{ pip_facts_title | escape }}</p>
-            {%- endif -%}
-            {%- if pip_note_check != blank -%}
-              <div class="pip-facts__note pip-rte">{{ pip_note }}</div>
-            {%- endif -%}
-            <table class="pip-table pip-facts__table">
-              <tbody>{{ pip_rows }}</tbody>
-            </table>
-          </div>
-        {%- endif -%}
+      {%- capture pip_rows -%}
+        {%- for pip_line in pip_lines -%}
+          {%- assign pip_line_check = pip_line | strip -%}
+          {%- if pip_line_check == blank -%}{%- continue -%}{%- endif -%}
+          {%- assign pip_cells = pip_line | split: '|' -%}
+          {%- assign pip_name = pip_cells[0] | strip -%}
+          <tr>
+            <th scope="row" class="pip-facts__name">{{ pip_name | escape }}</th>
+            <td class="pip-facts__values">
+              {%- for pip_cell in pip_cells offset: 1 -%}
+                {%- assign pip_value = pip_cell | strip -%}
+                {%- if pip_value != blank -%}
+                  <span class="pip-facts__value">{{ pip_value | escape }}</span>
+                {%- endif -%}
+              {%- endfor -%}
+            </td>
+          </tr>
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign pip_check = pip_rows | strip -%}
+      {%- if pip_check != blank -%}
+        {%- assign pip_facts_title = block.settings.facts_title | strip -%}
+        <div class="pip-facts">
+          {%- if pip_facts_title != blank -%}
+            <p class="pip-facts__title">{{ pip_facts_title | escape }}</p>
+          {%- endif -%}
+          {%- if pip_note_check != blank -%}
+            <div class="pip-facts__note pip-rte">{{ pip_note }}</div>
+          {%- endif -%}
+          <table class="pip-table pip-facts__table">
+            <tbody>{{ pip_rows }}</tbody>
+          </table>
+        </div>
       {%- endif -%}
   {%- endcase -%}
 {%- endcapture -%}
