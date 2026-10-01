@@ -121,6 +121,28 @@
             "override_footer": ""
           }
         },
+        "pip_accordion_VUFXBd": {
+          "type": "pip_accordion",
+          "settings": {
+            "title": "Product information",
+            "open_by_default": false,
+            "content_type": "icon_list",
+            "list_source": "features_info",
+            "intro": "",
+            "richtext": "",
+            "dosage_col1_label": "",
+            "dosage_col2_label": "",
+            "facts_title": "Product Facts",
+            "override_comparison": [],
+            "override_features": [],
+            "override_quote": "",
+            "override_rows": "",
+            "override_footer": "",
+            "promo_title": "",
+            "promo_subtitle": "",
+            "promo_bg": ""
+          }
+        },
         "description": {
           "type": "description",
           "settings": {}
@@ -155,6 +177,7 @@
         "pip_tab_HBxdN3",
         "pip_tab_wCVqBK",
         "pip_tab_ExBm8G",
+        "pip_accordion_VUFXBd",
         "description",
         "share",
         "appstle_loyalty_appstle_loyalty_current_vip_tier_U6BcYL",
