@@ -87,11 +87,11 @@
             "content_type": "dosage",
             "source_metafield": "pip.dosage",
             "intro": "<p>test</p>",
-            "intro_metafield": "qweqwe",
-            "footer_metafield": "qweqwe",
-            "richtext": "<p>eqeqw</p>",
-            "dosage_col1_label": "qweqwe",
-            "dosage_col2_label": "qeweqw",
+            "intro_metafield": "Köpek boyutu",
+            "footer_metafield": "pip.directions_footer",
+            "richtext": "<p><br/>Günlük doz<br/><br/></p>",
+            "dosage_col1_label": "Köpek boyutu",
+            "dosage_col2_label": "Günlük doz",
             "facts_title": "Product Facts",
             "facts_note_metafield": "eqewqweqwe"
           }
