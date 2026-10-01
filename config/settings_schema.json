@@ -1485,37 +1485,37 @@
         "type": "color",
         "id": "pip_color_check",
         "label": "Onay ikonu (✓)",
-        "default": "#1a7f45"
+        "default": "#289901"
       },
       {
         "type": "color",
         "id": "pip_color_cross",
         "label": "Çarpı ikonu (✕)",
-        "default": "#c0392b"
+        "default": "#B91C1C"
       },
       {
         "type": "color",
         "id": "pip_color_brand_col_bg",
         "label": "Marka sütunu arka planı",
-        "default": "#e8f1fc"
+        "default": "#F5F8FF"
       },
       {
         "type": "color",
         "id": "pip_color_border",
         "label": "Kenarlık ve ayraçlar",
-        "default": "#e2e2e2"
+        "default": "#D8DADF"
       },
       {
         "type": "color",
         "id": "pip_color_muted",
         "label": "İkincil metin",
-        "default": "#666666"
+        "default": "#3F424D"
       },
       {
         "type": "color",
         "id": "pip_color_tab_inactive_bg",
         "label": "Pasif sekme arka planı",
-        "default": "#f3f3f3"
+        "default": "#F5F5F1"
       },
       {
         "type": "range",
@@ -1525,7 +1525,7 @@
         "max": 24,
         "step": 1,
         "unit": "px",
-        "default": 14
+        "default": 16
       }
     ]
   }

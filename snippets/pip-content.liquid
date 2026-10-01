@@ -130,6 +130,30 @@
       {%- endif -%}
 
     {%- when 'icon_list' -%}
+      {%- liquid
+        # Madde ikonu: maddenin kendi icon alanı her zaman önceliklidir. Boşsa blok ayarı:
+        #   check  → pip-icon 'check_filled' (varsayılan; ayar hiç kaydedilmemişse de bu)
+        #   custom → list_icon_image (görsel seçilmemişse ikon gösterilmez)
+        #   none   → varsayılan ikon yok
+        # İkon kolonu, listede en az bir ikon varsa tüm maddelerde aynı genişlikte çizilir.
+        assign pip_icon_style = block.settings.list_icon_style | default: 'check'
+        assign pip_layout = block.settings.list_layout | default: 'auto'
+        assign pip_has_fallback = false
+        if pip_icon_style == 'check'
+          assign pip_has_fallback = true
+        elsif pip_icon_style == 'custom' and block.settings.list_icon_image != blank
+          assign pip_has_fallback = true
+        endif
+        assign pip_show_col = pip_has_fallback
+        unless pip_show_col
+          for pip_item in pip_list
+            if pip_item.system.type == 'pip_feature' and pip_item.icon.value.media_type == 'image'
+              assign pip_show_col = true
+              break
+            endif
+          endfor
+        endunless
+      -%}
       {%- capture pip_items -%}
         {%- for pip_item in pip_list -%}
           {%- if pip_item.system.type != 'pip_feature' -%}{%- continue -%}{%- endif -%}
@@ -147,33 +171,61 @@
               continue
             endif
 
-            # Tek paragraflı (liste/başlık içermeyen) açıklama başlıkla aynı satırda akar.
+            # Görünüm: inline → başlık - açıklama aynı satırda; stacked → alt alta;
+            # auto → tek paragraflı (liste/başlık içermeyen) açıklama aynı satırda akar.
+            # Açıklaması boş madde her görünümde yalnızca başlık satırıdır.
             assign pip_inline = false
             if pip_title != blank and pip_desc != blank
-              assign pip_p_count = pip_desc | split: '<p' | size | minus: 1
-              unless pip_desc contains '<ul' or pip_desc contains '<ol' or pip_desc contains '<h'
-                if pip_p_count <= 1
+              case pip_layout
+                when 'inline'
                   assign pip_inline = true
-                endif
-              endunless
+                when 'stacked'
+                  assign pip_inline = false
+                else
+                  assign pip_p_count = pip_desc | split: '<p' | size | minus: 1
+                  unless pip_desc contains '<ul' or pip_desc contains '<ol' or pip_desc contains '<h'
+                    if pip_p_count <= 1
+                      assign pip_inline = true
+                    endif
+                  endunless
+              endcase
             endif
 
             assign pip_img = pip_item.icon.value
           -%}
           <li class="pip-feature{% if pip_inline %} pip-feature--inline{% endif %}">
-            {%- if pip_img.media_type == 'image' -%}
-              {{
-                pip_img.preview_image
-                | image_url: width: 40
-                | image_tag:
-                  width: 20,
-                  height: 20,
-                  widths: '20, 40',
-                  sizes: '20px',
-                  loading: 'lazy',
-                  alt: '',
-                  class: 'pip-feature__icon'
-              }}
+            {%- if pip_show_col -%}
+              <span class="pip-feature__media">
+                {%- if pip_img.media_type == 'image' -%}
+                  {{
+                    pip_img.preview_image
+                    | image_url: width: 40
+                    | image_tag:
+                      width: 20,
+                      height: 20,
+                      widths: '20, 40',
+                      sizes: '20px',
+                      loading: 'lazy',
+                      alt: '',
+                      class: 'pip-feature__icon'
+                  }}
+                {%- elsif pip_icon_style == 'check' -%}
+                  {% render 'pip-icon', icon: 'check_filled', class: 'pip-feature__icon' %}
+                {%- elsif pip_icon_style == 'custom' and block.settings.list_icon_image != blank -%}
+                  {{
+                    block.settings.list_icon_image
+                    | image_url: width: 40
+                    | image_tag:
+                      width: 20,
+                      height: 20,
+                      widths: '20, 40',
+                      sizes: '20px',
+                      loading: 'lazy',
+                      alt: '',
+                      class: 'pip-feature__icon'
+                  }}
+                {%- endif -%}
+              </span>
             {%- endif -%}
             <div class="pip-feature__text">
               {%- if pip_title != blank -%}
@@ -215,12 +267,12 @@
                 {%- if pip_img.media_type == 'image' -%}
                   {{
                     pip_img.preview_image
-                    | image_url: width: 60
+                    | image_url: width: 64
                     | image_tag:
-                      width: 30,
-                      height: 30,
-                      widths: '30, 60',
-                      sizes: '30px',
+                      width: 32,
+                      height: 32,
+                      widths: '32, 64',
+                      sizes: '32px',
                       loading: 'lazy',
                       alt: '',
                       class: 'pip-cmp__icon'
@@ -313,12 +365,12 @@
                 {%- if pip_img.media_type == 'image' -%}
                   {{
                     pip_img.preview_image
-                    | image_url: width: 112
+                    | image_url: width: 128
                     | image_tag:
-                      width: 56,
-                      height: 56,
-                      widths: '56, 112',
-                      sizes: '56px',
+                      width: 64,
+                      height: 64,
+                      widths: '64, 128',
+                      sizes: '64px',
                       loading: 'lazy',
                       alt: '',
                       class: 'pip-quote__photo'
@@ -356,7 +408,30 @@
             </td>
             <td class="pip-dosage__dose-cell">
               {%- if pip_dose != blank -%}
-                <span class="pip-dosage__dot" aria-hidden="true"></span>
+                {%- liquid
+                  # Doz metnindeki ilk sayı kadar daire çizilir ("2 soft chews" → ●●). "1/2" ve "½" yarım dairedir.
+                  # Sayı yoksa daire çizilmez. Sekmelerde daireler CSS ile gizlenir (referans tasarımla aynı).
+                  assign pip_half = false
+                  assign pip_head = pip_dose | slice: 0, 3
+                  assign pip_head1 = pip_dose | slice: 0, 1
+                  if pip_head == '1/2' or pip_head1 == '½'
+                    assign pip_half = true
+                    assign pip_qty = 0
+                  else
+                    assign pip_qty = pip_dose | split: ' ' | first | plus: 0 | floor
+                  endif
+                -%}
+                {%- if pip_half or pip_qty > 0 -%}
+                  <span class="pip-dosage__dots" aria-hidden="true">
+                    {%- if pip_half -%}
+                      <span class="pip-dosage__dot pip-dosage__dot--half"></span>
+                    {%- else -%}
+                      {%- for pip_i in (1..pip_qty) limit: 10 -%}
+                        <span class="pip-dosage__dot"></span>
+                      {%- endfor -%}
+                    {%- endif -%}
+                  </span>
+                {%- endif -%}
                 <strong class="pip-dosage__dose">{{ pip_dose | escape }}</strong>
               {%- endif -%}
             </td>

@@ -2189,6 +2189,55 @@
           "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
         },
         {
+          "type": "select",
+          "id": "list_icon_style",
+          "label": "Varsayılan madde ikonu",
+          "default": "check",
+          "info": "Maddenin kendi ikonu varsa her zaman o gösterilir.",
+          "options": [
+            {
+              "value": "check",
+              "label": "Tik ikonu"
+            },
+            {
+              "value": "custom",
+              "label": "Özel görsel"
+            },
+            {
+              "value": "none",
+              "label": "İkon yok"
+            }
+          ],
+          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "list_icon_image",
+          "label": "Özel madde ikonu",
+          "visible_if": "{{ block.settings.content_type == 'icon_list' and block.settings.list_icon_style == 'custom' }}"
+        },
+        {
+          "type": "select",
+          "id": "list_layout",
+          "label": "Madde görünümü",
+          "default": "auto",
+          "options": [
+            {
+              "value": "auto",
+              "label": "Otomatik"
+            },
+            {
+              "value": "inline",
+              "label": "Satır içi (Başlık - açıklama)"
+            },
+            {
+              "value": "stacked",
+              "label": "Alt alta (başlık üstte, açıklama altta)"
+            }
+          ],
+          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+        },
+        {
           "type": "richtext",
           "id": "intro",
           "label": "Giriş metni",
@@ -2322,6 +2371,55 @@
             {
               "value": "features_benefits",
               "label": "Fayda maddeleri"
+            }
+          ],
+          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+        },
+        {
+          "type": "select",
+          "id": "list_icon_style",
+          "label": "Varsayılan madde ikonu",
+          "default": "check",
+          "info": "Maddenin kendi ikonu varsa her zaman o gösterilir.",
+          "options": [
+            {
+              "value": "check",
+              "label": "Tik ikonu"
+            },
+            {
+              "value": "custom",
+              "label": "Özel görsel"
+            },
+            {
+              "value": "none",
+              "label": "İkon yok"
+            }
+          ],
+          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "list_icon_image",
+          "label": "Özel madde ikonu",
+          "visible_if": "{{ block.settings.content_type == 'icon_list' and block.settings.list_icon_style == 'custom' }}"
+        },
+        {
+          "type": "select",
+          "id": "list_layout",
+          "label": "Madde görünümü",
+          "default": "auto",
+          "options": [
+            {
+              "value": "auto",
+              "label": "Otomatik"
+            },
+            {
+              "value": "inline",
+              "label": "Satır içi (Başlık - açıklama)"
+            },
+            {
+              "value": "stacked",
+              "label": "Alt alta (başlık üstte, açıklama altta)"
             }
           ],
           "visible_if": "{{ block.settings.content_type == 'icon_list' }}"

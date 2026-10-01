@@ -398,37 +398,37 @@ Dawn'da son blok `icon-with-text`'tir.
       "type": "color",
       "id": "pip_color_check",
       "label": "Onay ikonu (✓)",
-      "default": "#1a7f45"
+      "default": "#289901"
     },
     {
       "type": "color",
       "id": "pip_color_cross",
       "label": "Çarpı ikonu (✕)",
-      "default": "#c0392b"
+      "default": "#B91C1C"
     },
     {
       "type": "color",
       "id": "pip_color_brand_col_bg",
       "label": "Marka sütunu arka planı",
-      "default": "#e8f1fc"
+      "default": "#F5F8FF"
     },
     {
       "type": "color",
       "id": "pip_color_border",
       "label": "Kenarlık ve ayraçlar",
-      "default": "#e2e2e2"
+      "default": "#D8DADF"
     },
     {
       "type": "color",
       "id": "pip_color_muted",
       "label": "İkincil metin",
-      "default": "#666666"
+      "default": "#3F424D"
     },
     {
       "type": "color",
       "id": "pip_color_tab_inactive_bg",
       "label": "Pasif sekme arka planı",
-      "default": "#f3f3f3"
+      "default": "#F5F5F1"
     },
     {
       "type": "range",
@@ -438,7 +438,7 @@ Dawn'da son blok `icon-with-text`'tir.
       "max": 24,
       "step": 1,
       "unit": "px",
-      "default": 14
+      "default": 16
     }
   ]
 }
@@ -479,7 +479,7 @@ Renkler, grubun kök elemanına inline `style` ile CSS değişkeni olarak basıl
 | `comparison` | List of metaobject references → `pip_comparison_row` | `comparison` |
 | `features_info` | List of metaobject references → `pip_feature` | `icon_list` (Liste kaynağı: Ürün bilgisi maddeleri) |
 | `intro_info` | Rich text | `icon_list` girişi (yalnızca `features_info` seçiliyken) |
-| `features_benefits` | List of metaobject references → `pip_feature` | `icon_list` (Liste kaynağı: Fayda maddeleri) |
+| `features_benefits` | List of metaobject references → `pip_feature` | `icon_list` (Liste kaynağı: Fayda maddeleri; görseli olmayan maddelerde onay ikonu gösterilir) |
 | `dosage` | Multi-line text | `dosage` satırları |
 | `directions_footer` | Rich text | `dosage` alt metni |
 | `facts` | Multi-line text | `facts` satırları |
@@ -541,7 +541,7 @@ Medium | 25 - 75 lbs | 1 soft chew/Medium
 Large | Over 75 lbs | 1 soft chew/Large
 ```
 
-Sol sütunda kalın boyut ve altında alt açıklama yer alır. Sağ sütunda küçük dolu bir daire (●) ve altında kalın doz bulunur.
+Sol sütunda kalın boyut ve altında alt açıklama yer alır. Sağ sütunda doz metnindeki ilk sayı kadar dolu daire (●●) ve altında kalın doz bulunur; "1/2" veya "½" yarım dairedir. Daireler yalnızca akordeonda görünür, sekmede gizlenir.
 Sütun başlıkları bloktaki **1. sütun başlığı** ve **2. sütun başlığı** alanlarından gelir.
 
 **facts**: `İsim | değer1 | değer2 | ...` (değer sayısı serbest)
