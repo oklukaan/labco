@@ -86,7 +86,7 @@
             "group_heading": "Directions for Use",
             "content_type": "dosage",
             "source_metafield": "pip.dosage",
-            "intro": "<p>test</p>",
+            "intro": "",
             "intro_metafield": "Köpek boyutu",
             "footer_metafield": "pip.directions_footer",
             "richtext": "<p><br/>Günlük doz<br/><br/></p>",
