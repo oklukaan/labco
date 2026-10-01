@@ -12,23 +12,6 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "pip_tab_McRYDB": {
-          "type": "pip_tab",
-          "settings": {
-            "title": "Vet Reviewed",
-            "group_heading": "Tell me about:",
-            "content_type": "quote",
-            "source_metafield": "pip.quote",
-            "intro": "",
-            "intro_metafield": "",
-            "footer_metafield": "",
-            "richtext": "",
-            "dosage_col1_label": "",
-            "dosage_col2_label": "",
-            "facts_title": "Product Facts",
-            "facts_note_metafield": ""
-          }
-        },
         "vendor": {
           "type": "text",
           "settings": {
@@ -62,13 +45,30 @@
             "show_gift_card_recipient": true
           }
         },
+        "pip_tab_McRYDB": {
+          "type": "pip_tab",
+          "settings": {
+            "title": "Vet Reviewed",
+            "group_heading": "Tell me about:",
+            "content_type": "quote",
+            "source_metafield": "pip.quote",
+            "intro": "",
+            "intro_metafield": "",
+            "footer_metafield": "",
+            "richtext": "",
+            "dosage_col1_label": "",
+            "dosage_col2_label": "",
+            "facts_title": "Product Facts",
+            "facts_note_metafield": ""
+          }
+        },
         "pip_tab_HBxdN3": {
           "type": "pip_tab",
           "settings": {
-            "title": "test",
-            "group_heading": "test",
-            "content_type": "richtext",
-            "source_metafield": "{{ product.title }}",
+            "title": "Key Ingredients",
+            "group_heading": "Karşılaştırma tablosu",
+            "content_type": "comparison",
+            "source_metafield": "pip.comparison",
             "intro": "<p>test</p>",
             "intro_metafield": "qweqwe",
             "footer_metafield": "qweqwe",
@@ -82,10 +82,10 @@
         "pip_tab_wCVqBK": {
           "type": "pip_tab",
           "settings": {
-            "title": "test",
-            "group_heading": "test",
-            "content_type": "richtext",
-            "source_metafield": "{{ product.title }}",
+            "title": "Directions for Use",
+            "group_heading": "Directions for Use",
+            "content_type": "dosage",
+            "source_metafield": "pip.dosage",
             "intro": "<p>test</p>",
             "intro_metafield": "qweqwe",
             "footer_metafield": "qweqwe",
@@ -120,13 +120,13 @@
         }
       },
       "block_order": [
-        "pip_tab_McRYDB",
         "vendor",
         "title",
         "price",
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
+        "pip_tab_McRYDB",
         "pip_tab_HBxdN3",
         "pip_tab_wCVqBK",
         "description",
