@@ -21,7 +21,6 @@
   --pip-ink-fg: #ffffff;
   --pip-color-divider-soft: #e5e7eb;
   --pip-color-hover-bg: #f7f8f8;
-  --pip-color-photo-bg: #e0ebff;
   --pip-color-text: #1e1f24;
 
   display: block;
@@ -125,8 +124,17 @@
   font-weight: 700;
 }
 
-.pip-content--icon_list > .pip-content__intro + * {
+.pip-content--icon_list > .pip-content__intro + *,
+.pip-content--icon_list > .pip-content__lead + * {
   margin-top: 8px;
+}
+
+/* Panelden gelen açıklama paragrafı: normal ağırlık, ikincil renk (referans: text-body-text-16 text-secondary-text). */
+.pip-content__lead {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--pip-color-muted);
 }
 
 .pip-content__footer {
@@ -544,6 +552,30 @@
   color: var(--pip-color-muted);
 }
 
+/* Açıklamalı liste (referans list item size lg): 24px ikon, 18px başlık, 16px dikey dolgu. */
+.pip-features--lg .pip-feature__media {
+  width: 24px;
+  min-height: 24px;
+}
+
+.pip-features--lg .pip-feature__icon {
+  width: 24px;
+  height: 24px;
+}
+
+.pip-features--lg .pip-feature__text {
+  padding: 16px 0;
+}
+
+.pip-features--lg .pip-feature__title {
+  font-size: 18px;
+}
+
+.pip-features--lg .pip-feature__desc {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 .pip-feature--inline .pip-feature__text {
   display: block;
 }
@@ -572,10 +604,12 @@
   margin: 0;
 }
 
+/* Dawn blockquote'a italik, %75 opak renk, sol çizgi ve dolgu verir; hepsi sıfırlanır. */
 .pip-quote__text {
   margin: 0;
   padding: 0;
   border: 0;
+  color: inherit;
   font-size: 16px;
   font-style: normal;
   line-height: 1.4;
@@ -596,7 +630,6 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: var(--pip-color-photo-bg);
   object-fit: cover;
 }
 
@@ -691,6 +724,8 @@
   flex: none;
   width: 32px;
   height: 32px;
+  /* Referansta mb-2: görsel satır içinde 4px yukarıda durur. */
+  margin-bottom: 8px;
   border-radius: 50%;
   object-fit: cover;
 }
