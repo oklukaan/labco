@@ -55,6 +55,7 @@
 
 {%- if pip_is_head -%}
   {%- capture pip_style -%}
+    {%- if settings.pip_color_text != blank -%}--pip-color-text: {{ settings.pip_color_text }};{%- endif -%}
     {%- if settings.pip_color_check != blank -%}--pip-color-check: {{ settings.pip_color_check }};{%- endif -%}
     {%- if settings.pip_color_cross != blank -%}--pip-color-cross: {{ settings.pip_color_cross }};{%- endif -%}
     {%- if settings.pip_color_brand_col_bg != blank -%}--pip-color-brand-col-bg: {{ settings.pip_color_brand_col_bg }};{%- endif -%}

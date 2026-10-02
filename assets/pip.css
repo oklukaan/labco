@@ -22,11 +22,13 @@
   --pip-color-divider-soft: #e5e7eb;
   --pip-color-hover-bg: #f7f8f8;
   --pip-color-photo-bg: #e0ebff;
+  --pip-color-text: #1e1f24;
 
   display: block;
   /* Font tema ayarından (varsayılan Inter); "tema fontunu kullan" seçiliyse temadan miras. */
   font-family: var(--pip-font-family, inherit);
-  color: inherit;
+  /* Dawn body rengi %75 opaktır; referans tasarımda ana metin tam opak #1E1F24. */
+  color: var(--pip-color-text);
   font-size: 16px;
   line-height: 1.4;
   /* Dawn body'e letter-spacing verir; referans tasarımda harf aralığı normaldir. */
@@ -500,14 +502,14 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  min-height: 20px;
+  width: 16px;
+  min-height: 16px;
 }
 
 .pip-feature__icon {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   object-fit: contain;
 }
 

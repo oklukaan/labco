@@ -1500,6 +1500,12 @@
       },
       {
         "type": "color",
+        "id": "pip_color_text",
+        "label": "Ana metin",
+        "default": "#1E1F24"
+      },
+      {
+        "type": "color",
         "id": "pip_color_check",
         "label": "Onay ikonu (✓)",
         "default": "#289901"
