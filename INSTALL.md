@@ -60,6 +60,13 @@ Dawn'da son blok `icon-with-text`'tir.
       "info": "Yalnızca gruptaki ilk sekmeden okunur. Örn: Tell me about:"
     },
     {
+      "type": "checkbox",
+      "id": "equal_height",
+      "label": "Tüm sekmeler aynı yükseklikte olsun",
+      "default": false,
+      "info": "Yalnızca gruptaki ilk sekmeden okunur. Kutu en uzun panel kadar olur; sekme değişince hiçbir şey kaymaz."
+    },
+    {
       "type": "select",
       "id": "content_type",
       "label": "İçerik tipi",
@@ -596,6 +603,8 @@ Renkler, grubun kök elemanına inline `style` ile CSS değişkeni olarak basıl
 - Art arda gelen sekme blokları tek bir sekme bileşeni olur. Araya başka tipte bir blok girerse yeni grup başlar.
   Akordeonlarda da aynı kural geçerlidir.
 - Grup başlığı (örneğin "Tell me about:") gruptaki ilk sekme bloğunun **Grup başlığı** alanından okunur.
+- **Tüm sekmeler aynı yükseklikte olsun** (ilk sekme bloğunda): açıkken kutu en uzun panel kadar olur ve sekme değişince
+  hiçbir şey kaymaz. Kapalıyken JS, sekme şeridini ekranda aynı yerde tutmak için sayfayı yükseklik farkı kadar kaydırır.
 - Blokta yalnızca **İçerik tipi** seçilir; veri ürünün panelinden (`pip.panel`) sabit alanlardan okunur (bölüm 5).
   Aynı panel alanı hem bir sekmede hem bir akordeonda gösterilebilir.
 - İçerik tipine özel ayarlar (sütun başlıkları, tablo başlığı, liste kaynağı vb.) yalnızca ilgili tip seçiliyken görünür.

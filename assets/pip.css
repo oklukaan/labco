@@ -24,6 +24,8 @@
   --pip-color-text: #1e1f24;
 
   display: block;
+  /* Sekme değişince yükseklik değişir; tarayıcının scroll anchoring ile sayfayı kaydırmasını engeller. */
+  overflow-anchor: none;
   /* Font tema ayarından (varsayılan Inter); "tema fontunu kullan" seçiliyse temadan miras. */
   font-family: var(--pip-font-family, inherit);
   /* Dawn body rengi %75 opaktır; referans tasarımda ana metin tam opak #1E1F24. */
@@ -280,6 +282,28 @@
 
 .pip-tabs__panel[hidden] {
   display: none;
+}
+
+/* Eşit yükseklik: paneller aynı grid hücresinde üst üste durur; kutu en uzun panel kadar olur,
+   pasif paneller yer kaplar ama görünmez. Yalnızca JS modunda (JS yokken paneller alt alta). */
+.pip-tabs--js.pip-tabs--equal .pip-tabs__box {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.pip-tabs--js.pip-tabs--equal .pip-tabs__list {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.pip-tabs--js.pip-tabs--equal .pip-tabs__panel {
+  grid-row: 2;
+  grid-column: 1;
+}
+
+.pip-tabs--js.pip-tabs--equal .pip-tabs__panel[hidden] {
+  display: block;
+  visibility: hidden;
 }
 
 .pip-tabs__panel:focus-visible {

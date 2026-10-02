@@ -20,6 +20,11 @@
   if (window.customElements && !customElements.get('pip-tabs')) {
     class PipTabs extends HTMLElement {
       connectedCallback() {
+        // Tanım parse sırasında hazırsa çocuklar henüz gelmemiş olabilir; bir sonraki kareye ertele.
+        if (!this.querySelector('[role="tablist"]')) {
+          requestAnimationFrame(() => this.init());
+          return;
+        }
         this.init();
       }
 
@@ -50,15 +55,33 @@
       select(tab, focus) {
         if (!this.pipTabs || !this.pipTabs.includes(tab)) return;
 
+        // Sekme şeridi ekranda aynı yerde kalsın: değişimden önce/sonra şeridin konumunu ölçüp
+        // farkı kaydırmayla telafi eder. Eşit yükseklik modunda yükseklik değişmediği için gerekmez.
+        const list = tab.closest('[role="tablist"]');
+        const equal = this.classList.contains('pip-tabs--equal');
+        const before = !equal && list ? list.getBoundingClientRect().top : null;
+
         this.pipTabs.forEach((item) => {
           const active = item === tab;
           item.setAttribute('aria-selected', active ? 'true' : 'false');
           item.tabIndex = active ? 0 : -1;
           const panel = document.getElementById(item.getAttribute('aria-controls'));
-          if (panel) panel.hidden = !active;
+          if (!panel) return;
+          panel.hidden = !active;
+          // Eşit yükseklik modunda pasif paneller yer kaplar; erişilebilirlik ağacından ve sekme sırasından çıkarılır.
+          if (equal) {
+            panel.setAttribute('aria-hidden', active ? 'false' : 'true');
+            panel.tabIndex = active ? 0 : -1;
+          }
         });
 
-        if (focus) tab.focus();
+        if (before !== null) {
+          const diff = list.getBoundingClientRect().top - before;
+          // Anlık düzeltme; animasyon olmadığı için prefers-reduced-motion'da da uygulanır.
+          if (Math.abs(diff) > 0.5) window.scrollBy(0, diff);
+        }
+
+        if (focus) tab.focus({ preventScroll: true });
       }
 
       onKeydown(event) {
@@ -158,7 +181,12 @@
       const tabs = target.closest('pip-tabs');
       if (tabs && typeof tabs.select === 'function') {
         tabs.select(target, false);
-        target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        // Editörde seçilen sekme görünür alana getirilir; kaydırma hareketi azaltılmış harekete saygılıdır.
+        target.scrollIntoView({
+          block: 'nearest',
+          inline: 'nearest',
+          behavior: reduceMotion.matches ? 'auto' : 'smooth',
+        });
       }
     } else if (target.tagName === 'DETAILS') {
       target.open = true;
