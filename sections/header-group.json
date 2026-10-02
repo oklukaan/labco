@@ -69,7 +69,7 @@
           "type": "link",
           "settings": {
             "label": "Vet Reviewed",
-            "target": "vet-reviewed"
+            "target": "shopify-section-template--28388479861035__related-products"
           }
         },
         "link_npGwN6": {
@@ -92,10 +92,10 @@
         "align": "center",
         "font_size": 16,
         "spy_offset": 40,
-        "bg": "#FFFFFF",
-        "text": "#1E1F24",
-        "active": "#076D08",
-        "border": "#D8DADF",
+        "bg": "#ffffff",
+        "text": "#1e1f24",
+        "active": "#076d08",
+        "border": "#d8dadf",
         "aria_label": "Sayfa bölümleri"
       }
     }
