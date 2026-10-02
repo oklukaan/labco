@@ -37,7 +37,6 @@
     },
     "header": {
       "type": "header",
-      "disabled": true,
       "settings": {
         "logo_position": "middle-left",
         "mobile_logo_position": "center",
@@ -88,6 +87,7 @@
       "name": "Çapa menüsü",
       "settings": {
         "sticky": true,
+        "update_url": true,
         "show_on_mobile": true,
         "align": "center",
         "font_size": 16,

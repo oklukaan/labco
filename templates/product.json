@@ -325,6 +325,14 @@
         "padding_bottom": 28
       }
     },
+    "anchor_marker_eWYkKQ": {
+      "type": "anchor-marker",
+      "name": "Çapa işaretçisi",
+      "settings": {
+        "handle": "key-ingredients",
+        "label": ""
+      }
+    },
     "multirow_iAEPME": {
       "type": "multirow",
       "blocks": {
@@ -379,14 +387,6 @@
         "row_color_scheme": "",
         "padding_top": 36,
         "padding_bottom": 36
-      }
-    },
-    "anchor_marker_eWYkKQ": {
-      "type": "anchor-marker",
-      "name": "Çapa işaretçisi",
-      "settings": {
-        "handle": "key-ingredients",
-        "label": ""
       }
     }
   },
