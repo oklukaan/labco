@@ -7,7 +7,7 @@
     quote      → quote (metaobject pip_quote)
     comparison → comparison (list pip_comparison_row)
     features_info     → features_info (giriş: intro_info)
-    features_benefits → features_benefits
+    features_benefits → features_benefits (pip_benefit: title + icon; açıklama yok, tek satır)
     dosage     → dosage (satır formatı); alt metin yalnızca blok ayarı override_footer
     facts      → facts (satır formatı), porsiyon notu: facts_note, alt metin: facts_footer
     richtext   → blok ayarı richtext
@@ -174,7 +174,7 @@
         assign pip_show_col = pip_has_fallback
         unless pip_show_col
           for pip_item in pip_list
-            if pip_item.system.type == 'pip_feature' and pip_item.icon.value.preview_image != blank
+            if pip_item.icon.value.preview_image != blank
               assign pip_show_col = true
               break
             endif
@@ -183,7 +183,8 @@
       -%}
       {%- capture pip_items -%}
         {%- for pip_item in pip_list -%}
-          {%- if pip_item.system.type != 'pip_feature' -%}{%- continue -%}{%- endif -%}
+          {%- comment -%} features_info / override: pip_feature; features_benefits: pip_benefit (title, icon). {%- endcomment -%}
+          {%- if pip_item.system.type != 'pip_feature' and pip_item.system.type != 'pip_benefit' -%}{%- continue -%}{%- endif -%}
           {%- liquid
             assign pip_title = pip_item.title.value | strip
             assign pip_desc = ''

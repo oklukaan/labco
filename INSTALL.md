@@ -603,7 +603,7 @@ Renkler, grubun kök elemanına inline `style` ile CSS değişkeni olarak basıl
 | `comparison` | List of metaobject references → `pip_comparison_row` | `comparison` |
 | `features_info` | List of metaobject references → `pip_feature` | `features_info` (Ürün bilgisi maddeleri) |
 | `intro_info` | Rich text | `features_info` girişi |
-| `features_benefits` | List of metaobject references → `pip_feature` | `features_benefits` (Fayda maddeleri; görseli olmayan maddelerde onay ikonu gösterilir) |
+| `features_benefits` | List of metaobject references → `pip_benefit` | `features_benefits` (Fayda maddeleri; yalnızca başlık, tek satır; görseli olmayan maddelerde onay ikonu) |
 | `dosage` | Multi-line text | `dosage` satırları |
 | `facts` | Multi-line text | `facts` satırları |
 | `facts_note` | Rich text | `facts` porsiyon notu (başlık bandının altında, kalın) |
@@ -632,6 +632,7 @@ Bloğun **Giriş metni** ayarı doluysa, panelden gelen girişin üstüne ekleni
 |---|---|
 | `pip_comparison_row` | `icon` (file_reference, image), `title` (single_line_text_field), `description` (multi_line_text_field), `link_url` (url), `link_label` (single_line_text_field), `ours` (boolean), `others` (boolean) |
 | `pip_feature` | `icon` (file_reference, image, opsiyonel), `title` (single_line_text_field), `description` (rich_text_field) |
+| `pip_benefit` | `title` (single_line_text_field), `icon` (file_reference, image, opsiyonel) |
 | `pip_quote` | `quote` (multi_line_text_field), `author_name` (single_line_text_field), `author_title` (single_line_text_field), `photo` (file_reference, image) |
 
 ### Karşılaştırma tablosu marka sütunu
@@ -655,7 +656,7 @@ ayarın yanındaki **Dinamik kaynak bağla** ikonundan bir metafield seçebilir 
 
 | Ayar | Tip | İçerik tipi |
 |---|---|---|
-| `override_features` — Ortak liste maddeleri | metaobject_list (`pip_feature`) | `features_info`, `features_benefits` |
+| `override_features` — Ortak liste maddeleri | metaobject_list (`pip_feature`) | `features_info`, `features_benefits` (ör. Why Subscribe gibi her üründe aynı listeler) |
 | `override_rows` — Tablo satırları | textarea | `dosage`, `facts` |
 | `override_footer` — Ortak alt metin | richtext | `dosage` (tek kaynak), `facts` (panel `facts_footer` yerine) |
 
