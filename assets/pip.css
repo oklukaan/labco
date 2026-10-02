@@ -126,8 +126,10 @@
   font-weight: 600;
 }
 
-.pip-content--icon_list > .pip-content__intro + *,
-.pip-content--icon_list > .pip-content__lead + * {
+.pip-content--features_info > .pip-content__intro + *,
+.pip-content--features_info > .pip-content__lead + *,
+.pip-content--features_benefits > .pip-content__intro + *,
+.pip-content--features_benefits > .pip-content__lead + * {
   margin-top: 8px;
 }
 

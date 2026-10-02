@@ -6,8 +6,8 @@
   İçerik tipine göre okunacak panel alanları sabittir:
     quote      → quote (metaobject pip_quote)
     comparison → comparison (list pip_comparison_row)
-    icon_list  → list_source ayarına göre features_info | features_benefits
-                 (features_info seçiliyse giriş: intro_info)
+    features_info     → features_info (giriş: intro_info)
+    features_benefits → features_benefits
     dosage     → dosage (satır formatı); alt metin yalnızca blok ayarı override_footer
     facts      → facts (satır formatı), porsiyon notu: facts_note, alt metin: facts_footer
     richtext   → blok ayarı richtext
@@ -32,21 +32,19 @@
   assign pip_panel_intro = nil
   assign pip_footer_field = nil
   assign pip_note_field = nil
+  assign pip_is_list = false
+  if pip_type == 'features_info' or pip_type == 'features_benefits'
+    assign pip_is_list = true
+  endif
 
   case pip_type
     when 'comparison'
       assign pip_list = pip_panel.comparison.value
-    when 'icon_list'
-      if block.settings.override_features != blank
-        assign pip_list = block.settings.override_features
-      elsif block.settings.list_source == 'features_benefits'
-        assign pip_list = pip_panel.features_benefits.value
-      else
-        assign pip_list = pip_panel.features_info.value
-      endif
-      if block.settings.list_source != 'features_benefits'
-        assign pip_panel_intro = pip_panel.intro_info
-      endif
+    when 'features_info'
+      assign pip_list = block.settings.override_features | default: pip_panel.features_info.value
+      assign pip_panel_intro = pip_panel.intro_info
+    when 'features_benefits'
+      assign pip_list = block.settings.override_features | default: pip_panel.features_benefits.value
     when 'quote'
       assign pip_quote = pip_panel.quote.value
     when 'dosage'
@@ -71,7 +69,7 @@
   endif
   assign pip_check = pip_extra | strip_html | strip
   # Panelde açıklama yoksa (ör. fayda maddeleri) bloğun "Açıklama" ayarı kullanılır.
-  if pip_check == blank and pip_type == 'icon_list'
+  if pip_check == blank and pip_is_list
     assign pip_extra = block.settings.lead
     assign pip_check = pip_extra | strip_html | strip
   endif
@@ -126,7 +124,7 @@
         <div class="pip-rte">{{ block.settings.richtext }}</div>
       {%- endif -%}
 
-    {%- when 'icon_list' -%}
+    {%- when 'features_info', 'features_benefits' -%}
       {%- liquid
         # Madde ikonu: maddenin kendi icon alanı her zaman önceliklidir. Boşsa blok ayarı:
         #   check  → pip-icon 'check_filled' (varsayılan; ayar hiç kaydedilmemişse de bu)
@@ -137,7 +135,7 @@
         assign pip_layout = block.settings.list_layout | default: 'auto'
         # Fayda maddeleri (features_benefits) düz liste: tek satır, normal ağırlık, "Başlık – açıklama".
         assign pip_plain = false
-        if block.settings.list_source == 'features_benefits'
+        if pip_type == 'features_benefits'
           assign pip_plain = true
         endif
         if pip_layout == 'auto'

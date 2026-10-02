@@ -2150,40 +2150,16 @@
           "id": "content_type",
           "label": "İçerik tipi",
           "default": "richtext",
-          "info": "Veri, ürünün pip.panel metaobject’inden içerik tipine göre okunur.",
+          "info": "Panelin hangi bölümünün gösterileceğini seçin.",
           "options": [
             {
-              "value": "richtext",
-              "label": "Zengin metin"
-            },
-            {
-              "value": "icon_list",
-              "label": "İkonlu liste"
+              "value": "quote",
+              "label": "Uzman görüşü"
             },
             {
               "value": "comparison",
               "label": "Karşılaştırma tablosu"
             },
-            {
-              "value": "quote",
-              "label": "Alıntı"
-            },
-            {
-              "value": "dosage",
-              "label": "Dozaj tablosu"
-            },
-            {
-              "value": "facts",
-              "label": "Ürün bilgileri tablosu"
-            }
-          ]
-        },
-        {
-          "type": "select",
-          "id": "list_source",
-          "label": "Liste kaynağı",
-          "default": "features_info",
-          "options": [
             {
               "value": "features_info",
               "label": "Ürün bilgisi maddeleri"
@@ -2191,9 +2167,20 @@
             {
               "value": "features_benefits",
               "label": "Fayda maddeleri"
+            },
+            {
+              "value": "dosage",
+              "label": "Doz tablosu"
+            },
+            {
+              "value": "facts",
+              "label": "Product Facts"
+            },
+            {
+              "value": "richtext",
+              "label": "Zengin metin"
             }
-          ],
-          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+          ]
         },
         {
           "type": "select",
@@ -2215,13 +2202,13 @@
               "label": "İkon yok"
             }
           ],
-          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+          "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
         },
         {
           "type": "image_picker",
           "id": "list_icon_image",
           "label": "Özel madde ikonu",
-          "visible_if": "{{ block.settings.content_type == 'icon_list' and block.settings.list_icon_style == 'custom' }}"
+          "visible_if": "{{ (block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits') and block.settings.list_icon_style == 'custom' }}"
         },
         {
           "type": "select",
@@ -2242,7 +2229,7 @@
               "label": "Alt alta (başlık üstte, açıklama altta)"
             }
           ],
-          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+          "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
         },
         {
           "type": "richtext",
@@ -2255,7 +2242,7 @@
           "id": "lead",
           "label": "Açıklama",
           "info": "Başlığın altında normal ağırlıkta gösterilir. Ürün bilgisi maddelerinde paneldeki intro_info doluysa o kullanılır.",
-          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+          "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
         },
         {
           "type": "richtext",
@@ -2286,14 +2273,14 @@
           "type": "image_picker",
           "id": "brand_image",
           "label": "Marka sütunu görseli",
-          "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa tema ayarındaki marka logosu, o da yoksa temanın logosu kullanılır.",
+          "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa temanın logosu kullanılır.",
           "visible_if": "{{ block.settings.content_type == 'comparison' }}"
         },
         {
           "type": "text",
           "id": "brand_label",
           "label": "Marka sütunu yazısı",
-          "info": "Görsel yoksa gösterilir. Boşsa tema ayarındaki marka etiketi, o da yoksa mağaza adı.",
+          "info": "Görsel yoksa gösterilir. Boşsa mağaza adı.",
           "visible_if": "{{ block.settings.content_type == 'comparison' }}"
         },
         {
@@ -2358,40 +2345,16 @@
           "id": "content_type",
           "label": "İçerik tipi",
           "default": "richtext",
-          "info": "Veri, ürünün pip.panel metaobject’inden içerik tipine göre okunur.",
+          "info": "Panelin hangi bölümünün gösterileceğini seçin.",
           "options": [
             {
-              "value": "richtext",
-              "label": "Zengin metin"
-            },
-            {
-              "value": "icon_list",
-              "label": "İkonlu liste"
+              "value": "quote",
+              "label": "Uzman görüşü"
             },
             {
               "value": "comparison",
               "label": "Karşılaştırma tablosu"
             },
-            {
-              "value": "quote",
-              "label": "Alıntı"
-            },
-            {
-              "value": "dosage",
-              "label": "Dozaj tablosu"
-            },
-            {
-              "value": "facts",
-              "label": "Ürün bilgileri tablosu"
-            }
-          ]
-        },
-        {
-          "type": "select",
-          "id": "list_source",
-          "label": "Liste kaynağı",
-          "default": "features_info",
-          "options": [
             {
               "value": "features_info",
               "label": "Ürün bilgisi maddeleri"
@@ -2399,9 +2362,20 @@
             {
               "value": "features_benefits",
               "label": "Fayda maddeleri"
+            },
+            {
+              "value": "dosage",
+              "label": "Doz tablosu"
+            },
+            {
+              "value": "facts",
+              "label": "Product Facts"
+            },
+            {
+              "value": "richtext",
+              "label": "Zengin metin"
             }
-          ],
-          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+          ]
         },
         {
           "type": "select",
@@ -2423,13 +2397,13 @@
               "label": "İkon yok"
             }
           ],
-          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+          "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
         },
         {
           "type": "image_picker",
           "id": "list_icon_image",
           "label": "Özel madde ikonu",
-          "visible_if": "{{ block.settings.content_type == 'icon_list' and block.settings.list_icon_style == 'custom' }}"
+          "visible_if": "{{ (block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits') and block.settings.list_icon_style == 'custom' }}"
         },
         {
           "type": "select",
@@ -2450,7 +2424,7 @@
               "label": "Alt alta (başlık üstte, açıklama altta)"
             }
           ],
-          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+          "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
         },
         {
           "type": "richtext",
@@ -2463,7 +2437,7 @@
           "id": "lead",
           "label": "Açıklama",
           "info": "Başlığın altında normal ağırlıkta gösterilir. Ürün bilgisi maddelerinde paneldeki intro_info doluysa o kullanılır.",
-          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+          "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
         },
         {
           "type": "richtext",
@@ -2494,14 +2468,14 @@
           "type": "image_picker",
           "id": "brand_image",
           "label": "Marka sütunu görseli",
-          "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa tema ayarındaki marka logosu, o da yoksa temanın logosu kullanılır.",
+          "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa temanın logosu kullanılır.",
           "visible_if": "{{ block.settings.content_type == 'comparison' }}"
         },
         {
           "type": "text",
           "id": "brand_label",
           "label": "Marka sütunu yazısı",
-          "info": "Görsel yoksa gösterilir. Boşsa tema ayarındaki marka etiketi, o da yoksa mağaza adı.",
+          "info": "Görsel yoksa gösterilir. Boşsa mağaza adı.",
           "visible_if": "{{ block.settings.content_type == 'comparison' }}"
         },
         {

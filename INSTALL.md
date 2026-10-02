@@ -71,40 +71,16 @@ Dawn'da son blok `icon-with-text`'tir.
       "id": "content_type",
       "label": "İçerik tipi",
       "default": "richtext",
-      "info": "Veri, ürünün pip.panel metaobject’inden içerik tipine göre okunur.",
+      "info": "Panelin hangi bölümünün gösterileceğini seçin.",
       "options": [
         {
-          "value": "richtext",
-          "label": "Zengin metin"
-        },
-        {
-          "value": "icon_list",
-          "label": "İkonlu liste"
+          "value": "quote",
+          "label": "Uzman görüşü"
         },
         {
           "value": "comparison",
           "label": "Karşılaştırma tablosu"
         },
-        {
-          "value": "quote",
-          "label": "Alıntı"
-        },
-        {
-          "value": "dosage",
-          "label": "Dozaj tablosu"
-        },
-        {
-          "value": "facts",
-          "label": "Ürün bilgileri tablosu"
-        }
-      ]
-    },
-    {
-      "type": "select",
-      "id": "list_source",
-      "label": "Liste kaynağı",
-      "default": "features_info",
-      "options": [
         {
           "value": "features_info",
           "label": "Ürün bilgisi maddeleri"
@@ -112,9 +88,20 @@ Dawn'da son blok `icon-with-text`'tir.
         {
           "value": "features_benefits",
           "label": "Fayda maddeleri"
+        },
+        {
+          "value": "dosage",
+          "label": "Doz tablosu"
+        },
+        {
+          "value": "facts",
+          "label": "Product Facts"
+        },
+        {
+          "value": "richtext",
+          "label": "Zengin metin"
         }
-      ],
-      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+      ]
     },
     {
       "type": "select",
@@ -136,13 +123,13 @@ Dawn'da son blok `icon-with-text`'tir.
           "label": "İkon yok"
         }
       ],
-      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
     },
     {
       "type": "image_picker",
       "id": "list_icon_image",
       "label": "Özel madde ikonu",
-      "visible_if": "{{ block.settings.content_type == 'icon_list' and block.settings.list_icon_style == 'custom' }}"
+      "visible_if": "{{ (block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits') and block.settings.list_icon_style == 'custom' }}"
     },
     {
       "type": "select",
@@ -163,7 +150,7 @@ Dawn'da son blok `icon-with-text`'tir.
           "label": "Alt alta (başlık üstte, açıklama altta)"
         }
       ],
-      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
     },
     {
       "type": "richtext",
@@ -176,7 +163,7 @@ Dawn'da son blok `icon-with-text`'tir.
       "id": "lead",
       "label": "Açıklama",
       "info": "Başlığın altında normal ağırlıkta gösterilir. Ürün bilgisi maddelerinde paneldeki intro_info doluysa o kullanılır.",
-      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
     },
     {
       "type": "richtext",
@@ -207,14 +194,14 @@ Dawn'da son blok `icon-with-text`'tir.
       "type": "image_picker",
       "id": "brand_image",
       "label": "Marka sütunu görseli",
-      "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa tema ayarındaki marka logosu, o da yoksa temanın logosu kullanılır.",
+      "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa temanın logosu kullanılır.",
       "visible_if": "{{ block.settings.content_type == 'comparison' }}"
     },
     {
       "type": "text",
       "id": "brand_label",
       "label": "Marka sütunu yazısı",
-      "info": "Görsel yoksa gösterilir. Boşsa tema ayarındaki marka etiketi, o da yoksa mağaza adı.",
+      "info": "Görsel yoksa gösterilir. Boşsa mağaza adı.",
       "visible_if": "{{ block.settings.content_type == 'comparison' }}"
     },
     {
@@ -279,40 +266,16 @@ Dawn'da son blok `icon-with-text`'tir.
       "id": "content_type",
       "label": "İçerik tipi",
       "default": "richtext",
-      "info": "Veri, ürünün pip.panel metaobject’inden içerik tipine göre okunur.",
+      "info": "Panelin hangi bölümünün gösterileceğini seçin.",
       "options": [
         {
-          "value": "richtext",
-          "label": "Zengin metin"
-        },
-        {
-          "value": "icon_list",
-          "label": "İkonlu liste"
+          "value": "quote",
+          "label": "Uzman görüşü"
         },
         {
           "value": "comparison",
           "label": "Karşılaştırma tablosu"
         },
-        {
-          "value": "quote",
-          "label": "Alıntı"
-        },
-        {
-          "value": "dosage",
-          "label": "Dozaj tablosu"
-        },
-        {
-          "value": "facts",
-          "label": "Ürün bilgileri tablosu"
-        }
-      ]
-    },
-    {
-      "type": "select",
-      "id": "list_source",
-      "label": "Liste kaynağı",
-      "default": "features_info",
-      "options": [
         {
           "value": "features_info",
           "label": "Ürün bilgisi maddeleri"
@@ -320,9 +283,20 @@ Dawn'da son blok `icon-with-text`'tir.
         {
           "value": "features_benefits",
           "label": "Fayda maddeleri"
+        },
+        {
+          "value": "dosage",
+          "label": "Doz tablosu"
+        },
+        {
+          "value": "facts",
+          "label": "Product Facts"
+        },
+        {
+          "value": "richtext",
+          "label": "Zengin metin"
         }
-      ],
-      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+      ]
     },
     {
       "type": "select",
@@ -344,13 +318,13 @@ Dawn'da son blok `icon-with-text`'tir.
           "label": "İkon yok"
         }
       ],
-      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
     },
     {
       "type": "image_picker",
       "id": "list_icon_image",
       "label": "Özel madde ikonu",
-      "visible_if": "{{ block.settings.content_type == 'icon_list' and block.settings.list_icon_style == 'custom' }}"
+      "visible_if": "{{ (block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits') and block.settings.list_icon_style == 'custom' }}"
     },
     {
       "type": "select",
@@ -371,7 +345,7 @@ Dawn'da son blok `icon-with-text`'tir.
           "label": "Alt alta (başlık üstte, açıklama altta)"
         }
       ],
-      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
     },
     {
       "type": "richtext",
@@ -384,7 +358,7 @@ Dawn'da son blok `icon-with-text`'tir.
       "id": "lead",
       "label": "Açıklama",
       "info": "Başlığın altında normal ağırlıkta gösterilir. Ürün bilgisi maddelerinde paneldeki intro_info doluysa o kullanılır.",
-      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
     },
     {
       "type": "richtext",
@@ -415,14 +389,14 @@ Dawn'da son blok `icon-with-text`'tir.
       "type": "image_picker",
       "id": "brand_image",
       "label": "Marka sütunu görseli",
-      "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa tema ayarındaki marka logosu, o da yoksa temanın logosu kullanılır.",
+      "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa temanın logosu kullanılır.",
       "visible_if": "{{ block.settings.content_type == 'comparison' }}"
     },
     {
       "type": "text",
       "id": "brand_label",
       "label": "Marka sütunu yazısı",
-      "info": "Görsel yoksa gösterilir. Boşsa tema ayarındaki marka etiketi, o da yoksa mağaza adı.",
+      "info": "Görsel yoksa gösterilir. Boşsa mağaza adı.",
       "visible_if": "{{ block.settings.content_type == 'comparison' }}"
     },
     {
@@ -627,9 +601,9 @@ Renkler, grubun kök elemanına inline `style` ile CSS değişkeni olarak basıl
 |---|---|---|
 | `quote` | Metaobject reference → `pip_quote` | `quote` |
 | `comparison` | List of metaobject references → `pip_comparison_row` | `comparison` |
-| `features_info` | List of metaobject references → `pip_feature` | `icon_list` (Liste kaynağı: Ürün bilgisi maddeleri) |
-| `intro_info` | Rich text | `icon_list` girişi (yalnızca `features_info` seçiliyken) |
-| `features_benefits` | List of metaobject references → `pip_feature` | `icon_list` (Liste kaynağı: Fayda maddeleri; görseli olmayan maddelerde onay ikonu gösterilir) |
+| `features_info` | List of metaobject references → `pip_feature` | `features_info` (Ürün bilgisi maddeleri) |
+| `intro_info` | Rich text | `features_info` girişi |
+| `features_benefits` | List of metaobject references → `pip_feature` | `features_benefits` (Fayda maddeleri; görseli olmayan maddelerde onay ikonu gösterilir) |
 | `dosage` | Multi-line text | `dosage` satırları |
 | `facts` | Multi-line text | `facts` satırları |
 | `facts_note` | Rich text | `facts` porsiyon notu (başlık bandının altında, kalın) |
@@ -644,7 +618,8 @@ Rich text alanları multi-line text olarak tanımlanırsa da çalışır; satır
 |---|---|---|---|
 | `quote` | `quote` | — | — |
 | `comparison` | `comparison` | — | — |
-| `icon_list` | **Liste kaynağı**na göre `features_info` veya `features_benefits` | `features_info` seçiliyse `intro_info` | — |
+| `features_info` | `features_info` | `intro_info` | — |
+| `features_benefits` | `features_benefits` | — | — |
 | `dosage` | `dosage` | — | Blok ayarı **Ortak alt metin** |
 | `facts` | `facts` | `facts_note` (porsiyon notu) | `facts_footer` |
 | `richtext` | Blok ayarı **Metin** | — | — |
@@ -680,12 +655,12 @@ ayarın yanındaki **Dinamik kaynak bağla** ikonundan bir metafield seçebilir 
 
 | Ayar | Tip | İçerik tipi |
 |---|---|---|
-| `override_features` — Ortak liste maddeleri | metaobject_list (`pip_feature`) | `icon_list` (liste kaynağı ayarının yerine geçer) |
+| `override_features` — Ortak liste maddeleri | metaobject_list (`pip_feature`) | `features_info`, `features_benefits` |
 | `override_rows` — Tablo satırları | textarea | `dosage`, `facts` |
 | `override_footer` — Ortak alt metin | richtext | `dosage` (tek kaynak), `facts` (panel `facts_footer` yerine) |
 
 `override_features` her içerik tipinde görünür, çünkü Shopify şeması metaobject ayarlarında `visible_if` kabul etmiyor;
-yalnızca ikonlu listede okunur. Diğer ayarlar yalnızca ilgili tip seçiliyken görünür.
+yalnızca iki liste tipinde okunur. Diğer ayarlar yalnızca ilgili tip seçiliyken görünür.
 Doz tablosunun alt metni panelden gelmez; yalnızca **Ortak alt metin** ayarından gelir.
 
 ### Satır bazlı tablo formatı
