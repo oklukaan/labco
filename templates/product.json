@@ -50,6 +50,7 @@
           "settings": {
             "title": "Vet Reviewed",
             "group_heading": "Tell me about:",
+            "equal_height": false,
             "content_type": "quote",
             "list_icon_style": "check",
             "list_layout": "auto",
@@ -61,7 +62,6 @@
             "facts_title": "Product Facts",
             "brand_label": "",
             "others_label": "Others",
-            "override_comparison": [],
             "override_features": [],
             "override_rows": "",
             "override_footer": ""
@@ -72,6 +72,7 @@
           "settings": {
             "title": "Key Ingredients",
             "group_heading": "",
+            "equal_height": false,
             "content_type": "comparison",
             "list_icon_style": "check",
             "list_layout": "auto",
@@ -84,7 +85,6 @@
             "brand_image": "shopify://shop_images/b5fb2911ac5bba58259a7cf237dcc82924f37e29_1_769ebeccb7.png",
             "brand_label": "",
             "others_label": "Others",
-            "override_comparison": [],
             "override_features": [],
             "override_rows": "",
             "override_footer": ""
@@ -95,6 +95,7 @@
           "settings": {
             "title": "Directions for Use",
             "group_heading": "Directions for Use",
+            "equal_height": false,
             "content_type": "dosage",
             "list_icon_style": "check",
             "list_layout": "auto",
@@ -106,7 +107,6 @@
             "facts_title": "Product Facts",
             "brand_label": "",
             "others_label": "Others",
-            "override_comparison": [],
             "override_features": [],
             "override_rows": "",
             "override_footer": ""
@@ -117,7 +117,9 @@
           "settings": {
             "title": "Product Benefits",
             "group_heading": "Product Benefits",
-            "content_type": "features_info",
+            "equal_height": false,
+            "content_type": "icon_list",
+            "list_source": "features_benefits",
             "list_icon_style": "check",
             "list_layout": "auto",
             "intro": "",
@@ -128,7 +130,6 @@
             "facts_title": "Product Facts",
             "brand_label": "",
             "others_label": "Others",
-            "override_comparison": [],
             "override_features": [],
             "override_rows": "",
             "override_footer": ""
@@ -150,7 +151,6 @@
             "facts_title": "Product Facts",
             "brand_label": "",
             "others_label": "Others",
-            "override_comparison": [],
             "override_features": [],
             "override_rows": "",
             "override_footer": "",
