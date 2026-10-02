@@ -77,12 +77,28 @@
             "label": "Key Ingredients",
             "target": "key-ingredients"
           }
+        },
+        "link_JL4MK4": {
+          "type": "link",
+          "settings": {
+            "label": "",
+            "target": ""
+          }
+        },
+        "link_wgK3EC": {
+          "type": "link",
+          "settings": {
+            "label": "",
+            "target": ""
+          }
         }
       },
       "block_order": [
         "link_eL6JgF",
         "link_NnbjDD",
-        "link_npGwN6"
+        "link_npGwN6",
+        "link_JL4MK4",
+        "link_wgK3EC"
       ],
       "name": "Çapa menüsü",
       "settings": {
