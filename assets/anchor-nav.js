@@ -15,7 +15,7 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   // Dawn header'ı yapışkansa yüksekliği; değilse 0. Diğer temalarda <header> / .shopify-section-header denenir.
-  const stickyHeaderHeight = () => {
+  const stickyHeaderHeight = (self) => {
     const candidates = [
       '.shopify-section-header-sticky',
       '.shopify-section-header',
@@ -23,7 +23,8 @@
       'header',
     ];
     for (const selector of candidates) {
-      const element = document.querySelector(selector);
+      // Çubuğun kendi section'ı header grubunda olabilir; onu header sayma.
+      const element = Array.from(document.querySelectorAll(selector)).find((el) => !el.contains(self));
       if (!element) continue;
       const position = getComputedStyle(element).position;
       const inner = element.querySelector('.header-wrapper, header');
@@ -103,11 +104,14 @@
       });
       // Belge sırasına göre sırala (scroll-spy "son geçilen" mantığı için).
       this.targets.sort((a, b) => (a.marker.compareDocumentPosition(b.marker) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+      // Sayfada hiç hedef yoksa (ör. header grubunda, işaretçisiz sayfa) çubuk hiç görünmesin.
+      const wrapper = this.closest('.anv-section') || this;
+      wrapper.hidden = this.targets.length === 0;
     }
 
     measure() {
       const sticky = this.classList.contains('anv--sticky');
-      const headerHeight = sticky ? stickyHeaderHeight() : 0;
+      const headerHeight = sticky ? stickyHeaderHeight(this) : 0;
       // Sticky, section sarmalayıcısına (Shopify'ın div'i) uygulanır; yoksa elemanın kendisine.
       const wrapper = this.closest('.anv-section') || this;
       wrapper.classList.toggle('anv-section--sticky', sticky);
@@ -179,6 +183,14 @@
       }
     });
   };
+  // Editörde bir link bloğu seçilince hedefine kaydır (önizlemede tıklama bloğu seçer, linki çalıştırmaz).
+  document.addEventListener('shopify:block:select', (event) => {
+    const link = event.target && event.target.querySelector ? event.target.querySelector('.anv__link') : null;
+    const nav = link ? link.closest('anchor-nav') : null;
+    if (!nav || !nav.targets) return;
+    const entry = nav.targets.find((t) => t.link === link);
+    if (entry) nav.scrollTo(entry.marker, false);
+  });
   document.addEventListener('shopify:section:load', refreshAll);
   document.addEventListener('shopify:section:unload', refreshAll);
   document.addEventListener('shopify:section:reorder', refreshAll);
