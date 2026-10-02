@@ -225,8 +225,9 @@
             "override_features": [],
             "override_rows": "",
             "override_footer": "",
-            "promo_title": "",
-            "promo_subtitle": "",
+            "promo_title": "FREE Wild Caught Salmon Bites",
+            "promo_subtitle": "with subscription",
+            "promo_image": "shopify://shop_images/with_badge_7e911a5fa4.jpg",
             "promo_bg": ""
           }
         },
