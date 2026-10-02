@@ -70,7 +70,7 @@
           "type": "pip_tab",
           "settings": {
             "title": "Key Ingredients",
-            "group_heading": "Karşılaştırma tablosu",
+            "group_heading": "",
             "content_type": "comparison",
             "list_source": "features_info",
             "list_icon_style": "check",
