@@ -21,6 +21,15 @@
 
 {%- liquid
   assign pip_type = block.settings.content_type | default: 'richtext'
+  # Geriye dönük yedek: dönüştürülmemiş eski şablonlarda content_type hâlâ 'icon_list' gelebilir.
+  # Yeni şemada bu seçenek yok; eski list_source değerine göre iki liste tipinden birine eşlenir.
+  if pip_type == 'icon_list'
+    if block.settings.list_source == 'features_benefits'
+      assign pip_type = 'features_benefits'
+    else
+      assign pip_type = 'features_info'
+    endif
+  endif
   assign pip_panel = product.metafields.pip.panel.value
   if pip_panel.system.type != 'pip_panel'
     assign pip_panel = nil
