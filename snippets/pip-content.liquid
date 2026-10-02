@@ -8,6 +8,8 @@
     comparison → comparison (list pip_comparison_row)
     features_info     → features_info (giriş: intro_info)
     features_benefits → features_benefits (pip_benefit: title + icon; açıklama yok, tek satır)
+    why_subscribe     → panel.pip_why_subscribe (sıralı liste); boşsa shop.metaobjects.pip_why_subscribe tüm kayıtlar
+                        (pip_why_subscribe: title + description + icon; "Başlık – açıklama" tek satır)
     dosage     → dosage (satır formatı); alt metin yalnızca blok ayarı override_footer
     facts      → facts (satır formatı), porsiyon notu: facts_note, alt metin: facts_footer
     richtext   → blok ayarı richtext
@@ -42,7 +44,7 @@
   assign pip_footer_field = nil
   assign pip_note_field = nil
   assign pip_is_list = false
-  if pip_type == 'features_info' or pip_type == 'features_benefits'
+  if pip_type == 'features_info' or pip_type == 'features_benefits' or pip_type == 'why_subscribe'
     assign pip_is_list = true
   endif
 
@@ -54,6 +56,12 @@
       assign pip_panel_intro = pip_panel.intro_info
     when 'features_benefits'
       assign pip_list = block.settings.override_features | default: pip_panel.features_benefits.value
+    when 'why_subscribe'
+      # Mağaza geneli içerik: panelde seçim varsa o sıra, yoksa tipin tüm kayıtları.
+      assign pip_list = pip_panel.pip_why_subscribe.value
+      if pip_list.size == 0 or pip_list == blank
+        assign pip_list = shop.metaobjects.pip_why_subscribe.values
+      endif
     when 'quote'
       assign pip_quote = pip_panel.quote.value
     when 'dosage'
@@ -133,7 +141,7 @@
         <div class="pip-rte">{{ block.settings.richtext }}</div>
       {%- endif -%}
 
-    {%- when 'features_info', 'features_benefits' -%}
+    {%- when 'features_info', 'features_benefits', 'why_subscribe' -%}
       {%- liquid
         # Madde ikonu: maddenin kendi icon alanı her zaman önceliklidir. Boşsa blok ayarı:
         #   check  → pip-icon 'check_filled' (varsayılan; ayar hiç kaydedilmemişse de bu)
@@ -148,7 +156,7 @@
           assign pip_plain = true
         endif
         if pip_layout == 'auto'
-          if pip_plain
+          if pip_plain or pip_type == 'why_subscribe'
             assign pip_layout = 'inline'
           else
             assign pip_layout = 'stacked'
@@ -184,12 +192,14 @@
       {%- capture pip_items -%}
         {%- for pip_item in pip_list -%}
           {%- comment -%} features_info / override: pip_feature; features_benefits: pip_benefit (title, icon). {%- endcomment -%}
-          {%- if pip_item.system.type != 'pip_feature' and pip_item.system.type != 'pip_benefit' -%}{%- continue -%}{%- endif -%}
+          {%- if pip_item.system.type != 'pip_feature' and pip_item.system.type != 'pip_benefit' and pip_item.system.type != 'pip_why_subscribe' -%}{%- continue -%}{%- endif -%}
           {%- liquid
             assign pip_title = pip_item.title.value | strip
             assign pip_desc = ''
             if pip_item.description.type == 'rich_text_field'
               assign pip_desc = pip_item.description | metafield_tag | strip
+            elsif pip_item.description.type == 'single_line_text_field' or pip_item.description.type == 'multi_line_text_field'
+              assign pip_desc = pip_item.description.value | strip | escape | newline_to_br | prepend: '<p>' | append: '</p>'
             endif
             assign pip_check = pip_desc | strip_html | strip
             if pip_check == blank

@@ -129,7 +129,9 @@
 .pip-content--features_info > .pip-content__intro + *,
 .pip-content--features_info > .pip-content__lead + *,
 .pip-content--features_benefits > .pip-content__intro + *,
-.pip-content--features_benefits > .pip-content__lead + * {
+.pip-content--features_benefits > .pip-content__lead + *,
+.pip-content--why_subscribe > .pip-content__intro + *,
+.pip-content--why_subscribe > .pip-content__lead + * {
   margin-top: 8px;
 }
 

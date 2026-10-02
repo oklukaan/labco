@@ -90,6 +90,10 @@ Dawn'da son blok `icon-with-text`'tir.
           "label": "Fayda maddeleri"
         },
         {
+          "value": "why_subscribe",
+          "label": "Abonelik avantajları"
+        },
+        {
           "value": "dosage",
           "label": "Doz tablosu"
         },
@@ -123,13 +127,13 @@ Dawn'da son blok `icon-with-text`'tir.
           "label": "İkon yok"
         }
       ],
-      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' or block.settings.content_type == 'why_subscribe' }}"
     },
     {
       "type": "image_picker",
       "id": "list_icon_image",
       "label": "Özel madde ikonu",
-      "visible_if": "{{ (block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits') and block.settings.list_icon_style == 'custom' }}"
+      "visible_if": "{{ block.settings.list_icon_style == 'custom' }}"
     },
     {
       "type": "select",
@@ -150,7 +154,7 @@ Dawn'da son blok `icon-with-text`'tir.
           "label": "Alt alta (başlık üstte, açıklama altta)"
         }
       ],
-      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' or block.settings.content_type == 'why_subscribe' }}"
     },
     {
       "type": "richtext",
@@ -163,7 +167,7 @@ Dawn'da son blok `icon-with-text`'tir.
       "id": "lead",
       "label": "Açıklama",
       "info": "Başlığın altında normal ağırlıkta gösterilir. Ürün bilgisi maddelerinde paneldeki intro_info doluysa o kullanılır.",
-      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' or block.settings.content_type == 'why_subscribe' }}"
     },
     {
       "type": "richtext",
@@ -285,6 +289,10 @@ Dawn'da son blok `icon-with-text`'tir.
           "label": "Fayda maddeleri"
         },
         {
+          "value": "why_subscribe",
+          "label": "Abonelik avantajları"
+        },
+        {
           "value": "dosage",
           "label": "Doz tablosu"
         },
@@ -318,13 +326,13 @@ Dawn'da son blok `icon-with-text`'tir.
           "label": "İkon yok"
         }
       ],
-      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' or block.settings.content_type == 'why_subscribe' }}"
     },
     {
       "type": "image_picker",
       "id": "list_icon_image",
       "label": "Özel madde ikonu",
-      "visible_if": "{{ (block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits') and block.settings.list_icon_style == 'custom' }}"
+      "visible_if": "{{ block.settings.list_icon_style == 'custom' }}"
     },
     {
       "type": "select",
@@ -345,7 +353,7 @@ Dawn'da son blok `icon-with-text`'tir.
           "label": "Alt alta (başlık üstte, açıklama altta)"
         }
       ],
-      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' or block.settings.content_type == 'why_subscribe' }}"
     },
     {
       "type": "richtext",
@@ -358,7 +366,7 @@ Dawn'da son blok `icon-with-text`'tir.
       "id": "lead",
       "label": "Açıklama",
       "info": "Başlığın altında normal ağırlıkta gösterilir. Ürün bilgisi maddelerinde paneldeki intro_info doluysa o kullanılır.",
-      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' }}"
+      "visible_if": "{{ block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits' or block.settings.content_type == 'why_subscribe' }}"
     },
     {
       "type": "richtext",
@@ -608,6 +616,7 @@ Renkler, grubun kök elemanına inline `style` ile CSS değişkeni olarak basıl
 | `facts` | Multi-line text | `facts` satırları |
 | `facts_note` | Rich text | `facts` porsiyon notu (başlık bandının altında, kalın) |
 | `facts_footer` | Rich text | `facts` alt metni |
+| `pip_why_subscribe` | List of metaobject references → `pip_why_subscribe` | `why_subscribe` (opsiyonel; boşsa tipin tüm kayıtları okunur) |
 
 Rich text alanları multi-line text olarak tanımlanırsa da çalışır; satır sonları korunarak gösterilir.
 `richtext` içerik tipi panelden okumaz, bloktaki **Metin** ayarını gösterir.
@@ -620,6 +629,7 @@ Rich text alanları multi-line text olarak tanımlanırsa da çalışır; satır
 | `comparison` | `comparison` | — | — |
 | `features_info` | `features_info` | `intro_info` | — |
 | `features_benefits` | `features_benefits` | — | — |
+| `why_subscribe` | Panel `pip_why_subscribe` listesi; boşsa `pip_why_subscribe` tipinin tüm kayıtları (mağaza geneli) | — | — |
 | `dosage` | `dosage` | — | Blok ayarı **Ortak alt metin** |
 | `facts` | `facts` | `facts_note` (porsiyon notu) | `facts_footer` |
 | `richtext` | Blok ayarı **Metin** | — | — |
@@ -633,6 +643,7 @@ Bloğun **Giriş metni** ayarı doluysa, panelden gelen girişin üstüne ekleni
 | `pip_comparison_row` | `icon` (file_reference, image), `title` (single_line_text_field), `description` (multi_line_text_field), `link_url` (url), `link_label` (single_line_text_field), `ours` (boolean), `others` (boolean) |
 | `pip_feature` | `icon` (file_reference, image, opsiyonel), `title` (single_line_text_field), `description` (rich_text_field) |
 | `pip_benefit` | `title` (single_line_text_field), `icon` (file_reference, image, opsiyonel) |
+| `pip_why_subscribe` | `title` (single_line_text_field), `description` (single_line_text_field), `icon` (file_reference, image) — her kayıt bir abonelik avantajı; "Başlık – açıklama" tek satır |
 | `pip_quote` | `quote` (multi_line_text_field), `author_name` (single_line_text_field), `author_title` (single_line_text_field), `photo` (file_reference, image) |
 
 ### Karşılaştırma tablosu marka sütunu
