@@ -40,11 +40,12 @@
         {%- for block in section.blocks -%}
           {%- liquid
             assign anv_label = block.settings.label | strip
-            assign anv_target = block.settings.target | strip | handleize
+            # Hedef olduğu gibi aktarılır (handleize YOK: tam section id'lerindeki "__" bozulmasın). JS temizler ve çözer.
+            assign anv_target = block.settings.target | strip | remove_first: '#'
           -%}
           {%- if anv_label != blank and anv_target != blank -%}
             <li class="anv__item" {{ block.shopify_attributes }}>
-              <a class="anv__link" href="#anv-{{ anv_target }}" data-anv-target="{{ anv_target }}">
+              <a class="anv__link" href="#{{ anv_target | escape }}" data-anv-target="{{ anv_target | escape }}">
                 {{- anv_label | escape -}}
               </a>
             </li>
@@ -155,7 +156,7 @@
           "type": "text",
           "id": "target",
           "label": "Hedef",
-          "info": "Çapa işaretçisi adı (vet-reviewed), bir elemanın id'si veya section anahtarı (related-products). Küçük harf ve tire.",
+          "info": "En kolayı: hedef section'ın id'sini yapıştırın (F12 → Elements, shopify-section-... ile başlar). Alternatif: Çapa işaretçisi adı veya section anahtarı (related-products).",
           "placeholder": "vet-reviewed"
         }
       ]

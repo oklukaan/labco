@@ -90,16 +90,21 @@
     }
 
     // Hedef çözümleme sırası (ilk bulunan kazanır):
-    //   1. Çapa işaretçisi: [data-anv-marker="hedef"]
-    //   2. Tam eleman id'si: #hedef
+    //   1. Tam eleman id'si: #hedef (yapıştırılan shopify-section-... id'si)
+    //   2. Çapa işaretçisi: [data-anv-marker="hedef"] (ham ya da slug)
     //   3. Section anahtarı: id'si "__hedef" ile biten Shopify section'ı
     //      (ör. "related-products" → #shopify-section-template--123__related-products)
     // Hiçbiri yoksa link gizlenir.
-    resolveTarget(handle) {
+    resolveTarget(raw) {
+      const handle = String(raw || '').trim().replace(/^#/, '');
+      if (!handle) return null;
       const safe = CSS.escape(handle);
+      // Yapıştırılan id'de boşluk/büyük harf olabilir; işaretçi adları için slug da denenir.
+      const slug = handle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
       return (
-        document.querySelector(`[data-anv-marker="${safe}"]`) ||
         document.getElementById(handle) ||
+        document.querySelector(`[data-anv-marker="${safe}"]`) ||
+        document.querySelector(`[data-anv-marker="${CSS.escape(slug)}"]`) ||
         document.querySelector(`.shopify-section[id$="__${safe}"]`) ||
         null
       );

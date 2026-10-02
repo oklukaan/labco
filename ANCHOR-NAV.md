@@ -39,21 +39,24 @@ Hedef üç biçimde yazılabilir; JS sırayla dener, ilk bulunanı kullanır:
 
 | Yöntem | Hedef alanına yazılan | Ne zaman |
 |---|---|---|
-| **A. Çapa işaretçisi** | işaretçinin çapa adı, ör. `vet-reviewed` | Hedef, bir section'ın başı değilse veya section anahtarını bilmiyorsanız. Varsayılan yöntem. |
-| **B. Section anahtarı** | şablon JSON'daki section anahtarı, ör. `related-products`, `main` | Mevcut bir section'ın başına gitmek yeterliyse. İşaretçi gerekmez. |
-| **C. Eleman id'si** | sayfadaki herhangi bir elemanın `id`'si | Temada veya app bloğunda hazır bir id varsa. |
+| **A. Section id'sini yapıştır** | `shopify-section-template--28388479861035__related-products` | En kolayı. Mevcut bir section'ın başına gitmek yeterliyse. |
+| **B. Çapa işaretçisi** | işaretçinin çapa adı, ör. `vet-reviewed` | Hedef bir section'ın başı değilse, ya da aynı kurulumu başka şablon/temaya taşıyacaksanız. |
+| **C. Section anahtarı** | `related-products`, `main` | A'nın kısa hali: id'nin `__` sonrası. Şablon numarası değişse de çalışır. |
 
-Küçük harf ve tire kullanın (`vet-reviewed`); büyük harf ve boşluk dönüştürülür.
+**Yöntem A — id yapıştır:** mağazada F12 → Elements → hedef bölümün üstündeki
+`<section id="shopify-section-…">` veya `<div id="shopify-section-…">` satırındaki id'yi kopyalayıp
+Hedef alanına yapıştırın. Baştaki `#` olsa da olur. Not: bu id şablona özeldir; şablon kopyalanır
+veya tema değişirse numara değişir, linki güncellemeniz gerekir. Taşınabilirlik önemliyse B veya C.
 
-**Yöntem A — işaretçi:** Customizer → **Add section** → **Çapa işaretçisi** → çapa adını yazın →
+**Yöntem B — işaretçi:** Customizer → **Add section** → **Çapa işaretçisi** → çapa adını yazın →
 section'ı, hedeflenecek section'ın **hemen üstüne** sürükleyin. Sayfada görünmez. İstediğiniz kadar
 ekleyebilirsiniz; "Not" alanı yalnızca editörde, hangi bölümün üstünde durduğunu hatırlamak içindir.
+Çapa adı küçük harf ve tire olmalıdır (`vet-reviewed`).
 
-**Yöntem B — section anahtarı:** Shopify her section'ı `id="shopify-section-template--<şablon>__<anahtar>"`
-ile sarar. Anahtar, `templates/<şablon>.json` dosyasındaki section adıdır. Dawn ürün şablonunda:
-`main` (ürün bilgisi), `related-products` (You may also like). Customizer'dan eklenen section'ların
-anahtarı rastgeledir (`multirow_AbCdEf`); onu öğrenmek için mağazada F12 → Elements → section'ın id'sine
-bakın ve `__` sonrasını yazın. Bu durumda Yöntem A daha pratiktir.
+**Yöntem C — section anahtarı:** Shopify her section'ı `id="shopify-section-template--<şablon>__<anahtar>"`
+ile sarar; anahtar `__` sonrasıdır (`templates/<şablon>.json` içindeki section adı). Dawn ürün
+şablonunda `main` (ürün bilgisi) ve `related-products` (You may also like) sabittir; customizer'dan
+eklenen section'ların anahtarı rastgeledir (`multirow_AbCdEf`).
 
 ### 2c. Kaydet ve mağazada test et
 
@@ -95,6 +98,7 @@ Editörde sol listeden bir Link bloğunu seçince önizleme o linkin hedefine ka
   `anchor-nav.css` bunu `.anv-marker:empty` ile ezer. İşaretçiyi değiştirirken bu kuralı koruyun.
 - **Theme check:** `anchor-marker.liquid` ve `anchor-nav.liquid` uyarısız geçer.
 - **Header grubu:** çubuk header grubundaysa Dawn'ın header'ını ölçerken kendi section'ını saymaz.
+- **Hedef alanı olduğu gibi okunur:** Liquid tarafında `handleize` uygulanmaz; aksi halde id'lerdeki `__` bozulurdu. Baştaki `#` ve boşluklar JS'te temizlenir.
 - **Bilgi paneli sekmeleri:** çubuktaki bir linkin ürün bilgi panelindeki sekmeyi açması (referansta
   "Vet Reviewed" → sekme) henüz yok; işaretçiyi panelin üstüne koyarak panele kaydırabilirsiniz.
 
