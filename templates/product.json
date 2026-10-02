@@ -139,10 +139,10 @@
           "settings": {
             "title": "Product information",
             "open_by_default": false,
-            "content_type": "facts",
+            "content_type": "features_info",
             "list_icon_style": "check",
             "list_layout": "auto",
-            "intro": "<h3>Take your dog’s health and comfort to the next level!</h3>",
+            "intro": "",
             "lead": "",
             "richtext": "",
             "dosage_col1_label": "",
