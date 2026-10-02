@@ -325,9 +325,13 @@
       {%- assign pip_check = pip_rows | strip -%}
       {%- if pip_check != blank -%}
         {%- liquid
-          assign pip_brand_label = settings.pip_brand_label | strip | default: shop.name
-          assign pip_others_label = settings.pip_others_label | strip | default: 'Others'
-          assign pip_logo_alt = settings.pip_brand_logo.alt | default: pip_brand_label
+          # Marka sütunu başlığı yedek sırası:
+          #   1. blok ayarı brand_image  2. tema ayarı pip_brand_logo  3. temanın logosu (settings.logo)
+          #   4. metin: blok brand_label → tema pip_brand_label → mağaza adı
+          assign pip_brand_label = block.settings.brand_label | strip | default: settings.pip_brand_label | strip | default: shop.name
+          assign pip_others_label = block.settings.others_label | strip | default: settings.pip_others_label | strip | default: 'Others'
+          assign pip_brand_image = block.settings.brand_image | default: settings.pip_brand_logo | default: settings.logo
+          assign pip_logo_alt = pip_brand_image.alt | default: pip_brand_label
         -%}
         <table class="pip-table pip-cmp">
           <colgroup>
@@ -340,9 +344,9 @@
               <th scope="col" class="pip-cmp__head-feature"><span class="pip-sr">Feature</span></th>
               <th scope="col" class="pip-cmp__brand pip-cmp__head-brand">
                 <span class="pip-cmp__brand-box">
-                  {%- if settings.pip_brand_logo != blank -%}
+                  {%- if pip_brand_image != blank -%}
                     {{
-                      settings.pip_brand_logo
+                      pip_brand_image
                       | image_url: width: 120
                       | image_tag:
                         widths: '60, 120',

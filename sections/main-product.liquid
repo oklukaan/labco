@@ -2276,6 +2276,27 @@
           "visible_if": "{{ block.settings.content_type == 'facts' }}"
         },
         {
+          "type": "image_picker",
+          "id": "brand_image",
+          "label": "Marka sütunu görseli",
+          "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa tema ayarındaki marka logosu, o da yoksa temanın logosu kullanılır.",
+          "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+        },
+        {
+          "type": "text",
+          "id": "brand_label",
+          "label": "Marka sütunu yazısı",
+          "info": "Görsel yoksa gösterilir. Boşsa tema ayarındaki marka etiketi, o da yoksa mağaza adı.",
+          "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+        },
+        {
+          "type": "text",
+          "id": "others_label",
+          "label": "Rakip sütunu yazısı",
+          "default": "Others",
+          "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+        },
+        {
           "type": "header",
           "content": "Özel kaynak (isteğe bağlı)",
           "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
@@ -2475,6 +2496,27 @@
           "label": "Tablo başlığı",
           "default": "Product Facts",
           "visible_if": "{{ block.settings.content_type == 'facts' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "brand_image",
+          "label": "Marka sütunu görseli",
+          "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa tema ayarındaki marka logosu, o da yoksa temanın logosu kullanılır.",
+          "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+        },
+        {
+          "type": "text",
+          "id": "brand_label",
+          "label": "Marka sütunu yazısı",
+          "info": "Görsel yoksa gösterilir. Boşsa tema ayarındaki marka etiketi, o da yoksa mağaza adı.",
+          "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+        },
+        {
+          "type": "text",
+          "id": "others_label",
+          "label": "Rakip sütunu yazısı",
+          "default": "Others",
+          "visible_if": "{{ block.settings.content_type == 'comparison' }}"
         },
         {
           "type": "header",

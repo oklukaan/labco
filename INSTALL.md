@@ -110,10 +110,66 @@ Dawn'da son blok `icon-with-text`'tir.
       "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
     },
     {
+      "type": "select",
+      "id": "list_icon_style",
+      "label": "Varsayılan madde ikonu",
+      "default": "check",
+      "info": "Maddenin kendi ikonu varsa her zaman o gösterilir.",
+      "options": [
+        {
+          "value": "check",
+          "label": "Tik ikonu"
+        },
+        {
+          "value": "custom",
+          "label": "Özel görsel"
+        },
+        {
+          "value": "none",
+          "label": "İkon yok"
+        }
+      ],
+      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "list_icon_image",
+      "label": "Özel madde ikonu",
+      "visible_if": "{{ block.settings.content_type == 'icon_list' and block.settings.list_icon_style == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "list_layout",
+      "label": "Madde görünümü",
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Otomatik (faydalar tek satır, diğerleri alt alta)"
+        },
+        {
+          "value": "inline",
+          "label": "Satır içi (Başlık - açıklama)"
+        },
+        {
+          "value": "stacked",
+          "label": "Alt alta (başlık üstte, açıklama altta)"
+        }
+      ],
+      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+    },
+    {
       "type": "richtext",
       "id": "intro",
       "label": "Giriş metni",
-      "info": "Doluysa panelden gelen girişin üstüne eklenir."
+      "info": "Kalın kısa başlık olarak gösterilir (ör. Take your dog’s health and comfort to the next level!)."
+    },
+    {
+      "type": "richtext",
+      "id": "lead",
+      "label": "Açıklama",
+      "info": "Başlığın altında normal ağırlıkta gösterilir. Ürün bilgisi maddelerinde paneldeki intro_info doluysa o kullanılır.",
+      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
     },
     {
       "type": "richtext",
@@ -141,6 +197,27 @@ Dawn'da son blok `icon-with-text`'tir.
       "visible_if": "{{ block.settings.content_type == 'facts' }}"
     },
     {
+      "type": "image_picker",
+      "id": "brand_image",
+      "label": "Marka sütunu görseli",
+      "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa tema ayarındaki marka logosu, o da yoksa temanın logosu kullanılır.",
+      "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+    },
+    {
+      "type": "text",
+      "id": "brand_label",
+      "label": "Marka sütunu yazısı",
+      "info": "Görsel yoksa gösterilir. Boşsa tema ayarındaki marka etiketi, o da yoksa mağaza adı.",
+      "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+    },
+    {
+      "type": "text",
+      "id": "others_label",
+      "label": "Rakip sütunu yazısı",
+      "default": "Others",
+      "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+    },
+    {
       "type": "header",
       "content": "Özel kaynak (isteğe bağlı)",
       "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
@@ -165,6 +242,13 @@ Dawn'da son blok `icon-with-text`'tir.
       "metaobject_type": "pip_quote",
       "label": "Alıntı (alıntı)",
       "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_photo",
+      "label": "Uzman fotoğrafı",
+      "info": "Alıntı kaydındaki photo alanı boşsa kullanılır. 56px yuvarlak gösterilir.",
+      "visible_if": "{{ block.settings.content_type == 'quote' }}"
     },
     {
       "type": "textarea",
@@ -248,10 +332,66 @@ Dawn'da son blok `icon-with-text`'tir.
       "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
     },
     {
+      "type": "select",
+      "id": "list_icon_style",
+      "label": "Varsayılan madde ikonu",
+      "default": "check",
+      "info": "Maddenin kendi ikonu varsa her zaman o gösterilir.",
+      "options": [
+        {
+          "value": "check",
+          "label": "Tik ikonu"
+        },
+        {
+          "value": "custom",
+          "label": "Özel görsel"
+        },
+        {
+          "value": "none",
+          "label": "İkon yok"
+        }
+      ],
+      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "list_icon_image",
+      "label": "Özel madde ikonu",
+      "visible_if": "{{ block.settings.content_type == 'icon_list' and block.settings.list_icon_style == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "list_layout",
+      "label": "Madde görünümü",
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Otomatik (faydalar tek satır, diğerleri alt alta)"
+        },
+        {
+          "value": "inline",
+          "label": "Satır içi (Başlık - açıklama)"
+        },
+        {
+          "value": "stacked",
+          "label": "Alt alta (başlık üstte, açıklama altta)"
+        }
+      ],
+      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
+    },
+    {
       "type": "richtext",
       "id": "intro",
       "label": "Giriş metni",
-      "info": "Doluysa panelden gelen girişin üstüne eklenir."
+      "info": "Kalın kısa başlık olarak gösterilir (ör. Take your dog’s health and comfort to the next level!)."
+    },
+    {
+      "type": "richtext",
+      "id": "lead",
+      "label": "Açıklama",
+      "info": "Başlığın altında normal ağırlıkta gösterilir. Ürün bilgisi maddelerinde paneldeki intro_info doluysa o kullanılır.",
+      "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
     },
     {
       "type": "richtext",
@@ -279,6 +419,27 @@ Dawn'da son blok `icon-with-text`'tir.
       "visible_if": "{{ block.settings.content_type == 'facts' }}"
     },
     {
+      "type": "image_picker",
+      "id": "brand_image",
+      "label": "Marka sütunu görseli",
+      "info": "Sadece bu tablonun marka sütununda görünür. Beyaz, kare, şeffaf arka planlı görsel önerilir. Boşsa tema ayarındaki marka logosu, o da yoksa temanın logosu kullanılır.",
+      "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+    },
+    {
+      "type": "text",
+      "id": "brand_label",
+      "label": "Marka sütunu yazısı",
+      "info": "Görsel yoksa gösterilir. Boşsa tema ayarındaki marka etiketi, o da yoksa mağaza adı.",
+      "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+    },
+    {
+      "type": "text",
+      "id": "others_label",
+      "label": "Rakip sütunu yazısı",
+      "default": "Others",
+      "visible_if": "{{ block.settings.content_type == 'comparison' }}"
+    },
+    {
       "type": "header",
       "content": "Özel kaynak (isteğe bağlı)",
       "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
@@ -303,6 +464,13 @@ Dawn'da son blok `icon-with-text`'tir.
       "metaobject_type": "pip_quote",
       "label": "Alıntı (alıntı)",
       "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_photo",
+      "label": "Uzman fotoğrafı",
+      "info": "Alıntı kaydındaki photo alanı boşsa kullanılır. 56px yuvarlak gösterilir.",
+      "visible_if": "{{ block.settings.content_type == 'quote' }}"
     },
     {
       "type": "textarea",
@@ -370,6 +538,23 @@ Dawn'da son blok `icon-with-text`'tir.
   "settings": [
     {
       "type": "header",
+      "content": "Yazı tipi"
+    },
+    {
+      "type": "font_picker",
+      "id": "pip_font",
+      "label": "Panel yazı tipi",
+      "default": "inter_n4",
+      "info": "Referans tasarım Inter kullanır."
+    },
+    {
+      "type": "checkbox",
+      "id": "pip_use_theme_font",
+      "label": "Bunun yerine temanın gövde yazı tipini kullan",
+      "default": false
+    },
+    {
+      "type": "header",
       "content": "Karşılaştırma tablosu"
     },
     {
@@ -393,6 +578,12 @@ Dawn'da son blok `icon-with-text`'tir.
     {
       "type": "header",
       "content": "Renkler"
+    },
+    {
+      "type": "color",
+      "id": "pip_color_text",
+      "label": "Ana metin",
+      "default": "#1E1F24"
     },
     {
       "type": "color",
@@ -509,6 +700,20 @@ Bloğun **Giriş metni** ayarı doluysa, panelden gelen girişin üstüne ekleni
 | `pip_comparison_row` | `icon` (file_reference, image), `title` (single_line_text_field), `description` (multi_line_text_field), `link_url` (url), `link_label` (single_line_text_field), `ours` (boolean), `others` (boolean) |
 | `pip_feature` | `icon` (file_reference, image, opsiyonel), `title` (single_line_text_field), `description` (rich_text_field) |
 | `pip_quote` | `quote` (multi_line_text_field), `author_name` (single_line_text_field), `author_title` (single_line_text_field), `photo` (file_reference, image) |
+
+### Karşılaştırma tablosu marka sütunu
+
+Blokta (yalnızca Karşılaştırma tablosu seçiliyken görünür):
+
+| Ayar | Görev |
+|---|---|
+| `brand_image` — Marka sütunu görseli | Siyah başlık kutusundaki görsel. Beyaz, kare, şeffaf arka planlı görsel önerilir. |
+| `brand_label` — Marka sütunu yazısı | Görsel yoksa gösterilen metin. |
+| `others_label` — Rakip sütunu yazısı | Varsayılan "Others". |
+
+Marka sütunu başlığının yedek sırası: `brand_image` → tema ayarı **Marka logosu** (`pip_brand_logo`) →
+temanın logosu (`settings.logo`) → metin: `brand_label` → tema ayarı **Marka etiketi** (`pip_brand_label`) → mağaza adı.
+Rakip sütunu: `others_label` → tema ayarı **Diğerleri etiketi** (`pip_others_label`) → "Others".
 
 ### Özel kaynak (override)
 
