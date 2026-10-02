@@ -206,6 +206,30 @@
             "promo_bg": ""
           }
         },
+        "pip_accordion_UicW77": {
+          "type": "pip_accordion",
+          "settings": {
+            "title": "Why Subscribe?",
+            "open_by_default": false,
+            "content_type": "features_info",
+            "list_icon_style": "check",
+            "list_layout": "auto",
+            "intro": "",
+            "lead": "",
+            "richtext": "",
+            "dosage_col1_label": "Dog Size",
+            "dosage_col2_label": "Daily",
+            "facts_title": "Product Facts",
+            "brand_label": "",
+            "others_label": "Others",
+            "override_features": [],
+            "override_rows": "",
+            "override_footer": "",
+            "promo_title": "",
+            "promo_subtitle": "",
+            "promo_bg": ""
+          }
+        },
         "description": {
           "type": "description",
           "settings": {}
@@ -243,6 +267,7 @@
         "pip_accordion_VUFXBd",
         "pip_accordion_pBHBcP",
         "pip_accordion_REWXH8",
+        "pip_accordion_UicW77",
         "description",
         "share",
         "appstle_loyalty_appstle_loyalty_current_vip_tier_U6BcYL",
