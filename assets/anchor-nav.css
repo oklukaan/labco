@@ -1,7 +1,6 @@
 /*
   Çapa menüsü (anv)
   Tüm kurallar .anv- ile izoledir. Birimler px (Dawn kök font boyutu %62.5).
-  --anv-top: yapışma konumu (header yüksekliği), JS verir.
   --anv-offset: işaretçilerin scroll-margin-top'u (header + çubuk), JS verir.
 */
 
@@ -22,16 +21,28 @@
   scroll-margin-top: var(--anv-offset, 0px);
 }
 
-/* Yapışkanlık section sarmalayıcısına uygulanır (JS sınıfı ekler): sticky, kapsayıcısının
-   dışına çıkamadığı için <anchor-nav>'ın kendisi değil, Shopify section div'i yapışır. */
+/* Yapışma: JS, çubuğun doğal konumu header'ın altına değince .is-fixed ekler ve top'u header'ın
+   görünür alt kenarına eşitler; .anv-placeholder akıştaki boşluğu korur. Sticky yerine fixed:
+   çubuk hangi section grubunda olursa olsun (header grubu dâhil) ve header gizli/animasyonlu
+   olsa da kapsayıcıya bağlı kalmaz. */
 .anv-section {
   position: relative;
-  z-index: 3;
+  z-index: 5;
 }
 
-.anv-section--sticky {
-  position: sticky;
-  top: var(--anv-top, 0px);
+.anv.is-fixed {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 5;
+}
+
+/* Boş div; Dawn'ın div:empty kuralına karşı görünür tutulur (konumu ölçülebilsin). */
+.anv-placeholder,
+.anv-placeholder:empty {
+  display: block;
+  height: 0;
 }
 
 .anv {

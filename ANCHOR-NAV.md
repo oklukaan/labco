@@ -78,10 +78,12 @@ Editörde sol listeden bir Link bloğunu seçince önizleme o linkin hedefine ka
 
 ## 4. Davranış
 
-- **Yapışma:** JS, yapışkan header'ın yüksekliğini ölçer (`.shopify-section-header` ve benzerleri) ve
-  çubuğu tam altına yerleştirir. Header yüksekliği değişince (`ResizeObserver`) yeniden ölçer.
-  Yapışkanlık Shopify'ın section sarmalayıcısına uygulanır; çubuğun kendisine uygulansaydı
-  kapsayıcısının dışına çıkamazdı.
+- **Yapışma:** çubuk doğal yerinde başlar; kaydırınca üst kenarı header'ın görünür alt kenarına değdiği
+  anda `position: fixed` olur (akıştaki boşluğu bir yer tutucu korur), geri kaydırınca akışa döner.
+  Header'ın alt kenarı her kaydırma karesinde okunur: Dawn'ın "yalnızca yukarı kaydırınca göster"
+  modunda header gizlenince çubuk ekranın tepesine, header dönünce altına kayar. Header yoksa veya
+  gizliyse çubuk tepeye yapışır. Sticky yerine fixed kullanıldığı için çubuğun hangi section
+  grubunda olduğu (header grubu dâhil) ve Dawn'ın header kuralları sonucu etkilemez.
 - **Kaydırma:** hedefin üst kenarı header + çubuğun hemen altına gelir. `prefers-reduced-motion`
   açıksa anında, değilse yumuşak. URL hash'i `history.replaceState` ile linkin etiketine göre güncellenir
   (`#vet-reviewed`); hash ile açılan sayfa doğru ofsetle konumlanır.
@@ -98,7 +100,7 @@ Editörde sol listeden bir Link bloğunu seçince önizleme o linkin hedefine ka
 - **Dawn `div:empty`:** Dawn'ın `base.css`'i boş `div`'leri gizler. İşaretçi boş bir `div` olduğu için
   `anchor-nav.css` bunu `.anv-marker:empty` ile ezer. İşaretçiyi değiştirirken bu kuralı koruyun.
 - **Theme check:** `anchor-marker.liquid` ve `anchor-nav.liquid` uyarısız geçer.
-- **Header grubu:** çubuk header grubundaysa Dawn'ın header'ını ölçerken kendi section'ını saymaz.
+- **Header grubu:** çubuk header grubundaysa header ölçümünde kendi section'ı sayılmaz; fixed konumlandırma sayesinde header gizli olsa da çalışır.
 - **Hedef alanı olduğu gibi okunur:** Liquid tarafında `handleize` uygulanmaz; aksi halde id'lerdeki `__` bozulurdu. Baştaki `#` ve boşluklar JS'te temizlenir.
 - **Bilgi paneli sekmeleri:** çubuktaki bir linkin ürün bilgi panelindeki sekmeyi açması (referansta
   "Vet Reviewed" → sekme) henüz yok; işaretçiyi panelin üstüne koyarak panele kaydırabilirsiniz.
@@ -107,6 +109,6 @@ Editörde sol listeden bir Link bloğunu seçince önizleme o linkin hedefine ka
 
 1. Dört dosyayı kopyalayın.
 2. Customizer'dan çubuğu ve işaretçileri ekleyin (bölüm 2).
-3. Çubuk header'ın altına yapışmıyorsa temanın header'ı `.shopify-section-header`, `header` veya
-   `.shopify-section-group-header-group` seçicilerinden biriyle bulunamıyordur; `anchor-nav.js`
-   içindeki `stickyHeaderHeight` listesine temanın header seçicisini ekleyin.
+3. Çubuk header'ın altına değil ekranın tepesine yapışıyorsa temanın header'ı `.shopify-section-header`,
+   `.section-header`, `.shopify-section-group-header-group` veya `header` seçicilerinden biriyle
+   bulunamıyordur; `anchor-nav.js` içindeki `headerBottom` listesine temanın header seçicisini ekleyin.

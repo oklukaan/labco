@@ -1,7 +1,8 @@
 /*
   Çapa menüsü (anv)
-  - Header yüksekliğini ölçüp çubuğu altına yapıştırır (--anv-top) ve işaretçilerin
-    scroll-margin-top'unu ayarlar (--anv-offset).
+  - Kaydırınca çubuk header'ın görünür alt kenarına sabitlenir (position: fixed + yer tutucu).
+    Header'ın konumu her karede okunur; Dawn'ın gizle/göster animasyonu izlenir. İşaretçilerin
+    scroll-margin-top'u --anv-offset ile verilir.
   - Linke tıklayınca ilgili işaretçiye yumuşak kaydırır (prefers-reduced-motion → anında).
   - Scroll-spy: çubuğun altındaki eşiği geçen son işaretçi aktif link olur; mobilde aktif
     link görünür alana getirilir.
@@ -15,25 +16,20 @@
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  // Dawn header'ı yapışkansa yüksekliği; değilse 0. Diğer temalarda <header> / .shopify-section-header denenir.
-  const stickyHeaderHeight = (self) => {
-    const candidates = [
-      '.shopify-section-header-sticky',
-      '.shopify-section-header',
-      '.shopify-section-group-header-group',
-      'header',
-    ];
+  // Header'ın ekrandaki görünür alt kenarı (px). Dawn header'ı kaydırırken sticky/hidden
+  // sınıflarını değiştirip top'u animasyonla oynattığı için her karede yeniden okunur.
+  // Header yoksa, gizliyse ya da ekran dışındaysa 0.
+  const headerBottom = (self) => {
+    const candidates = ['.shopify-section-header', '.shopify-section-group-header-group', '.section-header', 'header'];
     for (const selector of candidates) {
-      // Çubuğun kendi section'ı header grubunda olabilir; onu header sayma.
-      const element = Array.from(document.querySelectorAll(selector)).find((el) => !el.contains(self));
+      const element = Array.from(document.querySelectorAll(selector)).find((el) => !el.contains(self) && !self.contains(el));
       if (!element) continue;
-      const position = getComputedStyle(element).position;
-      const inner = element.querySelector('.header-wrapper, header');
-      const innerPosition = inner ? getComputedStyle(inner).position : '';
-      if (position === 'sticky' || position === 'fixed' || innerPosition === 'sticky' || innerPosition === 'fixed') {
-        return element.getBoundingClientRect().height;
-      }
-      return 0;
+      const style = getComputedStyle(element);
+      if (style.display === 'none' || style.visibility === 'hidden') return 0;
+      const rect = element.getBoundingClientRect();
+      if (rect.height === 0) return 0;
+      // Normal akıştaki (yapışkan olmayan) header kaydırılınca yukarı çıkar; bottom negatife düşer → 0.
+      return Math.max(0, Math.round(rect.bottom));
     }
     return 0;
   };
@@ -57,6 +53,7 @@
         this.scrollTicking = true;
         requestAnimationFrame(() => {
           this.scrollTicking = false;
+          this.updateSticky();
           this.updateActive();
         });
       };
@@ -72,7 +69,14 @@
         const header = document.querySelector('.shopify-section-header, header');
         if (header) this.resizeObserver.observe(header);
       }
+      // Dawn header'ı gizle/göster geçişini top ile animasyonlar; geçiş boyunca çubuğu izle.
+      this.onHeaderTransition = (event) => {
+        const t = event.target;
+        if (t && t.matches && t.matches('.shopify-section-header, .section-header')) this.followHeader();
+      };
+      document.addEventListener('transitionrun', this.onHeaderTransition, true);
 
+      this.updateSticky();
       this.updateActive();
 
       // Sayfa hash ile açıldıysa (kısa etiket hash'i veya hedef id) ofsetli konuma getir.
@@ -86,6 +90,7 @@
     disconnectedCallback() {
       window.removeEventListener('scroll', this.onScroll);
       window.removeEventListener('resize', this.onResize);
+      document.removeEventListener('transitionrun', this.onHeaderTransition, true);
       if (this.resizeObserver) this.resizeObserver.disconnect();
       this.anvReady = false;
     }
@@ -133,15 +138,57 @@
     }
 
     measure() {
+      // Yer tutucu: çubuk fixed olunca akıştaki boşluğu korur, içerik zıplamaz.
+      if (!this.placeholder) {
+        this.placeholder = document.createElement('div');
+        this.placeholder.className = 'anv-placeholder';
+        this.placeholder.setAttribute('aria-hidden', 'true');
+        this.parentNode.insertBefore(this.placeholder, this);
+      }
+      this.barHeight = this.getBoundingClientRect().height;
+      this.placeholder.style.height = this.classList.contains('is-fixed') ? `${this.barHeight}px` : '0px';
+      this.updateSticky();
+    }
+
+    // Çubuk, doğal konumu header'ın alt kenarına değince fixed olur; geri kaydırınca akışa döner.
+    updateSticky() {
       const sticky = this.classList.contains('anv--sticky');
-      const headerHeight = sticky ? stickyHeaderHeight(this) : 0;
-      // Sticky, section sarmalayıcısına (Shopify'ın div'i) uygulanır; yoksa elemanın kendisine.
-      const wrapper = this.closest('.anv-section') || this;
-      wrapper.classList.toggle('anv-section--sticky', sticky);
-      wrapper.style.setProperty('--anv-top', `${Math.round(headerHeight)}px`);
-      const barHeight = this.getBoundingClientRect().height;
-      this.offset = Math.round(headerHeight + barHeight);
+      const hb = sticky ? headerBottom(this) : 0;
+      if (sticky && this.placeholder) {
+        const naturalTop = this.placeholder.getBoundingClientRect().top;
+        const shouldFix = naturalTop <= hb;
+        if (shouldFix !== this.classList.contains('is-fixed')) {
+          this.classList.toggle('is-fixed', shouldFix);
+          this.placeholder.style.height = shouldFix ? `${this.barHeight}px` : '0px';
+        }
+        this.style.top = shouldFix ? `${hb}px` : '';
+      } else if (this.classList.contains('is-fixed')) {
+        this.classList.remove('is-fixed');
+        if (this.placeholder) this.placeholder.style.height = '0px';
+        this.style.top = '';
+      }
+      // Kaydırma hedefi ofseti: header'ın görünür alt kenarı + çubuk yüksekliği.
+      this.offset = Math.round(hb + (this.barHeight || 0));
       document.documentElement.style.setProperty('--anv-offset', `${this.offset}px`);
+    }
+
+    // Header animasyonu / yumuşak kaydırma bitene kadar birkaç kare çubuğu header'a bağlı tut.
+    followHeader(frames, marker) {
+      let left = frames || 20;
+      const step = () => {
+        this.updateSticky();
+        this.updateActive();
+        if (--left > 0) {
+          requestAnimationFrame(step);
+        } else if (marker) {
+          // Kaydırma bitti: header bu arada gizlenmiş/görünmüş olabilir; hedefi son ofsete göre düzelt.
+          const diff = Math.round(marker.getBoundingClientRect().top - this.offset);
+          if (Math.abs(diff) > 1) window.scrollBy({ top: diff, behavior: 'auto' });
+          this.updateSticky();
+          this.updateActive();
+        }
+      };
+      requestAnimationFrame(step);
     }
 
     onClick(event) {
@@ -165,7 +212,10 @@
     scrollTo(marker, instant) {
       this.measure();
       const top = marker.getBoundingClientRect().top + window.scrollY - this.offset;
-      window.scrollTo({ top: Math.max(0, top), behavior: instant || reduceMotion.matches ? 'auto' : 'smooth' });
+      const behavior = instant || reduceMotion.matches ? 'auto' : 'smooth';
+      window.scrollTo({ top: Math.max(0, top), behavior });
+      // Yumuşak kaydırma sırasında header gizlenip görünebilir; çubuğu ~1 sn boyunca izle.
+      this.followHeader(behavior === 'smooth' ? 70 : 3, marker);
     }
 
     updateActive() {
