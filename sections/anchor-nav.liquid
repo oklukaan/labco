@@ -1,7 +1,7 @@
 {%- comment -%}
   Çapa menüsü — header'ın altına yapışan bölüm navigasyonu.
-  - Her blok bir link: etiket + hedef çapa adı. Hedef, sayfadaki bir "Çapa işaretçisi"
-    section'ıdır (id="anv-<çapa adı>"). Hedefi sayfada bulunmayan link JS ile gizlenir.
+  - Her blok bir link: etiket + hedef. Hedef sırayla: "Çapa işaretçisi" adı, tam eleman id'si,
+    ya da Shopify section anahtarı (id'si "__anahtar" ile biten section). Bulunmayan link gizlenir.
   - Tıklayınca yumuşak kaydırma (prefers-reduced-motion → anında), kaydırırken aktif link
     vurgusu (scroll-spy), mobilde yatay kaydırılabilir şerit.
   - Header yüksekliği JS ile ölçülür; Dawn'ın yapışkan header ayarı açık/kapalı fark etmez.
@@ -154,8 +154,8 @@
         {
           "type": "text",
           "id": "target",
-          "label": "Hedef çapa adı",
-          "info": "Sayfadaki bir Çapa işaretçisi'nin çapa adı. Örn: vet-reviewed",
+          "label": "Hedef",
+          "info": "Çapa işaretçisi adı (vet-reviewed), bir elemanın id'si veya section anahtarı (related-products). Küçük harf ve tire.",
           "placeholder": "vet-reviewed"
         }
       ]

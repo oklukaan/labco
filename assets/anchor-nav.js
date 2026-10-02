@@ -5,6 +5,7 @@
   - Linke tıklayınca ilgili işaretçiye yumuşak kaydırır (prefers-reduced-motion → anında).
   - Scroll-spy: çubuğun altındaki eşiği geçen son işaretçi aktif link olur; mobilde aktif
     link görünür alana getirilir.
+  - Hedef: çapa işaretçisi, tam eleman id'si veya section anahtarı (bkz. resolveTarget).
   - Hedefi sayfada olmayan linkler gizlenir. Vanilla, bağımlılıksız, idempotent.
 */
 (() => {
@@ -88,15 +89,31 @@
       this.anvReady = false;
     }
 
-    // Her link için işaretçiyi bul; yoksa linki gizle.
+    // Hedef çözümleme sırası (ilk bulunan kazanır):
+    //   1. Çapa işaretçisi: [data-anv-marker="hedef"]
+    //   2. Tam eleman id'si: #hedef
+    //   3. Section anahtarı: id'si "__hedef" ile biten Shopify section'ı
+    //      (ör. "related-products" → #shopify-section-template--123__related-products)
+    // Hiçbiri yoksa link gizlenir.
+    resolveTarget(handle) {
+      const safe = CSS.escape(handle);
+      return (
+        document.querySelector(`[data-anv-marker="${safe}"]`) ||
+        document.getElementById(handle) ||
+        document.querySelector(`.shopify-section[id$="__${safe}"]`) ||
+        null
+      );
+    }
+
     resolveTargets() {
       this.targets = [];
       this.links.forEach((link) => {
         const handle = link.dataset.anvTarget;
-        const marker = document.querySelector(`[data-anv-marker="${CSS.escape(handle)}"]`);
+        const marker = this.resolveTarget(handle);
         const item = link.closest('.anv__item');
         if (marker) {
           this.targets.push({ link, marker });
+          if (marker.id) link.setAttribute('href', `#${marker.id}`);
           if (item) item.hidden = false;
         } else if (item) {
           item.hidden = true;
