@@ -9,6 +9,14 @@
  */
 {
   "sections": {
+    "anchor_marker_rtCexX": {
+      "type": "anchor-marker",
+      "name": "Çapa işaretçisi",
+      "settings": {
+        "handle": "product-info",
+        "label": ""
+      }
+    },
     "main": {
       "type": "main-product",
       "blocks": {
@@ -291,14 +299,6 @@
         "padding_bottom": 12
       }
     },
-    "anchor_marker_rtCexX": {
-      "type": "anchor-marker",
-      "name": "Çapa işaretçisi",
-      "settings": {
-        "handle": "product-info",
-        "label": ""
-      }
-    },
     "related-products": {
       "type": "related-products",
       "settings": {
@@ -391,8 +391,8 @@
     }
   },
   "order": [
-    "main",
     "anchor_marker_rtCexX",
+    "main",
     "related-products",
     "anchor_marker_4HD8Km",
     "multirow_iAEPME",
