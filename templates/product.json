@@ -299,6 +299,14 @@
         "padding_bottom": 12
       }
     },
+    "anchor_marker_4HD8Km": {
+      "type": "anchor-marker",
+      "name": "Çapa işaretçisi",
+      "settings": {
+        "handle": "vet-reviewed",
+        "label": ""
+      }
+    },
     "related-products": {
       "type": "related-products",
       "settings": {
@@ -315,14 +323,6 @@
         "show_rating": false,
         "padding_top": 36,
         "padding_bottom": 28
-      }
-    },
-    "anchor_marker_4HD8Km": {
-      "type": "anchor-marker",
-      "name": "Çapa işaretçisi",
-      "settings": {
-        "handle": "vet-reviewed",
-        "label": ""
       }
     },
     "multirow_iAEPME": {
@@ -393,9 +393,9 @@
   "order": [
     "anchor_marker_rtCexX",
     "main",
-    "related-products",
     "anchor_marker_4HD8Km",
-    "multirow_iAEPME",
-    "anchor_marker_eWYkKQ"
+    "related-products",
+    "anchor_marker_eWYkKQ",
+    "multirow_iAEPME"
   ]
 }
