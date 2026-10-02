@@ -689,12 +689,17 @@
   object-fit: contain;
 }
 
+/* Logo yoksa kısa metin: tek satır, küçük font, sığmazsa üç noktayla kesilir. */
 .pip-cmp__brand-label {
-  font-size: 12px;
-  font-weight: 600;
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: 700;
   line-height: 1.2;
   text-align: center;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .pip-cmp .pip-cmp__head-others {

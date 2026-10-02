@@ -79,6 +79,11 @@
     assign pip_extra = pip_panel_intro.value | escape | newline_to_br | prepend: '<p>' | append: '</p>'
   endif
   assign pip_check = pip_extra | strip_html | strip
+  # Panelde açıklama yoksa (ör. fayda maddeleri) bloğun "Açıklama" ayarı kullanılır.
+  if pip_check == blank and pip_type == 'icon_list'
+    assign pip_extra = block.settings.lead
+    assign pip_check = pip_extra | strip_html | strip
+  endif
   assign pip_has_lead = false
   if pip_check != blank
     assign pip_has_lead = true

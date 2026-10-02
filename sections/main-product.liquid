@@ -2241,7 +2241,14 @@
           "type": "richtext",
           "id": "intro",
           "label": "Giriş metni",
-          "info": "Doluysa panelden gelen girişin üstüne eklenir."
+          "info": "Kalın kısa başlık olarak gösterilir (ör. Take your dog’s health and comfort to the next level!)."
+        },
+        {
+          "type": "richtext",
+          "id": "lead",
+          "label": "Açıklama",
+          "info": "Başlığın altında normal ağırlıkta gösterilir. Ürün bilgisi maddelerinde paneldeki intro_info doluysa o kullanılır.",
+          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
         },
         {
           "type": "richtext",
@@ -2428,7 +2435,14 @@
           "type": "richtext",
           "id": "intro",
           "label": "Giriş metni",
-          "info": "Doluysa panelden gelen girişin üstüne eklenir."
+          "info": "Kalın kısa başlık olarak gösterilir (ör. Take your dog’s health and comfort to the next level!)."
+        },
+        {
+          "type": "richtext",
+          "id": "lead",
+          "label": "Açıklama",
+          "info": "Başlığın altında normal ağırlıkta gösterilir. Ürün bilgisi maddelerinde paneldeki intro_info doluysa o kullanılır.",
+          "visible_if": "{{ block.settings.content_type == 'icon_list' }}"
         },
         {
           "type": "richtext",
