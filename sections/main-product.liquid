@@ -2528,28 +2528,34 @@
         },
         {
           "type": "header",
-          "content": "Promosyon kartı"
+          "content": "Promosyon kartı",
+          "info": "Abonelik avantajları içeriğinin altında gösterilir.",
+          "visible_if": "{{ block.settings.content_type == 'why_subscribe' }}"
         },
         {
           "type": "text",
           "id": "promo_title",
           "label": "Kart başlığı",
-          "info": "Boşsa kart gösterilmez."
+          "info": "Boşsa kart gösterilmez.",
+          "visible_if": "{{ block.settings.content_type == 'why_subscribe' }}"
         },
         {
           "type": "text",
           "id": "promo_subtitle",
-          "label": "Kart alt metni"
+          "label": "Kart alt metni",
+          "visible_if": "{{ block.settings.content_type == 'why_subscribe' }}"
         },
         {
           "type": "image_picker",
           "id": "promo_image",
-          "label": "Kart görseli"
+          "label": "Kart görseli",
+          "visible_if": "{{ block.settings.content_type == 'why_subscribe' }}"
         },
         {
           "type": "color",
           "id": "promo_bg",
-          "label": "Kart arka planı"
+          "label": "Kart arka planı",
+          "visible_if": "{{ block.settings.content_type == 'why_subscribe' }}"
         }
       ]
     }

@@ -36,8 +36,13 @@
   endfor
 
   assign pip_title = block.settings.title | strip
-  assign pip_promo_title = block.settings.promo_title | strip
-  assign pip_promo_subtitle = block.settings.promo_subtitle | strip
+  # Promosyon kartı yalnızca "Abonelik avantajları" içerik tipinde çizilir.
+  assign pip_promo_title = ''
+  assign pip_promo_subtitle = ''
+  if block.settings.content_type == 'why_subscribe'
+    assign pip_promo_title = block.settings.promo_title | strip
+    assign pip_promo_subtitle = block.settings.promo_subtitle | strip
+  endif
 -%}
 
 {%- if pip_load_assets -%}
