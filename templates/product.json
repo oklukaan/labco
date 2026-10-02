@@ -59,9 +59,7 @@
             "dosage_col1_label": "",
             "dosage_col2_label": "",
             "facts_title": "Product Facts",
-            "override_comparison": [],
             "override_features": [],
-            "override_quote": "",
             "override_rows": "",
             "override_footer": ""
           }
@@ -80,9 +78,7 @@
             "dosage_col1_label": "qweqwe",
             "dosage_col2_label": "qeweqw",
             "facts_title": "Product Facts",
-            "override_comparison": [],
             "override_features": [],
-            "override_quote": "",
             "override_rows": "",
             "override_footer": ""
           }
@@ -101,9 +97,7 @@
             "dosage_col1_label": "Köpek boyutu",
             "dosage_col2_label": "Günlük doz",
             "facts_title": "Product Facts",
-            "override_comparison": [],
             "override_features": [],
-            "override_quote": "",
             "override_rows": "",
             "override_footer": ""
           }
@@ -122,9 +116,7 @@
             "dosage_col1_label": "Köpek boyutu",
             "dosage_col2_label": "Günlük doz",
             "facts_title": "Product Facts",
-            "override_comparison": [],
             "override_features": [],
-            "override_quote": "",
             "override_rows": "",
             "override_footer": ""
           }
@@ -143,9 +135,7 @@
             "dosage_col1_label": "",
             "dosage_col2_label": "",
             "facts_title": "Product Facts",
-            "override_comparison": [],
             "override_features": [],
-            "override_quote": "",
             "override_rows": "",
             "override_footer": "",
             "promo_title": "",

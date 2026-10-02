@@ -1474,28 +1474,6 @@
       },
       {
         "type": "header",
-        "content": "Karşılaştırma tablosu"
-      },
-      {
-        "type": "image_picker",
-        "id": "pip_brand_logo",
-        "label": "Marka logosu",
-        "info": "Marka sütununun siyah başlık kutusunda gösterilir. Açık renkli logo önerilir."
-      },
-      {
-        "type": "text",
-        "id": "pip_brand_label",
-        "label": "Marka etiketi",
-        "info": "Logo yoksa gösterilir. Boşsa mağaza adı kullanılır."
-      },
-      {
-        "type": "text",
-        "id": "pip_others_label",
-        "label": "Diğerleri etiketi",
-        "default": "Others"
-      },
-      {
-        "type": "header",
         "content": "Renkler"
       },
       {

@@ -219,28 +219,14 @@ Dawn'da son blok `icon-with-text`'tir.
     },
     {
       "type": "header",
-      "content": "Özel kaynak (isteğe bağlı)",
-      "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
-    },
-    {
-      "type": "metaobject_list",
-      "id": "override_comparison",
-      "metaobject_type": "pip_comparison_row",
-      "label": "Karşılaştırma satırları (karşılaştırma tablosu)",
-      "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+      "content": "Ortak içerik (tüm ürünlerde aynı)",
+      "info": "Doluysa ürünün paneli yerine bu içerik gösterilir."
     },
     {
       "type": "metaobject_list",
       "id": "override_features",
       "metaobject_type": "pip_feature",
-      "label": "Liste maddeleri (ikonlu liste)",
-      "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
-    },
-    {
-      "type": "metaobject",
-      "id": "override_quote",
-      "metaobject_type": "pip_quote",
-      "label": "Alıntı (alıntı)",
+      "label": "Ortak liste maddeleri (tüm ürünlerde aynı)",
       "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
     },
     {
@@ -260,7 +246,7 @@ Dawn'da son blok `icon-with-text`'tir.
     {
       "type": "richtext",
       "id": "override_footer",
-      "label": "Alt metin",
+      "label": "Ortak alt metin (tüm ürünlerde aynı)",
       "info": "Boş bırakılırsa ürünün panelinden okunur.",
       "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
     }
@@ -441,28 +427,14 @@ Dawn'da son blok `icon-with-text`'tir.
     },
     {
       "type": "header",
-      "content": "Özel kaynak (isteğe bağlı)",
-      "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
-    },
-    {
-      "type": "metaobject_list",
-      "id": "override_comparison",
-      "metaobject_type": "pip_comparison_row",
-      "label": "Karşılaştırma satırları (karşılaştırma tablosu)",
-      "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+      "content": "Ortak içerik (tüm ürünlerde aynı)",
+      "info": "Doluysa ürünün paneli yerine bu içerik gösterilir."
     },
     {
       "type": "metaobject_list",
       "id": "override_features",
       "metaobject_type": "pip_feature",
-      "label": "Liste maddeleri (ikonlu liste)",
-      "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
-    },
-    {
-      "type": "metaobject",
-      "id": "override_quote",
-      "metaobject_type": "pip_quote",
-      "label": "Alıntı (alıntı)",
+      "label": "Ortak liste maddeleri (tüm ürünlerde aynı)",
       "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
     },
     {
@@ -482,7 +454,7 @@ Dawn'da son blok `icon-with-text`'tir.
     {
       "type": "richtext",
       "id": "override_footer",
-      "label": "Alt metin",
+      "label": "Ortak alt metin (tüm ürünlerde aynı)",
       "info": "Boş bırakılırsa ürünün panelinden okunur.",
       "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
     },
@@ -552,28 +524,6 @@ Dawn'da son blok `icon-with-text`'tir.
       "id": "pip_use_theme_font",
       "label": "Bunun yerine temanın gövde yazı tipini kullan",
       "default": false
-    },
-    {
-      "type": "header",
-      "content": "Karşılaştırma tablosu"
-    },
-    {
-      "type": "image_picker",
-      "id": "pip_brand_logo",
-      "label": "Marka logosu",
-      "info": "Marka sütununun siyah başlık kutusunda gösterilir. Açık renkli logo önerilir."
-    },
-    {
-      "type": "text",
-      "id": "pip_brand_label",
-      "label": "Marka etiketi",
-      "info": "Logo yoksa gösterilir. Boşsa mağaza adı kullanılır."
-    },
-    {
-      "type": "text",
-      "id": "pip_others_label",
-      "label": "Diğerleri etiketi",
-      "default": "Others"
     },
     {
       "type": "header",
@@ -672,7 +622,6 @@ Renkler, grubun kök elemanına inline `style` ile CSS değişkeni olarak basıl
 | `intro_info` | Rich text | `icon_list` girişi (yalnızca `features_info` seçiliyken) |
 | `features_benefits` | List of metaobject references → `pip_feature` | `icon_list` (Liste kaynağı: Fayda maddeleri; görseli olmayan maddelerde onay ikonu gösterilir) |
 | `dosage` | Multi-line text | `dosage` satırları |
-| `directions_footer` | Rich text | `dosage` alt metni |
 | `facts` | Multi-line text | `facts` satırları |
 | `facts_note` | Rich text | `facts` porsiyon notu (başlık bandının altında, kalın) |
 | `facts_footer` | Rich text | `facts` alt metni |
@@ -687,7 +636,7 @@ Rich text alanları multi-line text olarak tanımlanırsa da çalışır; satır
 | `quote` | `quote` | — | — |
 | `comparison` | `comparison` | — | — |
 | `icon_list` | **Liste kaynağı**na göre `features_info` veya `features_benefits` | `features_info` seçiliyse `intro_info` | — |
-| `dosage` | `dosage` | — | `directions_footer` |
+| `dosage` | `dosage` | — | Blok ayarı **Ortak alt metin** |
 | `facts` | `facts` | `facts_note` (porsiyon notu) | `facts_footer` |
 | `richtext` | Blok ayarı **Metin** | — | — |
 
@@ -711,27 +660,24 @@ Blokta (yalnızca Karşılaştırma tablosu seçiliyken görünür):
 | `brand_label` — Marka sütunu yazısı | Görsel yoksa gösterilen metin. |
 | `others_label` — Rakip sütunu yazısı | Varsayılan "Others". |
 
-Marka sütunu başlığının yedek sırası: `brand_image` → tema ayarı **Marka logosu** (`pip_brand_logo`) →
-temanın logosu (`settings.logo`) → metin: `brand_label` → tema ayarı **Marka etiketi** (`pip_brand_label`) → mağaza adı.
-Rakip sütunu: `others_label` → tema ayarı **Diğerleri etiketi** (`pip_others_label`) → "Others".
+Marka sütunu başlığının yedek sırası: `brand_image` → temanın logosu (`settings.logo`) → metin: `brand_label` → mağaza adı.
+Rakip sütunu: `others_label` → "Others".
 
-### Özel kaynak (override)
+### Ortak içerik (tüm ürünlerde aynı)
 
-Her blokta "Özel kaynak (isteğe bağlı)" başlığı altında, panel yerine kullanılacak veriyi seçebileceğiniz ayarlar vardır.
-Doluysa panel yerine bu veri kullanılır; boşsa ürünün panelinden okunur. Ayarların hepsi dinamik kaynak destekler:
+Her blokta "Ortak içerik (tüm ürünlerde aynı)" başlığı altında, ürünün paneli yerine kullanılacak içerik ayarları vardır.
+Doluysa panel yerine bu içerik gösterilir; boşsa ürünün panelinden okunur. Ayarlar dinamik kaynak destekler:
 ayarın yanındaki **Dinamik kaynak bağla** ikonundan bir metafield seçebilir ya da doğrudan bir metaobject seçebilirsiniz.
 
 | Ayar | Tip | İçerik tipi |
 |---|---|---|
-| `override_comparison` | metaobject_list (`pip_comparison_row`) | `comparison` |
-| `override_features` | metaobject_list (`pip_feature`) | `icon_list` (liste kaynağı ayarının yerine geçer) |
-| `override_quote` | metaobject (`pip_quote`) | `quote` |
-| `override_rows` | textarea | `dosage`, `facts` |
-| `override_footer` | richtext | `dosage`, `facts` |
+| `override_features` — Ortak liste maddeleri | metaobject_list (`pip_feature`) | `icon_list` (liste kaynağı ayarının yerine geçer) |
+| `override_rows` — Tablo satırları | textarea | `dosage`, `facts` |
+| `override_footer` — Ortak alt metin | richtext | `dosage` (tek kaynak), `facts` (panel `facts_footer` yerine) |
 
-`override_comparison`, `override_features` ve `override_quote` her içerik tipinde görünür, çünkü Shopify şeması
-metaobject ayarlarında `visible_if` kabul etmiyor. Bu ayarlar yalnızca etiketlerinde yazan içerik tipinde okunur.
-Diğer override ayarları yalnızca ilgili tip seçiliyken görünür.
+`override_features` her içerik tipinde görünür, çünkü Shopify şeması metaobject ayarlarında `visible_if` kabul etmiyor;
+yalnızca ikonlu listede okunur. Diğer ayarlar yalnızca ilgili tip seçiliyken görünür.
+Doz tablosunun alt metni panelden gelmez; yalnızca **Ortak alt metin** ayarından gelir.
 
 ### Satır bazlı tablo formatı
 

@@ -2298,28 +2298,14 @@
         },
         {
           "type": "header",
-          "content": "Özel kaynak (isteğe bağlı)",
-          "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
-        },
-        {
-          "type": "metaobject_list",
-          "id": "override_comparison",
-          "metaobject_type": "pip_comparison_row",
-          "label": "Karşılaştırma satırları (karşılaştırma tablosu)",
-          "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+          "content": "Ortak içerik (tüm ürünlerde aynı)",
+          "info": "Doluysa ürünün paneli yerine bu içerik gösterilir."
         },
         {
           "type": "metaobject_list",
           "id": "override_features",
           "metaobject_type": "pip_feature",
-          "label": "Liste maddeleri (ikonlu liste)",
-          "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
-        },
-        {
-          "type": "metaobject",
-          "id": "override_quote",
-          "metaobject_type": "pip_quote",
-          "label": "Alıntı (alıntı)",
+          "label": "Ortak liste maddeleri (tüm ürünlerde aynı)",
           "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
         },
         {
@@ -2339,7 +2325,7 @@
         {
           "type": "richtext",
           "id": "override_footer",
-          "label": "Alt metin",
+          "label": "Ortak alt metin (tüm ürünlerde aynı)",
           "info": "Boş bırakılırsa ürünün panelinden okunur.",
           "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
         }
@@ -2520,28 +2506,14 @@
         },
         {
           "type": "header",
-          "content": "Özel kaynak (isteğe bağlı)",
-          "visible_if": "{{ block.settings.content_type == 'comparison' or block.settings.content_type == 'icon_list' or block.settings.content_type == 'quote' or block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
-        },
-        {
-          "type": "metaobject_list",
-          "id": "override_comparison",
-          "metaobject_type": "pip_comparison_row",
-          "label": "Karşılaştırma satırları (karşılaştırma tablosu)",
-          "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+          "content": "Ortak içerik (tüm ürünlerde aynı)",
+          "info": "Doluysa ürünün paneli yerine bu içerik gösterilir."
         },
         {
           "type": "metaobject_list",
           "id": "override_features",
           "metaobject_type": "pip_feature",
-          "label": "Liste maddeleri (ikonlu liste)",
-          "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
-        },
-        {
-          "type": "metaobject",
-          "id": "override_quote",
-          "metaobject_type": "pip_quote",
-          "label": "Alıntı (alıntı)",
+          "label": "Ortak liste maddeleri (tüm ürünlerde aynı)",
           "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
         },
         {
@@ -2561,7 +2533,7 @@
         {
           "type": "richtext",
           "id": "override_footer",
-          "label": "Alt metin",
+          "label": "Ortak alt metin (tüm ürünlerde aynı)",
           "info": "Boş bırakılırsa ürünün panelinden okunur.",
           "visible_if": "{{ block.settings.content_type == 'dosage' or block.settings.content_type == 'facts' }}"
         },

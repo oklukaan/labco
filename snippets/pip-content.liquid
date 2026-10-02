@@ -8,10 +8,10 @@
     comparison → comparison (list pip_comparison_row)
     icon_list  → list_source ayarına göre features_info | features_benefits
                  (features_info seçiliyse giriş: intro_info)
-    dosage     → dosage (satır formatı), alt metin: directions_footer
+    dosage     → dosage (satır formatı); alt metin yalnızca blok ayarı override_footer
     facts      → facts (satır formatı), porsiyon notu: facts_note, alt metin: facts_footer
     richtext   → blok ayarı richtext
-  Bloktaki override_* ayarları doluysa panel yerine kullanılır.
+  Bloktaki "Ortak içerik" ayarları (override_features, override_rows, override_footer) doluysa panel yerine kullanılır.
   Bloğun intro ayarı doluysa panel girişinin üstüne eklenir.
 
   Ana veri boşsa HİÇBİR çıktı üretilmez. Varsayım: giriş/alt metin tek başına bir sekmeyi
@@ -35,11 +35,7 @@
 
   case pip_type
     when 'comparison'
-      if block.settings.override_comparison != blank
-        assign pip_list = block.settings.override_comparison
-      else
-        assign pip_list = pip_panel.comparison.value
-      endif
+      assign pip_list = pip_panel.comparison.value
     when 'icon_list'
       if block.settings.override_features != blank
         assign pip_list = block.settings.override_features
@@ -52,14 +48,9 @@
         assign pip_panel_intro = pip_panel.intro_info
       endif
     when 'quote'
-      if block.settings.override_quote != blank
-        assign pip_quote = block.settings.override_quote
-      else
-        assign pip_quote = pip_panel.quote.value
-      endif
+      assign pip_quote = pip_panel.quote.value
     when 'dosage'
       assign pip_rows_text = block.settings.override_rows | default: pip_panel.dosage.value
-      assign pip_footer_field = pip_panel.directions_footer
     when 'facts'
       assign pip_rows_text = block.settings.override_rows | default: pip_panel.facts.value
       assign pip_note_field = pip_panel.facts_note
@@ -94,7 +85,7 @@
     assign pip_has_intro = true
   endif
 
-  # Alt metin: override_footer (dosage/facts) doluysa öncelikli, değilse panel alanı.
+  # Alt metin: override_footer (dosage/facts) doluysa öncelikli; değilse panel alanı (yalnızca facts'te var).
   assign pip_footer = ''
   if pip_type == 'dosage' or pip_type == 'facts'
     assign pip_footer = block.settings.override_footer
@@ -326,11 +317,11 @@
       {%- if pip_check != blank -%}
         {%- liquid
           # Marka sütunu başlığı yedek sırası:
-          #   1. blok ayarı brand_image  2. tema ayarı pip_brand_logo  3. temanın logosu (settings.logo)
-          #   4. metin: blok brand_label → tema pip_brand_label → mağaza adı
-          assign pip_brand_label = block.settings.brand_label | strip | default: settings.pip_brand_label | strip | default: shop.name
-          assign pip_others_label = block.settings.others_label | strip | default: settings.pip_others_label | strip | default: 'Others'
-          assign pip_brand_image = block.settings.brand_image | default: settings.pip_brand_logo | default: settings.logo
+          #   1. blok ayarı brand_image  2. temanın logosu (settings.logo)
+          #   3. metin: blok brand_label → mağaza adı
+          assign pip_brand_label = block.settings.brand_label | strip | default: shop.name
+          assign pip_others_label = block.settings.others_label | strip | default: 'Others'
+          assign pip_brand_image = block.settings.brand_image | default: settings.logo
           assign pip_logo_alt = pip_brand_image.alt | default: pip_brand_label
         -%}
         <table class="pip-table pip-cmp">
