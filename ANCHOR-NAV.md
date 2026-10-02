@@ -68,6 +68,7 @@ Editörde sol listeden bir Link bloğunu seçince önizleme o linkin hedefine ka
 | Ayar | Açıklama | Varsayılan |
 |---|---|---|
 | Header'ın altına yapışsın | Kaydırınca çubuk header'ın altında sabit kalır. Header yapışkan değilse çubuk ekranın üstüne yapışır. | açık |
+| Tıklayınca URL'yi güncelle | Adres çubuğuna linkin etiketinden türeyen kısa hash yazılır (`#vet-reviewed`); bu adresle açılan sayfa aynı bölüme kaydırılır. | açık |
 | Mobilde göster | Kapalıysa 750px altında gizlenir. | açık |
 | Hizalama | Linkler sola veya ortaya. | ortaya |
 | Yazı boyutu | 12–20px | 16px |
@@ -82,8 +83,8 @@ Editörde sol listeden bir Link bloğunu seçince önizleme o linkin hedefine ka
   Yapışkanlık Shopify'ın section sarmalayıcısına uygulanır; çubuğun kendisine uygulansaydı
   kapsayıcısının dışına çıkamazdı.
 - **Kaydırma:** hedefin üst kenarı header + çubuğun hemen altına gelir. `prefers-reduced-motion`
-  açıksa anında, değilse yumuşak. URL hash'i `history.replaceState` ile güncellenir; hash ile açılan
-  sayfa doğru ofsetle konumlanır.
+  açıksa anında, değilse yumuşak. URL hash'i `history.replaceState` ile linkin etiketine göre güncellenir
+  (`#vet-reviewed`); hash ile açılan sayfa doğru ofsetle konumlanır.
 - **Scroll-spy:** eşiği geçen son hedef aktif olur (`is-active`, `aria-current="location"`). Hiçbir
   hedefe gelinmediyse ilk link, sayfa sonunda son link aktiftir.
 - **Mobil:** çubuk yatay kaydırılır, aktif link görünür alana getirilir.

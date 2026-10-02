@@ -34,6 +34,7 @@
     "
     data-section-id="{{ section.id }}"
     data-spy-offset="{{ section.settings.spy_offset }}"
+    data-update-url="{{ section.settings.update_url }}"
   >
     <nav class="anv__inner page-width" aria-label="{{ section.settings.aria_label | default: 'Sayfa bölümleri' | escape }}">
       <ul class="anv__list" role="list">
@@ -67,6 +68,13 @@
       "type": "checkbox",
       "id": "sticky",
       "label": "Header'ın altına yapışsın",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "update_url",
+      "label": "Tıklayınca URL'yi güncelle",
+      "info": "Açıkken adres çubuğuna linkin etiketi yazılır (#vet-reviewed). Sayfa bu adresle açılınca aynı bölüme kaydırılır.",
       "default": true
     },
     {

@@ -75,10 +75,11 @@
 
       this.updateActive();
 
-      // Sayfa hash ile açıldıysa ofsetli konuma getir.
-      if (location.hash && location.hash.startsWith('#anv-')) {
-        const target = document.getElementById(location.hash.slice(1));
-        if (target) requestAnimationFrame(() => this.scrollTo(target, true));
+      // Sayfa hash ile açıldıysa (kısa etiket hash'i veya hedef id) ofsetli konuma getir.
+      if (location.hash) {
+        const hash = decodeURIComponent(location.hash.slice(1));
+        const entry = this.targets.find((t) => this.slugFor(t) === hash || t.marker.id === hash || t.link.dataset.anvTarget === hash);
+        if (entry) requestAnimationFrame(() => this.scrollTo(entry.marker, true));
       }
     }
 
@@ -150,7 +151,15 @@
       if (!entry) return;
       event.preventDefault();
       this.scrollTo(entry.marker, false);
-      if (history.replaceState) history.replaceState(null, '', `#${entry.marker.id}`);
+      // URL'de uzun section id'si yerine linkin etiketinden türeyen kısa hash (#vet-reviewed).
+      if (this.dataset.updateUrl !== 'false' && history.replaceState) {
+        history.replaceState(null, '', `#${this.slugFor(entry)}`);
+      }
+    }
+
+    slugFor(entry) {
+      const text = entry.link.textContent || entry.link.dataset.anvTarget || '';
+      return text.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || entry.marker.id;
     }
 
     scrollTo(marker, instant) {
