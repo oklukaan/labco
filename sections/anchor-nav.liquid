@@ -1,0 +1,175 @@
+{%- comment -%}
+  Çapa menüsü — header'ın altına yapışan bölüm navigasyonu.
+  - Her blok bir link: etiket + hedef çapa adı. Hedef, sayfadaki bir "Çapa işaretçisi"
+    section'ıdır (id="anv-<çapa adı>"). Hedefi sayfada bulunmayan link JS ile gizlenir.
+  - Tıklayınca yumuşak kaydırma (prefers-reduced-motion → anında), kaydırırken aktif link
+    vurgusu (scroll-spy), mobilde yatay kaydırılabilir şerit.
+  - Header yüksekliği JS ile ölçülür; Dawn'ın yapışkan header ayarı açık/kapalı fark etmez.
+{%- endcomment -%}
+
+{{ 'anchor-nav.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'anchor-nav.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign anv_links = 0
+  for block in section.blocks
+    assign anv_label = block.settings.label | strip
+    assign anv_target = block.settings.target | strip
+    if anv_label != blank and anv_target != blank
+      assign anv_links = anv_links | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if anv_links > 0 -%}
+  <anchor-nav
+    class="anv{% if section.settings.sticky %} anv--sticky{% endif %}{% unless section.settings.show_on_mobile %} anv--desktop-only{% endunless %}"
+    style="
+      --anv-bg: {{ section.settings.bg }};
+      --anv-text: {{ section.settings.text }};
+      --anv-active: {{ section.settings.active }};
+      --anv-border: {{ section.settings.border }};
+      --anv-font-size: {{ section.settings.font_size }}px;
+      --anv-align: {{ section.settings.align }};
+    "
+    data-section-id="{{ section.id }}"
+    data-spy-offset="{{ section.settings.spy_offset }}"
+  >
+    <nav class="anv__inner page-width" aria-label="{{ section.settings.aria_label | default: 'Sayfa bölümleri' | escape }}">
+      <ul class="anv__list" role="list">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign anv_label = block.settings.label | strip
+            assign anv_target = block.settings.target | strip | handleize
+          -%}
+          {%- if anv_label != blank and anv_target != blank -%}
+            <li class="anv__item" {{ block.shopify_attributes }}>
+              <a class="anv__link" href="#anv-{{ anv_target }}" data-anv-target="{{ anv_target }}">
+                {{- anv_label | escape -}}
+              </a>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </nav>
+  </anchor-nav>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Çapa menüsü",
+  "tag": "section",
+  "class": "anv-section",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Header'ın altına yapışsın",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_mobile",
+      "label": "Mobilde göster",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Hizalama",
+      "default": "center",
+      "options": [
+        { "value": "flex-start", "label": "Sola" },
+        { "value": "center", "label": "Ortaya" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Yazı boyutu",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "spy_offset",
+      "label": "Aktif bölüm eşiği",
+      "info": "Bölümün üst kenarı çubuğun bu kadar altına gelince o bölüm aktif sayılır.",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Renkler"
+    },
+    {
+      "type": "color",
+      "id": "bg",
+      "label": "Arka plan",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text",
+      "label": "Yazı",
+      "default": "#1E1F24"
+    },
+    {
+      "type": "color",
+      "id": "active",
+      "label": "Aktif link",
+      "default": "#076D08"
+    },
+    {
+      "type": "color",
+      "id": "border",
+      "label": "Alt çizgi",
+      "default": "#D8DADF"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "Erişilebilirlik etiketi",
+      "default": "Sayfa bölümleri"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Etiket",
+          "placeholder": "Vet Reviewed"
+        },
+        {
+          "type": "text",
+          "id": "target",
+          "label": "Hedef çapa adı",
+          "info": "Sayfadaki bir Çapa işaretçisi'nin çapa adı. Örn: vet-reviewed",
+          "placeholder": "vet-reviewed"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Çapa menüsü",
+      "blocks": [
+        { "type": "link", "settings": { "label": "Product Info", "target": "product-info" } },
+        { "type": "link", "settings": { "label": "Vet Reviewed", "target": "vet-reviewed" } },
+        { "type": "link", "settings": { "label": "Key Ingredients", "target": "key-ingredients" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

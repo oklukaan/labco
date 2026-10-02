@@ -1,0 +1,46 @@
+{%- comment -%}
+  Çapa işaretçisi — görünmez, sıfır yükseklikte hedef.
+  Customizer'da hedeflenecek section'ın HEMEN ÜSTÜNE eklenir; çapa menüsü (anchor-nav)
+  bu işaretçilere kaydırır. Hiçbir tema section'ı düzenlenmez.
+  Kimlik: id="anv-{{ handle }}" (handleize edilir). Scroll ofseti JS tarafından
+  --anv-offset değişkeniyle verilir (header + çubuk yüksekliği).
+{%- endcomment -%}
+
+{%- assign anv_handle = section.settings.handle | default: section.id | handleize -%}
+
+<div
+  id="anv-{{ anv_handle }}"
+  class="anv-marker"
+  data-anv-marker="{{ anv_handle }}"
+  data-anv-label="{{ section.settings.label | escape }}"
+  aria-hidden="true"
+  {{ section.shopify_attributes }}
+></div>
+
+{% schema %}
+{
+  "name": "Çapa işaretçisi",
+  "tag": "div",
+  "class": "anv-marker-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "handle",
+      "label": "Çapa adı",
+      "info": "Çapa menüsündeki linkin hedefiyle aynı olmalı. Küçük harf ve tire: vet-reviewed",
+      "placeholder": "vet-reviewed"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Not (yalnızca editörde)",
+      "info": "Sayfada görünmez; hangi bölümün üstünde durduğunu hatırlamak için."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Çapa işaretçisi"
+    }
+  ]
+}
+{% endschema %}

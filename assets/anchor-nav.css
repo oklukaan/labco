@@ -1,0 +1,126 @@
+/*
+  Çapa menüsü (anv)
+  Tüm kurallar .anv- ile izoledir. Birimler px (Dawn kök font boyutu %62.5).
+  --anv-top: yapışma konumu (header yüksekliği), JS verir.
+  --anv-offset: işaretçilerin scroll-margin-top'u (header + çubuk), JS verir.
+*/
+
+.anv-marker-section,
+.anv-marker {
+  display: block;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.anv-marker {
+  scroll-margin-top: var(--anv-offset, 0px);
+}
+
+/* Yapışkanlık section sarmalayıcısına uygulanır (JS sınıfı ekler): sticky, kapsayıcısının
+   dışına çıkamadığı için <anchor-nav>'ın kendisi değil, Shopify section div'i yapışır. */
+.anv-section {
+  position: relative;
+  z-index: 3;
+}
+
+.anv-section--sticky {
+  position: sticky;
+  top: var(--anv-top, 0px);
+}
+
+.anv {
+  display: block;
+  background: var(--anv-bg, #fff);
+  border-bottom: 1px solid var(--anv-border, #d8dadf);
+  color: var(--anv-text, #1e1f24);
+  font-size: var(--anv-font-size, 16px);
+  line-height: 1.4;
+  letter-spacing: normal;
+}
+
+.anv__inner {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.anv__inner::-webkit-scrollbar {
+  display: none;
+}
+
+.anv__list {
+  display: flex;
+  justify-content: var(--anv-align, center);
+  gap: 8px;
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.anv__item {
+  flex: none;
+}
+
+.anv__link {
+  position: relative;
+  display: block;
+  padding: 14px 12px;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.anv__link::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  bottom: -1px;
+  left: 12px;
+  height: 3px;
+  background: var(--anv-active, #076d08);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.anv__link:hover {
+  color: var(--anv-active, #076d08);
+}
+
+.anv__link.is-active {
+  color: var(--anv-active, #076d08);
+}
+
+.anv__link.is-active::after {
+  opacity: 1;
+}
+
+.anv__link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -4px;
+}
+
+.anv__item[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anv__link::after {
+    transition: none;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .anv--desktop-only {
+    display: none;
+  }
+
+  .anv__link {
+    padding: 12px 10px;
+  }
+}
