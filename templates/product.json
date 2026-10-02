@@ -211,7 +211,7 @@
           "settings": {
             "title": "Why Subscribe?",
             "open_by_default": false,
-            "content_type": "features_info",
+            "content_type": "why_subscribe",
             "list_icon_style": "check",
             "list_layout": "auto",
             "intro": "",
