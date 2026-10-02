@@ -2208,7 +2208,7 @@
           "type": "image_picker",
           "id": "list_icon_image",
           "label": "Özel madde ikonu",
-          "visible_if": "{{ (block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits') and block.settings.list_icon_style == 'custom' }}"
+          "visible_if": "{{ block.settings.list_icon_style == 'custom' }}"
         },
         {
           "type": "select",
@@ -2403,7 +2403,7 @@
           "type": "image_picker",
           "id": "list_icon_image",
           "label": "Özel madde ikonu",
-          "visible_if": "{{ (block.settings.content_type == 'features_info' or block.settings.content_type == 'features_benefits') and block.settings.list_icon_style == 'custom' }}"
+          "visible_if": "{{ block.settings.list_icon_style == 'custom' }}"
         },
         {
           "type": "select",
