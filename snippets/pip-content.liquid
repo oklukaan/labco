@@ -144,15 +144,29 @@
         # İkon kolonu, listede en az bir ikon varsa tüm maddelerde aynı genişlikte çizilir.
         assign pip_icon_style = block.settings.list_icon_style | default: 'check'
         assign pip_layout = block.settings.list_layout | default: 'auto'
-
-        # Listede açıklamalı madde varsa büyük madde stili (referans: 24px ikon, 18px başlık).
-        assign pip_list_lg = false
-        for pip_item in pip_list
-          if pip_item.system.type == 'pip_feature' and pip_item.description.value != blank
-            assign pip_list_lg = true
-            break
+        # Fayda maddeleri (features_benefits) düz liste: tek satır, normal ağırlık, "Başlık – açıklama".
+        assign pip_plain = false
+        if block.settings.list_source == 'features_benefits'
+          assign pip_plain = true
+        endif
+        if pip_layout == 'auto'
+          if pip_plain
+            assign pip_layout = 'inline'
+          else
+            assign pip_layout = 'stacked'
           endif
-        endfor
+        endif
+
+        # Alt alta listede açıklamalı madde varsa büyük madde stili (24px ikon, 18px başlık).
+        assign pip_list_lg = false
+        if pip_layout == 'stacked'
+          for pip_item in pip_list
+            if pip_item.system.type == 'pip_feature' and pip_item.description.value != blank
+              assign pip_list_lg = true
+              break
+            endif
+          endfor
+        endif
         assign pip_has_fallback = false
         if pip_icon_style == 'check'
           assign pip_has_fallback = true
@@ -186,8 +200,7 @@
               continue
             endif
 
-            # Görünüm: inline → başlık - açıklama aynı satırda; stacked ve auto → alt alta
-            # (auto, referans tasarımdaki gibi başlığı üstte, açıklamayı altta gösterir).
+            # Görünüm: inline → başlık – açıklama aynı satırda; stacked → alt alta.
             # Açıklaması boş madde her görünümde yalnızca başlık satırıdır.
             assign pip_inline = false
             if pip_title != blank and pip_desc != blank and pip_layout == 'inline'
@@ -235,7 +248,7 @@
                 <span class="pip-feature__title">{{ pip_title | escape }}</span>
               {%- endif -%}
               {%- if pip_inline -%}
-                <span class="pip-feature__sep"> - </span>
+                <span class="pip-feature__sep"> – </span>
               {%- endif -%}
               {%- if pip_desc != blank -%}
                 <div class="pip-feature__desc pip-rte">{{ pip_desc }}</div>
@@ -246,7 +259,7 @@
       {%- endcapture -%}
       {%- assign pip_check = pip_items | strip -%}
       {%- if pip_check != blank -%}
-        <ul class="pip-features{% if pip_list_lg %} pip-features--lg{% endif %}" role="list">{{ pip_items }}</ul>
+        <ul class="pip-features{% if pip_list_lg %} pip-features--lg{% endif %}{% if pip_plain %} pip-features--plain{% endif %}" role="list">{{ pip_items }}</ul>
       {%- endif -%}
 
     {%- when 'comparison' -%}
@@ -357,6 +370,9 @@
           assign pip_name = pip_quote.author_name.value | strip
           assign pip_role = pip_quote.author_title.value | strip
           assign pip_img = pip_quote.photo.value
+          if pip_img.preview_image == blank and block.settings.quote_photo != blank
+            assign pip_img = block.settings.quote_photo
+          endif
         -%}
         {%- if pip_text != blank -%}
           <figure class="pip-quote">
@@ -368,12 +384,12 @@
                 {%- if pip_img.preview_image != blank -%}
                   {{
                     pip_img.preview_image
-                    | image_url: width: 128
+                    | image_url: width: 112
                     | image_tag:
-                      width: 64,
-                      height: 64,
-                      widths: '64, 128',
-                      sizes: '64px',
+                      width: 56,
+                      height: 56,
+                      widths: '56, 112',
+                      sizes: '56px',
                       loading: 'lazy',
                       alt: '',
                       class: 'pip-quote__photo'

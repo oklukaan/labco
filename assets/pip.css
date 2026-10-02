@@ -28,7 +28,7 @@
   font-family: var(--pip-font-family, inherit);
   /* Dawn body rengi %75 opaktır; referans tasarımda ana metin tam opak #1E1F24. */
   color: var(--pip-color-text);
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.4;
   /* Dawn body'e letter-spacing verir; referans tasarımda harf aralığı normaldir. */
   letter-spacing: normal;
@@ -120,8 +120,8 @@
 }
 
 .pip-content__intro {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .pip-content--icon_list > .pip-content__intro + *,
@@ -131,13 +131,14 @@
 
 /* Panelden gelen açıklama paragrafı: normal ağırlık, ikincil renk (referans: text-body-text-16 text-secondary-text). */
 .pip-content__lead {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.4;
   color: var(--pip-color-muted);
 }
 
 .pip-content__footer {
+  font-size: 13px;
   color: var(--pip-color-muted);
 }
 
@@ -208,6 +209,11 @@
   letter-spacing: inherit;
   text-align: center;
   cursor: pointer;
+}
+
+.pip-tabs__tab,
+.pip-tabs__tab[aria-selected='true'] {
+  font-size: 13px;
 }
 
 .pip-tabs__tab:first-child {
@@ -334,12 +340,8 @@
     margin-bottom: 24px;
   }
 
-  .pip-tabs__tab {
-    font-size: 14px;
-  }
-
   .pip-tabs__tab[aria-selected='true'] {
-    font-weight: 700;
+    font-weight: 600;
   }
 }
 
@@ -439,7 +441,7 @@
 
   .pip-acc__body {
     padding-bottom: 24px;
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 
@@ -527,7 +529,7 @@
   flex-direction: column;
   gap: 4px;
   min-width: 0;
-  padding: 12px 0;
+  padding: 14px 0;
 }
 
 .pip-feature:not(:last-child) .pip-feature__text {
@@ -536,7 +538,7 @@
 
 .pip-feature__title {
   display: block;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
 }
@@ -548,7 +550,7 @@
 }
 
 .pip-feature__desc {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--pip-color-muted);
 }
 
@@ -564,7 +566,7 @@
 }
 
 .pip-features--lg .pip-feature__text {
-  padding: 16px 0;
+  padding: 14px 0;
 }
 
 .pip-features--lg .pip-feature__title {
@@ -586,12 +588,39 @@
 .pip-feature--inline .pip-feature__desc :is(div, p) {
   display: inline;
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.4;
 }
 
 .pip-feature--inline .pip-feature__desc {
   font-weight: 400;
+  color: inherit;
+}
+
+/* Fayda listesi: tek satır, normal ağırlık, 14px tik, 14px boşluk. */
+.pip-features--plain .pip-feature {
+  gap: 14px;
+}
+
+.pip-features--plain .pip-feature__media {
+  width: 14px;
+  min-height: 14px;
+}
+
+.pip-features--plain .pip-feature__icon {
+  width: 14px;
+  height: 14px;
+}
+
+.pip-features--plain .pip-feature__title,
+.pip-features--plain .pip-feature__sep,
+.pip-features--plain .pip-feature__desc,
+.pip-features--plain .pip-feature__desc :is(div, p) {
+  display: inline;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
   color: inherit;
 }
 
@@ -610,7 +639,7 @@
   padding: 0;
   border: 0;
   color: inherit;
-  font-size: 16px;
+  font-size: 15px;
   font-style: normal;
   line-height: 1.4;
 }
@@ -627,8 +656,8 @@
 
 .pip-quote__photo {
   flex: none;
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -640,13 +669,13 @@
 }
 
 .pip-quote__name {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   line-height: 1.2;
 }
 
 .pip-quote__role {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--pip-color-muted);
 }
 
@@ -683,40 +712,38 @@
 
 .pip-cmp__logo {
   display: block;
-  width: 46px;
+  width: auto;
   height: auto;
-  max-height: 32px;
+  max-width: 46px;
+  max-height: 24px;
   object-fit: contain;
 }
 
-/* Logo yoksa kısa metin: tek satır, küçük font, sığmazsa üç noktayla kesilir. */
+/* Logo yoksa kısa metin: 11px, gerekirse iki satır. */
 .pip-cmp__brand-label {
-  display: block;
-  max-width: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  font-size: 10px;
+  max-width: 100%;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 .pip-cmp .pip-cmp__head-others {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.4;
   text-align: center;
   color: var(--pip-color-muted);
   overflow-wrap: anywhere;
 }
 
-.pip-cmp tbody tr {
-  height: 57px;
-}
-
 .pip-cmp .pip-cmp__feature-cell {
-  padding: 8px 4px 8px 0;
+  padding: 14px 4px 14px 0;
 }
 
 .pip-cmp__feature {
@@ -749,7 +776,7 @@
 }
 
 .pip-cmp__desc {
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.4;
   color: var(--pip-color-muted);
   overflow-wrap: break-word;
@@ -769,19 +796,24 @@
   background: var(--pip-color-brand-col-bg);
 }
 
+.pip-cmp .pip-icon {
+  width: 18px;
+  height: 18px;
+}
+
 /* ---------- Dozaj ---------- */
 
 .pip-dosage {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .pip-dosage thead th {
-  padding: 0 0 16px;
+  padding: 0 0 14px;
   font-weight: 400;
 }
 
 .pip-dosage tbody td {
-  padding: 16px 0;
+  padding: 14px 0;
   vertical-align: bottom;
 }
 

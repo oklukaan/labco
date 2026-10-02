@@ -2224,7 +2224,7 @@
           "options": [
             {
               "value": "auto",
-              "label": "Otomatik (alt alta)"
+              "label": "Otomatik (faydalar tek satır, diğerleri alt alta)"
             },
             {
               "value": "inline",
@@ -2300,6 +2300,13 @@
           "metaobject_type": "pip_quote",
           "label": "Alıntı (alıntı)",
           "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+        },
+        {
+          "type": "image_picker",
+          "id": "quote_photo",
+          "label": "Uzman fotoğrafı",
+          "info": "Alıntı kaydındaki photo alanı boşsa kullanılır. 56px yuvarlak gösterilir.",
+          "visible_if": "{{ block.settings.content_type == 'quote' }}"
         },
         {
           "type": "textarea",
@@ -2418,7 +2425,7 @@
           "options": [
             {
               "value": "auto",
-              "label": "Otomatik (alt alta)"
+              "label": "Otomatik (faydalar tek satır, diğerleri alt alta)"
             },
             {
               "value": "inline",
@@ -2494,6 +2501,13 @@
           "metaobject_type": "pip_quote",
           "label": "Alıntı (alıntı)",
           "info": "Boş bırakılırsa ürünün panelinden okunur. Yalnızca ilgili içerik tipinde kullanılır."
+        },
+        {
+          "type": "image_picker",
+          "id": "quote_photo",
+          "label": "Uzman fotoğrafı",
+          "info": "Alıntı kaydındaki photo alanı boşsa kullanılır. 56px yuvarlak gösterilir.",
+          "visible_if": "{{ block.settings.content_type == 'quote' }}"
         },
         {
           "type": "textarea",
