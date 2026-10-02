@@ -5,8 +5,12 @@
   --anv-offset: işaretçilerin scroll-margin-top'u (header + çubuk), JS verir.
 */
 
+/* Dawn base.css "div:empty { display: none }" kuralını ezmek için :empty ile özgüllük artırılır;
+   gizlenen işaretçinin konumu 0 ölçülür ve kaydırma/scroll-spy çalışmaz. */
 .anv-marker-section,
-.anv-marker {
+.anv-marker,
+.anv-marker:empty,
+.anv-marker-section:empty {
   display: block;
   height: 0;
   margin: 0;
