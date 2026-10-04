@@ -176,6 +176,73 @@
     anchorTimer = setTimeout(() => els.forEach((el) => { el.style.overflowAnchor = ''; }), ms);
   };
 
+  // Başlığı ekranda `offset` konumuna getirecek kaydırma değeri. Başlık yapışkan (position: sticky)
+  // bir sütunun içindeyse (Dawn: "ürün bilgisini yapışkan yap") sayfa kaydıkça başlık 1:1 hareket
+  // etmez: sütun takılıyken yerinde durur, kapsayıcının sonuna gelince yeniden kayar. Sütunun
+  // akış konumu, yüksekliği ve kapsayıcının alt kenarı ölçülüp bu davranış modellenir; hedef ikili
+  // arama ile bulunur. Ölçüm için sütun bir anlığına position: relative yapılır (aynı karede geri
+  // alınır, ekrana yansımaz).
+  const findStickyAncestor = (element) => {
+    for (let node = element.parentElement; node && node !== document.body; node = node.parentElement) {
+      const style = getComputedStyle(node);
+      if (style.position === 'sticky' && style.top !== 'auto') return node;
+    }
+    return null;
+  };
+
+  const scrollTargetFor = (summary, offset) => {
+    const y = window.scrollY;
+    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const clamp = (value) => Math.min(maxY, Math.max(0, Math.round(value)));
+    const sticky = findStickyAncestor(summary);
+    if (!sticky || !sticky.parentElement) return clamp(summary.getBoundingClientRect().top + y - offset);
+
+    const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0;
+    const prevPosition = sticky.style.position;
+    const prevTop = sticky.style.top;
+    sticky.style.position = 'relative';
+    sticky.style.top = 'auto';
+    const column = sticky.getBoundingClientRect();
+    const head = summary.getBoundingClientRect();
+    const container = sticky.parentElement.getBoundingClientRect();
+    sticky.style.position = prevPosition;
+    sticky.style.top = prevTop;
+
+    const columnFlow = column.top + y;
+    const columnHeight = column.height;
+    const relative = head.top - column.top;
+    const containerBottom = container.bottom + y;
+    // Y kaydırmasında başlığın ekrandaki üst kenarı (Y arttıkça azalır).
+    const viewTop = (Y) => Math.min(Math.max(columnFlow - Y, stickyTop), containerBottom - columnHeight - Y) + relative;
+
+    let lo = 0;
+    let hi = maxY;
+    if (viewTop(lo) <= offset) return lo;
+    if (viewTop(hi) >= offset) return hi;
+    for (let i = 0; i < 40; i++) {
+      const mid = (lo + hi) / 2;
+      if (viewTop(mid) > offset) lo = mid;
+      else hi = mid;
+    }
+    return clamp(hi);
+  };
+
+  // Yumuşak kaydırma bittiğinde başlık hedefte değilse (tema dinamikleri, header göster/gizle) kalan
+  // farkı anında düzelt. Kullanıcı bu arada kendisi kaydırdıysa dokunma.
+  const settleScroll = (summary, target) => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      window.removeEventListener('scrollend', finish);
+      if (Math.abs(window.scrollY - target) > 4) return;
+      const diff = Math.round(summary.getBoundingClientRect().top - topOffset());
+      if (Math.abs(diff) > 2) window.scrollTo({ top: scrollTargetFor(summary, topOffset()), behavior: 'auto' });
+    };
+    if ('onscrollend' in window) window.addEventListener('scrollend', finish, { once: true });
+    setTimeout(finish, 1000);
+  };
+
   const closeInstant = (details) => {
     if (details.pipAnimation) details.pipAnimation.cancel();
     details.open = false;
@@ -204,16 +271,26 @@
     const shift = summary.getBoundingClientRect().top - before;
     if (Math.abs(shift) > 0.5) window.scrollBy(0, shift);
 
+    // Hedef, akordeon AÇIK hâliyle hesaplanmalı (sütun yüksekliği ve sayfa uzunluğu değişir):
+    // aynı karede anlık açılıp ölçülür, sonra animasyon kapalı hâlden başlar.
+    let target = null;
+    const offset = topOffset();
+    const current = summary.getBoundingClientRect().top - offset;
+    // Başlık zaten üst bölgede görünüyorsa kaydırma yapma (gereksiz hareket olmasın).
+    const needsScroll = follow && (current < 0 || current > window.innerHeight * 0.35);
+    if (needsScroll) {
+      details.open = true;
+      target = scrollTargetFor(summary, offset);
+      if (canAnimate) details.open = false;
+    }
+
     if (canAnimate) animateDetails(details, summary, true);
     else details.open = true;
 
-    if (follow) {
-      const target = summary.getBoundingClientRect().top + window.scrollY - topOffset();
-      // Başlık zaten üst bölgede görünüyorsa kaydırma yapma (gereksiz hareket olmasın).
-      const current = summary.getBoundingClientRect().top - topOffset();
-      if (current < 0 || current > window.innerHeight * 0.35) {
-        window.scrollTo({ top: Math.max(0, target), behavior: reduceMotion.matches ? 'auto' : 'smooth' });
-      }
+    if (needsScroll && target !== null && Math.abs(target - window.scrollY) > 1) {
+      const smooth = !reduceMotion.matches;
+      window.scrollTo({ top: target, behavior: smooth ? 'smooth' : 'auto' });
+      if (smooth) settleScroll(summary, target);
     }
   };
 
