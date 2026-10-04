@@ -165,6 +165,22 @@
     return Math.max(0, header.getBoundingClientRect().bottom);
   };
 
+  // Programla kaydırma bittiğinde üstte kalacak sabit alan. Dawn header'ı "yukarı kaydırınca göster"
+  // modundaysa kaydırma sonunda gizli olur (yukarı kaydırırken preventHeaderReveal ile gizli tutulur);
+  // yalnızca çapa çubuğu kalır. Diğer durumlarda mevcut ofset.
+  const dawnStickyHeader = () => document.querySelector('sticky-header[data-sticky-type]');
+  const predictedTopOffset = () => {
+    const sticky = dawnStickyHeader();
+    const type = sticky ? sticky.getAttribute('data-sticky-type') : null;
+    if (type !== 'on-scroll-up' && type !== 'none') return topOffset();
+    const bar = document.querySelector('anchor-nav.anv--sticky');
+    return bar && !bar.closest('[hidden]') ? Math.round(bar.getBoundingClientRect().height) : 0;
+  };
+  const preventHeaderReveal = () => {
+    const sticky = dawnStickyHeader();
+    if (sticky) sticky.dispatchEvent(new Event('preventHeaderReveal'));
+  };
+
   // Tarayıcının scroll anchoring özelliği akordeon yüksekliği değişirken sayfayı kendi seçtiği bir
   // elemana göre kaydırır (çoğu zaman akordeonun altındaki bir section'a) ve açılan başlık ekrandan
   // kaçar. İşlem ve animasyon süresince belge genelinde kapatılır; konum aşağıda elle yönetilir.
@@ -237,7 +253,10 @@
       window.removeEventListener('scrollend', finish);
       if (Math.abs(window.scrollY - target) > 4) return;
       const diff = Math.round(summary.getBoundingClientRect().top - topOffset());
-      if (Math.abs(diff) > 2) window.scrollTo({ top: scrollTargetFor(summary, topOffset()), behavior: 'auto' });
+      if (Math.abs(diff) > 2) {
+        if (diff < 0) preventHeaderReveal();
+        window.scrollTo({ top: scrollTargetFor(summary, topOffset()), behavior: 'auto' });
+      }
     };
     if ('onscrollend' in window) window.addEventListener('scrollend', finish, { once: true });
     setTimeout(finish, 1000);
@@ -280,7 +299,7 @@
     const needsScroll = follow && (current < 0 || current > window.innerHeight * 0.35);
     if (needsScroll) {
       details.open = true;
-      target = scrollTargetFor(summary, offset);
+      target = scrollTargetFor(summary, predictedTopOffset());
       if (canAnimate) details.open = false;
     }
 
@@ -288,6 +307,7 @@
     else details.open = true;
 
     if (needsScroll && target !== null && Math.abs(target - window.scrollY) > 1) {
+      if (target < window.scrollY) preventHeaderReveal();
       const smooth = !reduceMotion.matches;
       window.scrollTo({ top: target, behavior: smooth ? 'smooth' : 'auto' });
       if (smooth) settleScroll(summary, target);

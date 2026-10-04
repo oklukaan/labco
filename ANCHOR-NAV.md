@@ -84,6 +84,11 @@ Editörde sol listeden bir Link bloğunu seçince önizleme o linkin hedefine ka
   modunda header gizlenince çubuk ekranın tepesine, header dönünce altına kayar. Header yoksa veya
   gizliyse çubuk tepeye yapışır. Sticky yerine fixed kullanıldığı için çubuğun hangi section
   grubunda olduğu (header grubu dâhil) ve Dawn'ın header kuralları sonucu etkilemez.
+- **Dawn header uyumu:** kaydırma hedefi, header'ın kaydırma *bittiğinde* olacağı duruma göre hesaplanır
+  (`<sticky-header data-sticky-type>`: `on-scroll-up` → gizli, `always` → görünür). Yukarı kaydırırken
+  Dawn'ın kendi `preventHeaderReveal` olayı gönderilir; header yarı yolda araya girip hedefi kaydırmaz.
+  Böylece kaydırma sonunda sıçrama olmaz. Dawn dışı temalarda kaydırma bitince (`scrollend`) kalan fark
+  tek seferde düzeltilir.
 - **Kaydırma:** hedefin üst kenarı header + çubuğun hemen altına gelir. `prefers-reduced-motion`
   açıksa anında, değilse yumuşak. URL hash'i `history.replaceState` ile linkin etiketine göre güncellenir
   (`#vet-reviewed`); hash ile açılan sayfa doğru ofsetle konumlanır.

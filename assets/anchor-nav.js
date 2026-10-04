@@ -34,6 +34,27 @@
     return 0;
   };
 
+  // Programla kaydırma BİTTİĞİNDE header'ın alt kenarı nerede olacak? Dawn <sticky-header>
+  // data-sticky-type'a göre: on-scroll-up → gizli (aşağı inerken Dawn gizler, yukarı çıkarken
+  // preventHeaderReveal ile gizli tutulur), none → akışta kalır, kaydırınca ekran dışı;
+  // always / reduce-logo-size → hep görünür. Dawn dışı temalarda mevcut konum kullanılır.
+  const dawnStickyHeader = () => document.querySelector('sticky-header[data-sticky-type]');
+  const predictedHeaderBottom = (self) => {
+    const sticky = dawnStickyHeader();
+    const type = sticky ? sticky.getAttribute('data-sticky-type') : null;
+    if (type === 'on-scroll-up' || type === 'none') return 0;
+    if (type === 'always' || type === 'reduce-logo-size') {
+      const section = sticky.closest('.shopify-section, .section-header') || sticky;
+      return Math.round(section.getBoundingClientRect().height);
+    }
+    return headerBottom(self);
+  };
+  // Dawn'ın kendi olayı: kodla yukarı kaydırırken header'ın yarı yolda geri gelmesini engeller.
+  const preventHeaderReveal = () => {
+    const sticky = dawnStickyHeader();
+    if (sticky) sticky.dispatchEvent(new Event('preventHeaderReveal'));
+  };
+
   class AnchorNav extends HTMLElement {
     connectedCallback() {
       if (this.anvReady) return;
@@ -48,15 +69,9 @@
       this.measure();
 
       this.addEventListener('click', (event) => this.onClick(event));
-      this.onScroll = () => {
-        if (this.scrollTicking) return;
-        this.scrollTicking = true;
-        requestAnimationFrame(() => {
-          this.scrollTicking = false;
-          this.updateSticky();
-          this.updateActive();
-        });
-      };
+      // Her kaydırmada izleme süresini uzat: Dawn header'ı kaydırma durduktan sonra da ~150 ms
+      // animasyonla girip çıkar; çubuk bu süre boyunca header'ın alt kenarını takip eder.
+      this.onScroll = () => this.followHeader(450);
       this.onResize = () => {
         this.measure();
         this.updateActive();
@@ -172,18 +187,29 @@
       document.documentElement.style.setProperty('--anv-offset', `${this.offset}px`);
     }
 
-    // Header animasyonu / yumuşak kaydırma bitene kadar birkaç kare çubuğu header'a bağlı tut.
-    followHeader(frames, marker) {
-      let left = frames || 20;
+    // Belirtilen süre boyunca her karede çubuğu header'a bağlı tut ve aktif linki güncelle.
+    // Tek döngü çalışır; yeni çağrılar süreyi uzatır. marker verilirse döngü bitince hedefe
+    // göre kalan fark (header beklenenden farklı davrandıysa) anında düzeltilir.
+    followHeader(ms, marker) {
+      if (ms) this.followUntil = Math.max(this.followUntil || 0, performance.now() + ms);
+      if (marker) this.pendingMarker = marker;
+      if (this.following) return;
+      this.following = true;
       const step = () => {
         this.updateSticky();
         this.updateActive();
-        if (--left > 0) {
+        if (performance.now() < this.followUntil) {
           requestAnimationFrame(step);
-        } else if (marker) {
-          // Kaydırma bitti: header bu arada gizlenmiş/görünmüş olabilir; hedefi son ofsete göre düzelt.
-          const diff = Math.round(marker.getBoundingClientRect().top - this.offset);
-          if (Math.abs(diff) > 1) window.scrollBy({ top: diff, behavior: 'auto' });
+          return;
+        }
+        this.following = false;
+        const target = this.pendingMarker;
+        this.pendingMarker = null;
+        if (!target) return;
+        const diff = Math.round(target.getBoundingClientRect().top - this.offset);
+        if (Math.abs(diff) > 2) {
+          if (diff < 0) preventHeaderReveal();
+          window.scrollBy({ top: diff, behavior: 'auto' });
           this.updateSticky();
           this.updateActive();
         }
@@ -211,11 +237,29 @@
 
     scrollTo(marker, instant) {
       this.measure();
-      const top = marker.getBoundingClientRect().top + window.scrollY - this.offset;
+      const barHeight = this.barHeight || this.getBoundingClientRect().height;
+      const target = Math.max(0, Math.round(marker.getBoundingClientRect().top + window.scrollY - predictedHeaderBottom(this) - barHeight));
+      if (target < window.scrollY) preventHeaderReveal();
       const behavior = instant || reduceMotion.matches ? 'auto' : 'smooth';
-      window.scrollTo({ top: Math.max(0, top), behavior });
-      // Yumuşak kaydırma sırasında header gizlenip görünebilir; çubuğu ~1 sn boyunca izle.
-      this.followHeader(behavior === 'smooth' ? 70 : 3, marker);
+      window.scrollTo({ top: target, behavior });
+
+      // Kaydırma bitince header animasyonu için kısa bir izleme ve son düzeltme.
+      let settled = false;
+      const settle = () => {
+        if (settled) return;
+        settled = true;
+        window.removeEventListener('scrollend', settle);
+        // Kaydırma bitti: uzun izlemeyi kısalt, header animasyonu kadar bekleyip düzelt.
+        this.followUntil = performance.now() + 250;
+        this.followHeader(0, marker);
+      };
+      if (behavior === 'smooth') {
+        if ('onscrollend' in window) window.addEventListener('scrollend', settle, { once: true });
+        setTimeout(settle, 1500);
+        this.followHeader(1500);
+      } else {
+        settle();
+      }
     }
 
     updateActive() {
