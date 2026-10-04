@@ -1,8 +1,9 @@
 /*
   Ürün Bilgi Paneli (pip)
   - <pip-tabs>: WAI-ARIA tabs deseni. JS yokken tüm paneller alt alta görünür.
-  - Akordeonlar yerel <details> ile JS'siz çalışır; bu dosya yalnızca yumuşak açılış
-    animasyonu (prefers-reduced-motion'a saygılı) ve tema editörü entegrasyonu ekler.
+  - Akordeonlar yerel <details> ile JS'siz çalışır; bu dosya yumuşak açılış animasyonu
+    (prefers-reduced-motion'a saygılı), gruptaki tek açık akordeon davranışı, açılan akordeona
+    kaydırma ve tema editörü entegrasyonu ekler.
   Vanilla, bağımlılıksız, idempotent; global değişken tanımlamaz.
 */
 (() => {
@@ -152,17 +153,87 @@
     };
   };
 
+  // Sayfanın üstünde sabit duran alanın alt kenarı: çapa menüsü varsa onun ofseti (header + çubuk),
+  // yoksa yapışkan header'ın görünür alt kenarı.
+  const topOffset = () => {
+    const anv = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--anv-offset'));
+    if (anv > 0) return anv;
+    const header = document.querySelector('.shopify-section-header, .section-header');
+    if (!header) return 0;
+    const style = getComputedStyle(header);
+    if (style.display === 'none' || (style.position !== 'sticky' && style.position !== 'fixed')) return 0;
+    return Math.max(0, header.getBoundingClientRect().bottom);
+  };
+
+  // Tarayıcının scroll anchoring özelliği akordeon yüksekliği değişirken sayfayı kendi seçtiği bir
+  // elemana göre kaydırır (çoğu zaman akordeonun altındaki bir section'a) ve açılan başlık ekrandan
+  // kaçar. İşlem ve animasyon süresince belge genelinde kapatılır; konum aşağıda elle yönetilir.
+  let anchorTimer = null;
+  const suspendAnchoring = (ms = 450) => {
+    const els = [document.documentElement, document.body];
+    els.forEach((el) => { el.style.overflowAnchor = 'none'; });
+    clearTimeout(anchorTimer);
+    anchorTimer = setTimeout(() => els.forEach((el) => { el.style.overflowAnchor = ''; }), ms);
+  };
+
+  const closeInstant = (details) => {
+    if (details.pipAnimation) details.pipAnimation.cancel();
+    details.open = false;
+    details.classList.remove('pip-acc--closing');
+    details.style.overflow = '';
+  };
+
+  // Tek açık akordeon: tıklanan açılır, aynı gruptaki diğerleri kapanır. Açılan başlık, sabit
+  // header/çapa çubuğunun hemen altına kaydırılır (ekran açılan akordeonu takip eder).
+  const openExclusive = (details, summary, { animate = true, follow = true } = {}) => {
+    const group = details.closest('.pip-acc-group');
+    const others = group
+      ? Array.from(group.querySelectorAll(':scope > .pip-acc')).filter((d) => d !== details && (d.open || d.pipAnimation))
+      : [];
+    const canAnimate = animate && !reduceMotion.matches && typeof details.animate === 'function';
+    suspendAnchoring();
+
+    // Tıklanandan önce gelenler anında kapanır ve kaydırma telafi edilir: başlık ekranda yerinde kalır,
+    // sonra yumuşakça yukarı kayar. Sonrakiler animasyonla kapanır (konumu etkilemezler).
+    const before = summary.getBoundingClientRect().top;
+    others.forEach((other) => {
+      const isAbove = other.compareDocumentPosition(details) & Node.DOCUMENT_POSITION_FOLLOWING;
+      if (isAbove || !canAnimate) closeInstant(other);
+      else animateDetails(other, other.querySelector('.pip-acc__summary'), false);
+    });
+    const shift = summary.getBoundingClientRect().top - before;
+    if (Math.abs(shift) > 0.5) window.scrollBy(0, shift);
+
+    if (canAnimate) animateDetails(details, summary, true);
+    else details.open = true;
+
+    if (follow) {
+      const target = summary.getBoundingClientRect().top + window.scrollY - topOffset();
+      // Başlık zaten üst bölgede görünüyorsa kaydırma yapma (gereksiz hareket olmasın).
+      const current = summary.getBoundingClientRect().top - topOffset();
+      if (current < 0 || current > window.innerHeight * 0.35) {
+        window.scrollTo({ top: Math.max(0, target), behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+      }
+    }
+  };
+
   document.addEventListener('click', (event) => {
     const summary = event.target.closest('.pip-acc__summary');
     if (!summary) return;
 
     const details = summary.parentElement;
     if (!details || details.tagName !== 'DETAILS' || !details.classList.contains('pip-acc')) return;
-    if (reduceMotion.matches || typeof details.animate !== 'function') return;
 
     event.preventDefault();
     const opening = !details.open || details.classList.contains('pip-acc--closing');
-    animateDetails(details, summary, opening);
+    if (opening) {
+      openExclusive(details, summary);
+    } else if (!reduceMotion.matches && typeof details.animate === 'function') {
+      suspendAnchoring();
+      animateDetails(details, summary, false);
+    } else {
+      details.open = false;
+    }
   });
 
   /* ---------- Tema editörü ---------- */
@@ -189,7 +260,10 @@
         });
       }
     } else if (target.tagName === 'DETAILS') {
-      target.open = true;
+      // Editörde seçilen akordeon açılır, gruptaki diğerleri kapanır; editör kendisi kaydırır.
+      const summary = target.querySelector('.pip-acc__summary');
+      if (summary) openExclusive(target, summary, { animate: false, follow: false });
+      else target.open = true;
     }
   });
 
