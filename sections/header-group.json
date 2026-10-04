@@ -81,15 +81,15 @@
         "link_JL4MK4": {
           "type": "link",
           "settings": {
-            "label": "",
-            "target": ""
+            "label": "Blog",
+            "target": "blog-ingredients"
           }
         },
         "link_wgK3EC": {
           "type": "link",
           "settings": {
-            "label": "test",
-            "target": ""
+            "label": "Video",
+            "target": "video-ingredients"
           }
         }
       },
