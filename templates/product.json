@@ -441,6 +441,21 @@
     "floating_ingredients_fcKd8q": {
       "type": "floating-ingredients",
       "blocks": {
+        "item_bqAQgD": {
+          "type": "item",
+          "settings": {
+            "ingredient_index": 6,
+            "custom_image": "shopify://shop_images/list_content_leading_4_1_acdc0e934d.jpg",
+            "side": "left",
+            "offset_x": -30,
+            "offset_y": 200,
+            "size": 110,
+            "base_rotation": 0,
+            "parallax_speed": -100,
+            "rotation_speed": 100,
+            "hide_on_mobile": false
+          }
+        },
         "item_ATpWmq": {
           "type": "item",
           "settings": {
@@ -473,6 +488,7 @@
         }
       },
       "block_order": [
+        "item_bqAQgD",
         "item_ATpWmq",
         "item_VceGfA"
       ],
@@ -482,7 +498,7 @@
         "z_layer": "front",
         "idle_float": true,
         "enable_mobile": true,
-        "mobile_scale": 60
+        "mobile_scale": 55
       }
     }
   },
