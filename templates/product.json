@@ -389,6 +389,53 @@
         "padding_bottom": 36
       }
     },
+    "floating_ingredients_gtnAKH": {
+      "type": "floating-ingredients",
+      "blocks": {
+        "item_rH7nNj": {
+          "type": "item",
+          "settings": {
+            "ingredient_index": 6,
+            "custom_image": "shopify://shop_images/pistachio-shell.png",
+            "side": "right",
+            "offset_x": -30,
+            "offset_y": 200,
+            "size": 110,
+            "base_rotation": 0,
+            "parallax_speed": -100,
+            "rotation_speed": 100,
+            "hide_on_mobile": false
+          }
+        },
+        "item_dreUjN": {
+          "type": "item",
+          "settings": {
+            "ingredient_index": 1,
+            "custom_image": "shopify://shop_images/hazelnut-whole.png",
+            "side": "left",
+            "offset_x": -35,
+            "offset_y": -80,
+            "size": 160,
+            "base_rotation": -20,
+            "parallax_speed": 35,
+            "rotation_speed": 25,
+            "hide_on_mobile": false
+          }
+        }
+      },
+      "block_order": [
+        "item_rH7nNj",
+        "item_dreUjN"
+      ],
+      "name": "Floating ingredients",
+      "settings": {
+        "source": "metafield",
+        "z_layer": "front",
+        "idle_float": true,
+        "enable_mobile": true,
+        "mobile_scale": 55
+      }
+    },
     "anchor_marker_74GiwM": {
       "type": "anchor-marker",
       "name": "Çapa işaretçisi",
@@ -493,6 +540,7 @@
     "related-products",
     "anchor_marker_eWYkKQ",
     "multirow_iAEPME",
+    "floating_ingredients_gtnAKH",
     "anchor_marker_74GiwM",
     "featured_blog_XMFNHn",
     "anchor_marker_jAkLMX",
