@@ -1,0 +1,264 @@
+{%- comment -%}
+  Floating ingredients — zero-height placement section.
+  Add between two sections in the theme editor; items overflow onto the neighbouring sections,
+  stick to the left/right edge (partly off-screen) and move/rotate on scroll (assets/floating-ingredients.js).
+
+  Data: product.metafields.custom.ingredients (list.metaobject_reference → ingredient:
+  name, image, alt_images, base_size). Outside a product template `product` is nil, so
+  source=metafield renders nothing; use source=custom there.
+  If no item can be rendered the section outputs nothing (Dawn hides the empty wrapper).
+{%- endcomment -%}
+
+{%- liquid
+  assign fi_ingredients = product.metafields.custom.ingredients.value
+  assign fi_count = 0
+  if fi_ingredients != blank
+    assign fi_count = fi_ingredients.size
+  endif
+-%}
+
+{%- capture fi_items -%}
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign fi_image = nil
+      assign fi_file = nil
+      assign fi_size = block.settings.size
+
+      if section.settings.source == 'metafield' and fi_count > 0
+        # 1-based index; cycles when the list is shorter than the index.
+        assign fi_i = block.settings.ingredient_index | minus: 1 | at_least: 0 | modulo: fi_count
+        for fi_ing in fi_ingredients offset: fi_i limit: 1
+          # Variety: blocks pick image / alt_images in turn (block position modulo image count).
+          assign fi_alts = fi_ing.alt_images.value
+          assign fi_n = 1
+          if fi_alts != blank
+            assign fi_n = fi_alts.size | plus: 1
+          endif
+          assign fi_k = forloop.parentloop.index0 | modulo: fi_n
+          if fi_k == 0
+            assign fi_file = fi_ing.image.value
+          else
+            assign fi_alt_i = fi_k | minus: 1
+            for fi_alt in fi_alts offset: fi_alt_i limit: 1
+              assign fi_file = fi_alt
+            endfor
+          endif
+          assign fi_image = fi_file.preview_image | default: fi_file
+          if fi_ing.base_size.value != blank
+            assign fi_size = fi_ing.base_size.value
+          endif
+        endfor
+      endif
+
+      # custom_image overrides (and is the only source when source=custom).
+      if block.settings.custom_image != blank
+        assign fi_image = block.settings.custom_image
+      endif
+    -%}
+
+    {%- if fi_image != blank -%}
+      {%- assign fi_delay = forloop.index0 | times: -1.7 -%}
+      <div
+        class="fi-item fi-item--{{ block.settings.side }}{% if block.settings.hide_on_mobile %} fi-item--hide-mobile{% endif %}"
+        style="--fi-size: {{ fi_size }}px; --fi-offset-x: {{ block.settings.offset_x }}%; --fi-offset-y: {{ block.settings.offset_y }}px; --fi-base-rot: {{ block.settings.base_rotation }}deg; --fi-delay: {{ fi_delay }}s;"
+        data-speed="{{ block.settings.parallax_speed }}"
+        data-rot="{{ block.settings.rotation_speed }}"
+        aria-hidden="true"
+        {{ block.shopify_attributes }}
+      >
+        <div class="fi-scroll">
+          <div class="fi-idle">
+            {%- assign fi_w2 = fi_size | times: 2 | at_most: 1200 -%}
+            {{
+              fi_image
+              | image_url: width: fi_w2
+              | image_tag:
+                widths: '120, 180, 240, 360, 480, 720, 960',
+                sizes: '(max-width: 749px) 30vw, 400px',
+                loading: 'lazy',
+                decoding: 'async',
+                alt: '',
+                class: 'fi-img'
+            }}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign fi_check = fi_items | strip -%}
+{%- if fi_check != blank -%}
+  {{ 'floating-ingredients.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'floating-ingredients.js' | asset_url }}" defer="defer"></script>
+  <div
+    class="fi-anchor fi-anchor--{{ section.settings.z_layer }}{% unless section.settings.enable_mobile %} fi-anchor--no-mobile{% endunless %}{% unless section.settings.idle_float %} fi-anchor--no-idle{% endunless %}"
+    style="--fi-mobile-scale: {{ section.settings.mobile_scale | divided_by: 100.0 }};"
+    data-fi-section
+  >
+    {{ fi_items }}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Floating ingredients",
+  "tag": "div",
+  "class": "fi-section",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Görsel kaynağı",
+      "default": "metafield",
+      "options": [
+        { "value": "metafield", "label": "Ürünün malzemeleri (metafield)" },
+        { "value": "custom", "label": "Elle seçilen görseller" }
+      ],
+      "info": "Metafield: product.metafields.custom.ingredients. Blokta özel görsel seçilirse her durumda o kullanılır."
+    },
+    {
+      "type": "select",
+      "id": "z_layer",
+      "label": "Katman",
+      "default": "front",
+      "options": [
+        { "value": "front", "label": "İçeriğin önünde" },
+        { "value": "behind", "label": "İçeriğin arkasında" }
+      ],
+      "info": "Arkada: yalnızca arka planı şeffaf bölümlerde görünür."
+    },
+    {
+      "type": "checkbox",
+      "id": "idle_float",
+      "label": "Scroll olmasa da hafif süzülme",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mobile",
+      "label": "Mobilde göster",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "mobile_scale",
+      "label": "Mobil boyut oranı",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Obje",
+      "settings": [
+        {
+          "type": "number",
+          "id": "ingredient_index",
+          "label": "Malzeme sırası",
+          "default": 1,
+          "info": "Metafield listesindeki kaçıncı malzeme (1'den başlar). Liste kısaysa başa döner."
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Özel görsel",
+          "info": "Doluysa metafield yerine bu görsel kullanılır. Şeffaf arka planlı WebP/PNG."
+        },
+        {
+          "type": "select",
+          "id": "side",
+          "label": "Kenar",
+          "default": "left",
+          "options": [
+            { "value": "left", "label": "Sol" },
+            { "value": "right", "label": "Sağ" }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "offset_x",
+          "label": "Ekran dışına taşma",
+          "min": -50,
+          "max": 50,
+          "step": 5,
+          "unit": "%",
+          "default": -30,
+          "info": "Objenin kendi genişliğine göre. Negatif: ekran dışına."
+        },
+        {
+          "type": "range",
+          "id": "offset_y",
+          "label": "Dikey konum",
+          "min": -300,
+          "max": 300,
+          "step": 10,
+          "unit": "px",
+          "default": 0,
+          "info": "Bölüm çizgisine göre. Negatif: yukarı."
+        },
+        {
+          "type": "range",
+          "id": "size",
+          "label": "Boyut (masaüstü)",
+          "min": 60,
+          "max": 400,
+          "step": 10,
+          "unit": "px",
+          "default": 180,
+          "info": "Malzemenin base_size alanı doluysa o kullanılır."
+        },
+        {
+          "type": "range",
+          "id": "base_rotation",
+          "label": "Başlangıç açısı",
+          "min": -180,
+          "max": 180,
+          "step": 5,
+          "unit": "deg",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "parallax_speed",
+          "label": "Parallax hızı",
+          "min": -100,
+          "max": 100,
+          "step": 5,
+          "default": 30,
+          "info": "Negatif: ters yön."
+        },
+        {
+          "type": "range",
+          "id": "rotation_speed",
+          "label": "Dönüş hızı",
+          "min": -100,
+          "max": 100,
+          "step": 5,
+          "default": 20
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_on_mobile",
+          "label": "Mobilde gizle",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Floating ingredients",
+      "blocks": [
+        { "type": "item", "settings": { "ingredient_index": 1, "side": "left", "offset_x": -35, "offset_y": -80, "size": 200, "base_rotation": -20, "parallax_speed": 35, "rotation_speed": 25 } },
+        { "type": "item", "settings": { "ingredient_index": 2, "side": "right", "offset_x": -30, "offset_y": 60, "size": 160, "base_rotation": 30, "parallax_speed": -25, "rotation_speed": -20 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

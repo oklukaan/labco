@@ -1,0 +1,111 @@
+/*
+  Floating ingredients (fi). Zero-height anchor between two sections; items overflow onto the
+  neighbouring sections and stay out of the page flow (no CLS), never block clicks.
+*/
+
+/* The Shopify section wrapper must carry the stacking context: a z-index on the inner anchor only
+   applies inside its own wrapper, so later sections would paint over the items.
+   front: above product content (Dawn's sticky info column is z-index 2) but below the header
+   group (3/4) and the anchor nav bar (5). */
+.shopify-section.fi-section {
+  position: relative;
+  z-index: 3;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+.shopify-section.fi-section:has(.fi-anchor--behind) {
+  z-index: 0;
+}
+
+/* Items overflow the viewport edge on purpose. The anchor spans the full section width and clips
+   horizontally only (clip + visible is a valid pair, unlike hidden), so no horizontal scroll and
+   no global html/body change. Browsers without overflow: clip (Safari < 16) fall back to body. */
+.fi-anchor {
+  position: relative;
+  height: 0;
+  overflow-x: clip;
+  overflow-y: visible;
+  pointer-events: none;
+}
+
+@supports not (overflow: clip) {
+  body {
+    overflow-x: hidden;
+  }
+}
+
+.fi-item {
+  position: absolute;
+  top: var(--fi-offset-y, 0px);
+  width: var(--fi-size, 180px);
+  /* Centre the item vertically on the section line. */
+  margin-top: calc(var(--fi-size, 180px) * -0.5);
+  pointer-events: none;
+}
+
+.fi-item--left {
+  left: 0;
+  transform: translateX(var(--fi-offset-x, -30%));
+}
+
+.fi-item--right {
+  right: 0;
+  transform: translateX(calc(var(--fi-offset-x, -30%) * -1));
+}
+
+.fi-scroll {
+  will-change: transform;
+}
+
+.fi-idle {
+  animation: fi-float 6s ease-in-out var(--fi-delay, 0s) infinite;
+}
+
+.fi-anchor--no-idle .fi-idle {
+  animation: none;
+}
+
+.fi-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: rotate(var(--fi-base-rot, 0deg));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+@keyframes fi-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(3deg);
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .fi-item {
+    width: calc(var(--fi-size, 180px) * var(--fi-mobile-scale, 0.6));
+    margin-top: calc(var(--fi-size, 180px) * var(--fi-mobile-scale, 0.6) * -0.5);
+  }
+
+  .fi-anchor--no-mobile,
+  .fi-item--hide-mobile {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fi-idle {
+    animation: none;
+  }
+
+  .fi-scroll {
+    transform: none !important;
+    will-change: auto;
+  }
+}
