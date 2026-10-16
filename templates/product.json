@@ -446,7 +446,7 @@
           "settings": {
             "ingredient_index": 6,
             "custom_image": "shopify://shop_images/list_content_leading_4_1_acdc0e934d.jpg",
-            "side": "left",
+            "side": "right",
             "offset_x": -30,
             "offset_y": 200,
             "size": 110,
@@ -470,27 +470,11 @@
             "rotation_speed": 25,
             "hide_on_mobile": false
           }
-        },
-        "item_VceGfA": {
-          "type": "item",
-          "settings": {
-            "ingredient_index": 2,
-            "custom_image": "shopify://shop_images/list_content_leading_1_1780461036.jpg",
-            "side": "right",
-            "offset_x": -20,
-            "offset_y": 60,
-            "size": 160,
-            "base_rotation": 30,
-            "parallax_speed": -25,
-            "rotation_speed": -20,
-            "hide_on_mobile": false
-          }
         }
       },
       "block_order": [
         "item_bqAQgD",
-        "item_ATpWmq",
-        "item_VceGfA"
+        "item_ATpWmq"
       ],
       "name": "Floating ingredients",
       "settings": {
